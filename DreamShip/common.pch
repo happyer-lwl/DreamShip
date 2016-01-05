@@ -1,0 +1,59 @@
+//
+//  Weibo.pch
+//  SinaWeibo
+//
+//  Created by 刘伟龙 on 15/11/27.
+//  Copyright © 2015年 lwl. All rights reserved.
+//
+
+#ifndef Weibo_pch
+#define Weibo_pch
+
+#import "UIView+Extension.h"
+#import "NSString+Tools.h"
+#import "MacroHeader.h"
+#import "MBProgressHUD+MJ.h"
+#import "CommonFunc.h"
+#import "UIImageView+GCDCash.h"
+#import "UIButton+GCDCash.h"
+#import "CommomToolDefine.h"
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+// Log区分发布和测试环境
+#ifdef DEBUG
+#define DBLog(...) NSLog(__VA_ARGS__)
+#else
+#define DBLog(...)
+#endif
+
+#define IOS7 ([[UIDevice currentDevice].systemVersion doubleValue] >= 7.0) ? YES : NO
+#define IOS8 ([[UIDevice currentDevice].systemVersion doubleValue] >= 8.0) ? YES : NO
+#define IOS9 ([[UIDevice currentDevice].systemVersion doubleValue] >= 9.0) ? YES : NO
+
+#define kScreenWidth [UIScreen mainScreen].bounds.size.width
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#define kKeyWindow [UIApplication sharedApplication].keyWindow
+
+#define kNotificationCenter [NSNotificationCenter defaultCenter]
+#define kDocumentPath [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
+
+#define degreesToRadian(x) (M_PI * (x) / 180.0) 
+
+// 随机色
+#define WBRandomColor [UIColor colorWithRed:arc4random_uniform(256)/255.0 green:arc4random_uniform(256)/255.0 blue:arc4random_uniform(256)/255.0 alpha:1.0]
+
+// RGB颜色
+#define RGBColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
+
+// Dream
+#define kTitleBlueColor     RGBColor(56, 155, 250)
+#define kButtonBgBlueColor  RGBColor(45, 124, 244)
+#define kNavBgColor         RGBColor(230, 230, 230)
+
+#define kViewBgColor        RGBColor(240, 240, 240)
+
+#define kLaunchImageShowSec 0
+
+#endif /* Weibo_pch */
