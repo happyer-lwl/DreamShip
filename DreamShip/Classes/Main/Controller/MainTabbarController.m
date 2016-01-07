@@ -14,6 +14,8 @@
 #import "DiscoverViewController.h"
 #import "ProfileViewController.h"
 
+#import <RongIMKit/RongIMKit.h>
+
 @interface MainTabbarController ()
 
 @end
@@ -32,6 +34,7 @@
     [self addChildVc:commend title:@"梦乡" image:@"tabbar_message_center" selectImage:@"tabbar_message_center_selected"];
     
     DiscoverViewController *discover = [[DiscoverViewController alloc] init];
+    //RCConversationListViewController *discover = [[RCConversationListViewController alloc] init];
     [self addChildVc:discover title:@"梦扬" image:@"tabbar_discover" selectImage:@"tabbar_discover_selected"];
     
     ProfileViewController *profile = [[ProfileViewController alloc] init];

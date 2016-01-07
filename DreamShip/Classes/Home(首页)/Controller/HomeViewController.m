@@ -21,11 +21,11 @@
 #import "AccountTool.h"
 #import "HttpTool.h"
 #import "MJExtension.h"
+#import "MJRefresh.h"
 #import "UIBarButtonItem+Extension.h"
 
 @interface HomeViewController()
 
-@property (nonatomic, weak) UIRefreshControl *refreshControl;
 @property (nonatomic, weak) UIBarButtonItem *addDreamBarItem;
 
 @property (nonatomic, strong) NSMutableArray *dreamFrames;
@@ -42,6 +42,13 @@
     return _dreamFrames;
 }
 
+//-(AVAudioPlayer *)player{
+//    if (_player == nil) {
+//        _player = [[AVAudioPlayer alloc] init];
+//    }
+//    
+//    return _player;
+//}
 -(void)viewDidLoad{
     [super viewDidLoad];
     
@@ -54,13 +61,6 @@
     [kNotificationCenter addObserver:self selector:@selector(getNewDreams) name:kNotificationComposed object:nil];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    
-    [UIView animateWithDuration:0.3 delay:0 options:(UIViewAnimationOptionCurveEaseOut) animations:^{
-        self.tabBarController.tabBar.transform = CGAffineTransformIdentity;
-    } completion:nil];
-}
 /**
  *  设置导航
  */
@@ -99,6 +99,14 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"api_uid"] = @"dreams";
     params[@"api_type"] = @"getData";
+    if (self.dreamRange == DreamRangeSelf) {
+        AccountModel *account = [AccountTool account];
+        params[@"user_id"] = account.userID;
+    }else if (self.dreamRange == DreamRangeFriend){
+        params[@"user_id"] = self.dreamModel.user.user_id;
+    }else if (self.dreamRange == DreamRangeAll) {
+        params[@"user_id"] = @"all";
+    }
     
     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary *json) {
 
@@ -107,27 +115,20 @@
         
         self.dreamFrames = [NSMutableArray arrayWithArray:dreamFrames];
 
-        [self.refreshControl endRefreshing];
-        
         [self.tableView reloadData];
-        
-        DBLog(@"刷新成功");
+        [self.tableView.mj_header endRefreshing];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
-        [self.refreshControl endRefreshing];
     }];
 }
 
 // 设置头和尾刷新
 -(void)setHeaderRefreshView{
-    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-    [refreshControl addTarget:self action:@selector(getNewDreams) forControlEvents:UIControlEventValueChanged];
-    [self.tableView addSubview:refreshControl];
-    self.refreshControl = refreshControl;
-    [refreshControl beginRefreshing];
-    
-    [self getNewDreams];
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self getNewDreams];
+    }];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 -(void)getMoreDreams:(UIRefreshControl *)refreshControl{
@@ -172,20 +173,28 @@
     HomeDetailVC *homeDetailVC = [[HomeDetailVC alloc] init];
     [homeDetailVC setDreamFrame:selectedDream];
 
-    //self.tabBarController.tabBar.hidden = YES;
-    [UIView animateWithDuration:0.3 animations:^{
-        self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(-kScreenWidth, 0);
-        [self.navigationController pushViewController:homeDetailVC animated:YES];
-    }];
+    [kNotificationCenter addObserver:self selector:@selector(updateCellInfo) name:kUpdateCellInfoFromCell object:nil];
+    
+    homeDetailVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:homeDetailVC animated:YES];
 }
-
+/**
+ *  观察者，更新内容
+ */
+-(void)updateCellInfo{
+    self.dreamRange = DreamRangeAll;
+    [self getNewDreams];
+}
+/**
+ *  toolBar按键回调
+ *
+ *  @param tag        按键类型
+ *  @param dreamFrame 返回的数据模型
+ */
 -(void)cellToolBarClickedWithTag:(NSInteger)tag dreamFrame:(DSDreamFrame *)dreamFrame{
     switch (tag) {
         case kTagSupport:
-            [self supportDream:dreamFrame];
-            break;
         case kTagUnSupport:
-            [self unsupportDream:dreamFrame];
             break;
         case kTagComment:
             [self commentDream:dreamFrame];
@@ -193,59 +202,25 @@
         default:
             break;
     }
+    
+    for (NSInteger i = 0; i < self.dreamFrames.count; i++) {
+        DSDreamFrame *frame = self.dreamFrames[i];
+        if ([frame.dream.idStr isEqualToString:dreamFrame.dream.idStr]) {
+            self.dreamFrames[i] = dreamFrame;
+        }
+    }
 }
-
--(void)supportDream:(DSDreamFrame*)dreamFrame{
-    DSDreamModel *dreamModel = dreamFrame.dream;
-    DSUser *dsUser = dreamModel.user;
-    
-    AccountModel *accounter = [AccountTool account];
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[@"api_uid"] = @"comments";
-    params[@"api_type"] = @"support";
-    params[@"dream_id"] = dreamModel.idStr;
-    params[@"user_id"] = accounter.userID;
-    params[@"time"] = [CommomToolDefine currentDateStr];
-    
-    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
-        DBLog(@"%@", json);
-        [self getNewDreams];
-    } failure:^(NSError *error) {
-        DBLog(@"%@", error.description);
-    }];
-}
-
--(void)unsupportDream:(DSDreamFrame*)dreamFrame{
-    DSDreamModel *dreamModel = dreamFrame.dream;
-    DSUser *dsUser = dreamModel.user;
-    
-    AccountModel *accounter = [AccountTool account];
-    
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[@"api_uid"] = @"comments";
-    params[@"api_type"] = @"unsupport";
-    params[@"dream_id"] = dreamModel.idStr;
-    params[@"user_id"] = accounter.userID;
-    params[@"time"] = [CommomToolDefine currentDateStr];
-    
-    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
-        DBLog(@"%@", json);
-        [self getNewDreams];
-    } failure:^(NSError *error) {
-        DBLog(@"%@", error.description);
-    }];
-}
-
+/**
+ *  点击评论按键
+ *
+ *  @param dreamFrame <#dreamFrame description#>
+ */
 -(void)commentDream:(DSDreamFrame*)dreamFrame{
     HomeDetailVC *homeDetailVC = [[HomeDetailVC alloc] init];
     [homeDetailVC setDreamFrame:dreamFrame];
     
-    //self.tabBarController.tabBar.hidden = YES;
-    [UIView animateWithDuration:0.3 animations:^{
-        self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(-kScreenWidth, 0);
-        [self.navigationController pushViewController:homeDetailVC animated:YES];
-    }];
+    homeDetailVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:homeDetailVC animated:YES];
 }
 
 @end

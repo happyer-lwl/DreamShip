@@ -92,4 +92,29 @@
     return createTimeString;
 }
 
++(BOOL)writeToPlistFile:(NSString *)fileName withValue:(NSString *)value key:(NSString *)key{
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"plist"];
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    
+    //添加一项内容
+    [data setObject:value forKey:key];
+    
+    //获取应用程序沙盒的Documents目录
+    NSArray *paths=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
+    NSString *plistPath1 = [paths objectAtIndex:0];
+    
+    //得到完整的文件名
+    NSString *filepath=[plistPath1 stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.plist", fileName]];
+    //输入写入
+    [data writeToFile:filepath atomically:YES];
+    
+    return YES;
+}
+
++(NSDictionary *)readPlistFile:(NSString *)fileName{
+    NSString *plistPath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"plist"];
+    NSDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    
+    return data;
+}
 @end

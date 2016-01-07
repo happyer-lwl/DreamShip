@@ -17,12 +17,18 @@
 #import <SMS_SDK/SMSSDK.h>
 #import "DataBaseSharedManager.h"
 
+//IMSDK Headers
+//#import "IMSDK.h"
+//#import "IMMyself.h"
+
+#import <RongIMKit/RongIMKit.h>
+#import "AudioController.h"
+
 #import "AFNetworking.h"
 #import "UIKit+AFNetworking.h"
 
 #define kAppBuglyID         @"900016290"
-#define kEaseMobAppKey      @"noer#dreamship"
-#define kEaseMobCertName    @"mob_p12"
+#define kRongCloudAppKey    @"8luwapkvuq99l"
 
 static FMDatabase* db = nil;
 
@@ -34,11 +40,17 @@ static FMDatabase* db = nil;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    [self playMusic];
+    
     // 设置网络监听
-    [self setNetStatusCheck];
+    //[self setNetStatusCheck];
+    
     // 设置APNs推送
     [self setAPNs];
 
+    // 设置IMSDK
+    [[RCIM sharedRCIM] initWithAppKey:kRongCloudAppKey];
+    
     // 注册腾讯Bugly监测
     [[CrashReporter sharedInstance] installWithAppId:kAppBuglyID];
     // 短信验证注册
@@ -61,8 +73,44 @@ static FMDatabase* db = nil;
         db = [[DataBaseSharedManager sharedManager] getDB];
     }
     
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(didReceiveMessageNotification:)
+     name:RCKitDispatchMessageNotification
+     object:nil];
+    [[RCIM sharedRCIM] setConnectionStatusDelegate:self];
+    
     return YES;
 }
+
+/**
+ *  播放音乐
+ */
+-(void)playMusic{
+    BOOL be = [KUserDefaults boolForKey:@"background_audio"];
+    if (be) {
+        [AudioController playMusic];
+    }
+}
+
+/**
+ *  网络状态变化。
+ *
+ *  @param status 网络状态。
+ */
+- (void)onRCIMConnectionStatusChanged:(RCConnectionStatus)status {
+    if (status == ConnectionStatus_KICKED_OFFLINE_BY_OTHER_CLIENT) {
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:@"提示"
+                              message:@"您"
+                              @"的帐号在别的设备上登录，您被迫下线！"
+                              delegate:nil
+                              cancelButtonTitle:@"知道了"
+                              otherButtonTitles:nil, nil];
+        [alert show];
+    }
+}
+
 
 /**
  设置网络状态监听
@@ -111,24 +159,42 @@ static FMDatabase* db = nil;
 }
 
 -(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken{
-    NSString *deviceTokenStr = [NSString stringWithFormat:@"%@", deviceToken];
-    DBLog(@"DeviceToken is: %@", deviceTokenStr);
+
+    NSString *token =
+    [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<"
+                                                           withString:@""]
+      stringByReplacingOccurrencesOfString:@">"
+      withString:@""]
+     stringByReplacingOccurrencesOfString:@" "
+     withString:@""];
+    
+    [[RCIMClient sharedRCIMClient] setDeviceToken:token];
+    DBLog(@"DeviceToken is: %@", token);
 }
 
 -(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
     DBLog(@"Error -- %@", error);
 }
+
+-(void)didReceiveMessageNotification:(NSNotification *)notification{
+    [UIApplication sharedApplication].applicationIconBadgeNumber =
+    [UIApplication sharedApplication].applicationIconBadgeNumber + 1;
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents]; // 让后台可以处理多媒体的事件
+    NSLog(@"%s",__FUNCTION__);
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setActive:YES error:nil];
+    [session setCategory:AVAudioSessionCategoryPlayback error:nil]; //后台播放
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    
+    [AudioController playMusic];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-
+    //[g_pIMSDK applicationWillEnterForeground];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

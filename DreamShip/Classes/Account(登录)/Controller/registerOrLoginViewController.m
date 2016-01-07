@@ -15,7 +15,6 @@
 
 #import "DataBaseSharedManager.h"
 #import "HttpTool.h"
-#import "registerRequest.h"
 
 #import "AccountModel.h"
 #import "AccountTool.h"
@@ -224,6 +223,8 @@
             [dict setObject:dataDict[@"image"] forKey:@"userImage"];
             [dict setObject:dataDict[@"sex"] forKey:@"userSex"];
             [dict setObject:dataDict[@"id"] forKey:@"userID"];
+            [dict setObject:dataDict[@"words"] forKey:@"userWords"];
+            
             AccountModel *model = [AccountModel accountWithDictionary:dict];
             [AccountTool saveAccount:model];
             

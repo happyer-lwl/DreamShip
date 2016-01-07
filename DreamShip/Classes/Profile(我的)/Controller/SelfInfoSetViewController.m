@@ -9,6 +9,7 @@
 #import "SelfInfoSetViewController.h"
 #import "SelfInfoSetMailVC.h"
 #import "SelfInfoSetSexyVC.h"
+#import "SelfInfoSetWordsVC.h"
 
 #import "UICustomTextField.h"
 #import "AccountModel.h"
@@ -21,8 +22,9 @@
 #import "UIButton+WebCache.h"
 #import "DataBaseSharedManager.h"
 
-#define kTableTagMail 01
-#define kTableTagSex  02
+#define kTableTagMail   01
+#define kTableTagSex    02
+#define kTableTagWords  03
 
 @interface SelfInfoSetViewController()
 
@@ -110,8 +112,9 @@
     
     TableItemModel *itemMail = [TableItemModel initWithTitle:@"邮箱" detailTitle:model.userMail tag:kTableTagMail];
     TableItemModel *itemSexy = [TableItemModel initWithTitle:@"性别" detailTitle:model.userSex tag:kTableTagSex];
+    TableItemModel *itemWords = [TableItemModel initWithTitle:@"个人签名" detailTitle:model.userWords tag:kTableTagWords];
     
-    NSArray *items = @[itemMail, itemSexy];
+    NSArray *items = @[itemWords, itemMail, itemSexy];
     group.items = [NSArray arrayWithArray:items];
     
     [self.groups addObject:group];
@@ -327,7 +330,7 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 47;
+    return 40;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -362,6 +365,9 @@
     }else if(cell.tag == kTableTagSex){
         SelfInfoSetSexyVC *mainVC = [[SelfInfoSetSexyVC alloc] init];
         [self.navigationController pushViewController:mainVC animated:YES];
+    }else if(cell.tag == kTableTagWords){
+        SelfInfoSetWordsVC *wordVC = [[SelfInfoSetWordsVC alloc] init];
+        [self.navigationController pushViewController:wordVC animated:YES];
     }
 }
 @end

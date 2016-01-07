@@ -19,5 +19,7 @@
 @property (nonatomic, copy) NSString *userSex;
 @property (nonatomic, copy) NSString *userMail;
 
+@property (nonatomic, copy) NSString *userWords;
+
 +(instancetype)accountWithDictionary:(NSDictionary *)dict;
 @end

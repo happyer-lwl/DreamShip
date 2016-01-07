@@ -26,7 +26,7 @@
             success(responseObject);
         }
         
-        DBLog(@"%@", responseObject);
+        //DBLog(@"%@", responseObject);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if (failure) {

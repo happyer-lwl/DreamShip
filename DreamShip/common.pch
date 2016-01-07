@@ -56,4 +56,10 @@
 
 #define kLaunchImageShowSec 0
 
+typedef NS_ENUM(NSInteger, DreamRange){
+    DreamRangeAll,
+    DreamRangeSelf,
+    DreamRangeFriend
+};
+
 #endif /* Weibo_pch */

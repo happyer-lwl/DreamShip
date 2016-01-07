@@ -18,15 +18,19 @@
 #import "TableGroupModel.h"
 #import "TableItemModel.h"
 
+#import "HomeViewController.h"
+#import "MyFocusedUserVC.h"
+
 #define kTagMine            0
 
-#define kTagDream           1
-#define kTagCollection      2
-#define kTagFocus           3
+#define kTagMyDream         1
+#define kTagMyCollection    2
+#define kTagMyFocus         3
 
-#define kTagDreamMoney      4
-#define kTagHelper          5
-#define kTagSetting         6
+#define kTagDreamCredit     4
+#define kTagDreamLevel      5
+#define kTagHelpCenter      6
+#define kTagSetting         7
 
 @interface ProfileViewController()
 
@@ -67,14 +71,6 @@
     [self.tableView reloadData];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    
-    [UIView animateWithDuration:0.3 delay:0 options:(UIViewAnimationOptionCurveEaseOut) animations:^{
-        self.tabBarController.tabBar.transform = CGAffineTransformIdentity;
-    } completion:nil];
-}
-
 /**
  *  设置头像后更新
  */
@@ -86,7 +82,7 @@
     TableGroupModel *group = [TableGroupModel group];
     
     AccountModel *model = [AccountTool account];
-    TableItemModel *item = [TableItemModel initWithTitle:model.userPhone tag:kTagMine];
+    TableItemModel *item = [TableItemModel initWithTitle:model.userRealName detailTitle:model.userWords tag:kTagMine];
     group.items = @[item];
     
     [self.groups addObject:group];
@@ -95,9 +91,9 @@
 -(void)setGroup2{
     TableGroupModel *group = [TableGroupModel group];
     
-    TableItemModel *item1 = [TableItemModel initWithTitle:@"我做的梦" tag:kTagDream];
-    TableItemModel *item2 = [TableItemModel initWithTitle:@"我的收藏" tag:kTagCollection];
-    TableItemModel *item3 = [TableItemModel initWithTitle:@"我的关注" tag:kTagFocus];
+    TableItemModel *item1 = [TableItemModel initWithTitle:@"我做的梦" tag:kTagMyDream];
+    TableItemModel *item2 = [TableItemModel initWithTitle:@"我的收藏" tag:kTagMyCollection];
+    TableItemModel *item3 = [TableItemModel initWithTitle:@"我的关注" tag:kTagMyFocus];
     group.items = @[item1, item2, item3];
     
     [self.groups addObject:group];
@@ -107,10 +103,11 @@
 -(void)setGroup3{
     TableGroupModel *group = [TableGroupModel group];
     
-    TableItemModel *item1 = [TableItemModel initWithTitle:@"梦想基金" tag:kTagDreamMoney];
-    TableItemModel *item2 = [TableItemModel initWithTitle:@"帮助中心" tag:kTagHelper];
-    TableItemModel *item3 = [TableItemModel initWithTitle:@"设置" tag:kTagSetting];
-    group.items = @[item1, item2, item3];
+    TableItemModel *item1 = [TableItemModel initWithTitle:@"梦想积分" tag:kTagDreamCredit];
+    TableItemModel *item2 = [TableItemModel initWithTitle:@"梦想高度" tag:kTagDreamLevel];
+    TableItemModel *item3 = [TableItemModel initWithTitle:@"帮助中心" tag:kTagHelpCenter];
+    TableItemModel *item4 = [TableItemModel initWithTitle:@"设置" tag:kTagSetting];
+    group.items = @[item1, item2, item3, item4];
     
     [self.groups addObject:group];
 }
@@ -153,7 +150,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:ID];
     }
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -167,7 +164,6 @@
     if (indexPath.section == 0) {
         NSURL *imageUrl = [NSURL URLWithString:model.userImage];
         if (model.userImage.length) {
-            //[UIImageView setImageForImageView:cell.imageView imageURL:imageUrl];
             [cell.imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
         }else{
             cell.imageView.image = [UIImage imageNamed:@"avatar_default_big"];
@@ -175,8 +171,10 @@
         cell.imageView.layer.cornerRadius = 40;
         cell.imageView.layer.masksToBounds = YES;
         cell.imageView.backgroundColor = [UIColor lightGrayColor];
-        NSString *title = [NSString stringWithFormat:@" %@", item.title];
+        NSString *title = [NSString stringWithFormat:@"追梦人: %@", item.title];
+        NSString *detailTitle = [NSString stringWithFormat:@"  %@", item.detailTitle];
         cell.textLabel.text = title;
+//        cell.detailTextLabel.text = detailTitle;
     }else{
         cell.textLabel.text = item.title;
     }
@@ -187,16 +185,26 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
-    [UIView animateWithDuration:0.3 animations:^{
-        self.tabBarController.tabBar.transform = CGAffineTransformMakeTranslation(-kScreenWidth, 0);
-        if (cell.tag == kTagSetting) {
-            SetTableViewController *setVC = [[SetTableViewController alloc] init];
-            [self.navigationController pushViewController:setVC animated:YES];
-        }else if (cell.tag == kTagMine){
-            SelfInfoSetViewController *selfVC = [[SelfInfoSetViewController alloc] init];
-            [self.navigationController pushViewController:selfVC animated:YES];
-        }
-    }];
+    if (cell.tag == kTagMine){
+        SelfInfoSetViewController *selfVC = [[SelfInfoSetViewController alloc] init];
+        selfVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:selfVC animated:YES];
+    }else if (cell.tag == kTagSetting) {
+        SetTableViewController *setVC = [[SetTableViewController alloc] init];
+        setVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:setVC animated:YES];
+    }else if (cell.tag == kTagMyDream){
+        HomeViewController *homeVC = [[HomeViewController alloc] init];
+        homeVC.title = @"我的梦想";
+        homeVC.dreamRange = DreamRangeSelf;
+        homeVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:homeVC animated:YES];
+    }else if (cell.tag == kTagMyFocus){
+        MyFocusedUserVC *focusedUserVC = [[MyFocusedUserVC alloc] init];
+        focusedUserVC.title = @"我的关注";
+        focusedUserVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:focusedUserVC animated:YES];
+    }
 }
 
 @end

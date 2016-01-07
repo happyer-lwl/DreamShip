@@ -13,7 +13,7 @@
 #import "AppDelegate.h"
 
 //主域名
-//#define _TEST_ 1
+#define _TEST_ 1
 
 #ifdef _TEST_
     #define Host_Url @"http://192.168.1.101"

@@ -139,7 +139,16 @@
     self.toolBar.curDream = dream;
 }
 
--(void)DSToolBarClickedWithTag:(NSInteger)tag {
+/**
+ *  toolbar按键回调
+ *
+ *  @param tag        按键tag
+ *  @param dreamModel 数据模型
+ */
+-(void)DSToolBarClickedWithTag:(NSInteger)tag dreamModel:(DSDreamModel *)dreamModel {
+    DBLog(@"cellToolButton  %ld", tag);
+    self.dreamFrame.dream = dreamModel;
+    
     if ([self.delegate respondsToSelector:@selector(cellToolBarClickedWithTag:dreamFrame:)]) {
         [self.delegate cellToolBarClickedWithTag:tag dreamFrame: self.dreamFrame];
     }

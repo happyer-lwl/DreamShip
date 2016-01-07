@@ -10,6 +10,10 @@
 
 #import "DSHomeViewCell.h"
 
+@class DSDreamModel;
 @interface HomeViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate>
+
+@property (nonatomic, assign) DreamRange dreamRange;
+@property (nonatomic, assign) DSDreamModel *dreamModel;
 
 @end

@@ -14,4 +14,6 @@
 +(NSDate *)dateFromString:(NSString *)dateStr;
 +(NSString *)created_at:(NSString *)timeStr;
 
++(BOOL)writeToPlistFile:(NSString *)fileName withValue:(NSString *)value key:(NSString *)key;
++(NSDictionary *)readPlistFile:(NSString *)fileName;
 @end

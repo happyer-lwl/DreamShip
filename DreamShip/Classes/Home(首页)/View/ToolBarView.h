@@ -12,13 +12,12 @@
 #define kTagUnSupport   1
 #define kTagComment     2
 
+@class DSDreamModel;
+
 @protocol DSToolBarViewDelegate <NSObject>
-
--(void)DSToolBarClickedWithTag:(NSInteger)tag;
-
+-(void)DSToolBarClickedWithTag:(NSInteger)tag dreamModel:(DSDreamModel *)dreamModel;
 @end
 
-@class DSDreamModel;
 @interface ToolBarView : UIView
 
 +(instancetype)toolBar;

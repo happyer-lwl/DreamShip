@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <RongIMKit/RongIMKit.h>
 
-@interface DiscoverViewController : UITableViewController
+@interface DiscoverViewController : RCConversationListViewController
 
 @end

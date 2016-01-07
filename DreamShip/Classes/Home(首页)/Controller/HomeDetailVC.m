@@ -17,13 +17,21 @@
 
 #import "UIBarButtonItem+Extension.h"
 #import "MJExtension.h"
+#import "MJRefresh.h"
 #import "UIImageView+WebCache.h"
 
 #import "HttpTool.h"
+#import "AccountModel.h"
+#import "AccountTool.h"
+
+#import "CommentToolBarView.h"
 
 @interface HomeDetailVC ()
 
 @property (nonatomic, strong) NSMutableArray *commentArray;
+@property (nonatomic, weak) CommentToolBarView *commentToolBar;
+
+@property (nonatomic, weak) UITableView *tableView;
 
 @end
 
@@ -38,21 +46,16 @@
 }
 
 -(void)setDreamFrame:(DSDreamFrame *)dreamFrame{
-    if (_dreamFrame == nil) {
-        _dreamFrame = dreamFrame;
-    }
-}
-
--(id)init{
-    return [self initWithStyle:UITableViewStyleGrouped];
+    _dreamFrame = dreamFrame;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = kViewBgColor;
     
     [self setNavigationInfo];
     [self setTableViewInfo];
-    
+    [self setCommentToolBar];
     [self updateComments];
 }
 
@@ -72,7 +75,18 @@
  *  设置TableView信息
  */
 -(void)setTableViewInfo{
-//    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    tableView.backgroundColor = [UIColor clearColor];
+    tableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+        [self updateComments];
+    }];
+    
+    _tableView = tableView;
+    
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    
+    [self.view addSubview:tableView];
 }
 
 /**
@@ -82,21 +96,114 @@
     DSDreamModel *dreamModel = self.dreamFrame.dream;
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[@"api_uid"] = @"dreams";
+    params[@"api_uid"] = @"comments";
     params[@"api_type"] = @"getComments";
     params[@"dream_id"] = dreamModel.idStr;
     
     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
         NSArray *arry = [DSCommentModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
+        [self.commentArray removeAllObjects];
         [self.commentArray addObjectsFromArray:arry];
         [self.tableView reloadData];
     } failure:^(NSError *error) {
-        
+
     }];
+}
+
+-(void)setCommentToolBar{
+    CommentToolBarView *commentToolBar = [CommentToolBarView CommentToolBar];
+    commentToolBar.frame = CGRectMake(0, self.view.height - kToolBarHeight - 64, kScreenWidth, kToolBarHeight);
+    _commentToolBar = commentToolBar;
+    [kNotificationCenter addObserver:self selector:@selector(keyboardChanged:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    self.commentToolBar.delegate = self;
+    
+    [self.view addSubview:commentToolBar];
 }
 
 -(void)backToPre{
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+-(void)keyboardChanged:(NSNotification *)notification{
+    DBLog(@"%@", notification);
+    
+    NSDictionary *userInfo = notification.userInfo;
+    
+    CGFloat duration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    CGRect keyboradF = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    [UIView animateWithDuration:duration animations:^{
+        self.commentToolBar.y = keyboradF.origin.y - self.commentToolBar.height - 64;
+    }];
+}
+
+-(void)commitTheComments:(NSString *)comments{
+    AccountModel *accountModel = [AccountTool account];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"comments";
+    params[@"api_type"] = @"commit";
+    params[@"text"] = comments;
+    params[@"dream_id"] = self.dreamFrame.dream.idStr;
+    params[@"user_id"] = accountModel.userID;
+    params[@"time"] = [CommomToolDefine currentDateStr];
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(id json) {
+        DBLog(@"%@", json);
+        [self.view endEditing:YES];
+        [self updateComments];
+    } failure:^(NSError *error) {
+        DBLog(@"%@", error.description);
+    }];
+    
+}
+
+-(void)dealloc{
+    [kNotificationCenter removeObserver:self];
+}
+
+// 获取梦想
+-(void)getNewDreams{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"dreams";
+    params[@"api_type"] = @"getData";
+
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary *json) {
+        
+        NSArray *dreams = [DSDreamModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
+        NSArray *dreamFrames = [self dreamFramesWithDreams:dreams];
+        
+        for (DSDreamFrame *frame in dreamFrames) {
+            if ([frame.dream.idStr isEqualToString:self.dreamFrame.dream.idStr]) {
+                self.dreamFrame = frame;
+            }
+        }
+        
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+        DBLog(@"刷新成功");
+    } failure:^(NSError *error) {
+        DBLog(@"%@", error.description);
+        [MBProgressHUD showError:@"网络错误!"];
+    }];
+}
+
+-(NSArray *)dreamFramesWithDreams:(NSArray*)dreams{
+    // 将WBStatus数组转为 WBStatusFrame数组
+    NSMutableArray *newFrames = [NSMutableArray array];
+    for (DSDreamModel *dream in dreams) {
+        DSDreamFrame *frame = [[DSDreamFrame alloc]init];
+        frame.dream = dream;
+        [newFrames addObject:frame];
+    }
+    
+    return newFrames;
+}
+
+#pragma mark - ScrollDelegate
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [self.view endEditing:YES];
 }
 
 #pragma mark - Table view data source
@@ -131,10 +238,12 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 0.1;
 }
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0) {
         DSHomeViewCell *cell = [DSHomeViewCell cellWithTableView:tableView];
         cell.dreamFrame = self.dreamFrame;
+        cell.delegate = self;
         return cell;
     }else{
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -146,5 +255,80 @@
         
         return cell;
     }
+}
+
+-(void)supportDream:(DSDreamFrame*)dreamFrame{
+    DSDreamModel *dreamModel = dreamFrame.dream;
+    
+    AccountModel *accounter = [AccountTool account];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"comments";
+    params[@"api_type"] = @"support";
+    params[@"dream_id"] = dreamModel.idStr;
+    params[@"user_id"] = accounter.userID;
+    params[@"time"] = [CommomToolDefine currentDateStr];
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
+        DBLog(@"support  %@", json);
+        
+        NSArray *dreams = [DSDreamModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
+        NSArray *dreamFrames = [self dreamFramesWithDreams:dreams];
+        
+        self.dreamFrame = [dreamFrames objectAtIndex:0];
+
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+    } failure:^(NSError *error) {
+        DBLog(@"%@", error.description);
+    }];
+}
+
+-(void)unsupportDream:(DSDreamFrame*)dreamFrame{
+    DSDreamModel *dreamModel = dreamFrame.dream;
+    
+    AccountModel *accounter = [AccountTool account];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"comments";
+    params[@"api_type"] = @"unsupport";
+    params[@"dream_id"] = dreamModel.idStr;
+    params[@"user_id"] = accounter.userID;
+    params[@"time"] = [CommomToolDefine currentDateStr];
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
+        DBLog(@"unsupport  %@", json);
+        
+        NSArray *dreams = [DSDreamModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
+        NSArray *dreamFrames = [self dreamFramesWithDreams:dreams];
+        
+        self.dreamFrame = [dreamFrames objectAtIndex:0];
+        
+        [self.tableView reloadData];
+        
+    } failure:^(NSError *error) {
+        DBLog(@"%@", error.description);
+    }];
+}
+
+-(void)commentDream:(DSDreamFrame*)dreamFrame{
+    [self.commentToolBar.inputTextField becomeFirstResponder];
+}
+
+-(void)cellToolBarClickedWithTag:(NSInteger)tag dreamFrame:(DSDreamFrame*)dreamFrame{
+    switch (tag) {
+        case kTagSupport:
+        case kTagUnSupport:
+            DBLog(@"HomeDetail   %@", dreamFrame);
+            break;
+        case kTagComment:
+            [self commentDream:dreamFrame];
+            break;
+        default:
+            break;
+    }
+    
+    
+    [kNotificationCenter postNotificationName:kUpdateCellInfoFromCell object:nil];
 }
 @end

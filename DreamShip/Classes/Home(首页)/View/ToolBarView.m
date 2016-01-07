@@ -8,6 +8,12 @@
 
 #import "ToolBarView.h"
 #import "DSDreamModel.h"
+#import "DSDreamFrame.h"
+
+#import "AccountTool.h"
+#import "AccountModel.h"
+#import "HttpTool.h"
+#import "MJExtension.h"
 
 @interface ToolBarView()
 
@@ -54,7 +60,15 @@
     
     return self;
 }
-
+/**
+ *  设置按键标题和icon tag
+ *
+ *  @param title 标题
+ *  @param icon  icon
+ *  @param tag   tag
+ *
+ *  @return <#return value description#>
+ */
 -(UIButton *)setToolButtonWithTitle:(NSString *)title icon:(NSString *)icon tag:(NSInteger)tag{
     UIButton *btn = [[UIButton alloc] init];
     btn.titleLabel.font = [UIFont systemFontOfSize:13];
@@ -75,12 +89,86 @@
     
     return btn;
 }
-
+/**
+ *  ToolBar按下
+ *
+ *  @param button <#button description#>
+ */
 -(void)toolBarClicked:(UIButton *)button{
-    DBLog(@"%ld", button.tag);
-    if ([self.delegate respondsToSelector:@selector(DSToolBarClickedWithTag:)]) {
-        [self.delegate DSToolBarClickedWithTag:button.tag];
+    DBLog(@"toolButton  %ld", button.tag);
+    
+    switch (button.tag) {
+        case kTagSupport:
+            [self supportDreamWithType:kTagSupport];
+            break;
+        case kTagUnSupport:
+            [self supportDreamWithType:kTagUnSupport];
+            break;
+        case kTagComment:
+            if ([self.delegate respondsToSelector:@selector(DSToolBarClickedWithTag:dreamModel:)]) {
+                [self.delegate DSToolBarClickedWithTag:button.tag dreamModel:self.curDream];
+            }
+            break;
+        default:
+            break;
     }
+}
+/**
+ *  赞或喷
+ *
+ *  @param type 类型
+ */
+-(void)supportDreamWithType:(NSInteger)type{
+    AccountModel *accounter = [AccountTool account];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"comments";
+    if (type == kTagSupport) {
+        params[@"api_type"] = @"support";
+    }else{
+        params[@"api_type"] = @"unsupport";
+    }
+    params[@"dream_id"] = self.curDream.idStr;
+    params[@"user_id"] = accounter.userID;
+    params[@"time"] = [CommomToolDefine currentDateStr];
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
+        DBLog(@"support  %@", json);
+        
+        NSArray *dreams = [DSDreamModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
+        NSArray *dreamFrames = [self dreamFramesWithDreams:dreams];
+        
+        DSDreamFrame* dreamFrame = [dreamFrames objectAtIndex:0];
+        self.curDream = dreamFrame.dream;
+        
+        [self setButtonCount:dreamFrame.dream.support_count button:self.supportButton title:@"赞"];
+        [self setButtonCount:dreamFrame.dream.unsupport_count button:self.unSupportButton title:@"喷"];
+        
+        if ([self.delegate respondsToSelector:@selector(DSToolBarClickedWithTag:dreamModel:)]) {
+            [self.delegate DSToolBarClickedWithTag:type dreamModel:self.curDream];
+        }
+    } failure:^(NSError *error) {
+        DBLog(@"%@", error.description);
+    }];
+}
+
+/**
+ *  转换模型
+ *
+ *  @param dreams 数据模型
+ *
+ *  @return frame模型
+ */
+-(NSArray *)dreamFramesWithDreams:(NSArray*)dreams{
+    // 将WBStatus数组转为 WBStatusFrame数组
+    NSMutableArray *newFrames = [NSMutableArray array];
+    for (DSDreamModel *dream in dreams) {
+        DSDreamFrame *frame = [[DSDreamFrame alloc]init];
+        frame.dream = dream;
+        [newFrames addObject:frame];
+    }
+    
+    return newFrames;
 }
 
 -(void)setButtonCount:(NSInteger)count button:(UIButton *)button title:(NSString *)title{
