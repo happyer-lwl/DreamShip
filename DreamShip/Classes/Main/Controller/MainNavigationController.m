@@ -20,7 +20,9 @@
     // Do any additional setup after loading the view.
 
     // 设置navigationBar主题
-    [self.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_background"] forBarMetrics:UIBarMetricsDefault];
+    //[self.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_background"] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationBar setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"dream_wings" ofType:@"jpg"]] forBarMetrics:UIBarMetricsDefault];
+    //[self.navigationBar setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"dream_saysay" ofType:@"jpg"]] forBarMetrics:UIBarMetricsDefault];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[NSForegroundColorAttributeName] = [UIColor whiteColor];

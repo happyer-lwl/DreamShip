@@ -68,6 +68,8 @@
     UIBarButtonItem *addDreamBarItem = [UIBarButtonItem itemWithAction:@selector(addDream) target:self image:@"navigationbar_add" highImage:@"navigationbar_add_highlighted"];
     _addDreamBarItem = addDreamBarItem;
     self.navigationItem.rightBarButtonItem = addDreamBarItem;
+    
+    //self.navigationController.navigationBar.hidden = YES;
 }
 
 /**
@@ -86,7 +88,23 @@
  *  设置tableview
  */
 -(void)setTableViewInfo{
-    self.tableView.backgroundColor = kNavBgColor;//RGBColor(240, 240, 240);
+    //self.tableView.backgroundColor = kViewBgColor;
+    
+    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:self.tableView.bounds];
+    bgImageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ufo" ofType:@"jpeg"]];
+    self.tableView.backgroundView = bgImageView;
+    
+//    UIView *headerView = [[UIView alloc] init];
+//    headerView.frame = CGRectMake(0, 0, kScreenWidth, 150);
+//    
+//    UIImageView *headImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 10, kScreenWidth, 130)];
+//    NSString *imageFile = [[NSBundle mainBundle] pathForResource:@"DreamAndMoon" ofType:@"jpg"];
+//    headImage.image = [UIImage imageWithContentsOfFile:imageFile];
+//    
+//    [headerView addSubview:headImage];
+//    self.tableView.tableHeaderView = headerView;
+    
+    
     self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;

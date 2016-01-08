@@ -64,6 +64,14 @@
 		7E384CD81C3E3AAA000AB310 /* SelfInfoSetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E384CD71C3E3AAA000AB310 /* SelfInfoSetViewController.m */; };
 		7E384CE11C3E52D4000AB310 /* dreamer.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7E384CE01C3E52D4000AB310 /* dreamer.mp3 */; };
 		7E384CEA1C3E59C4000AB310 /* AudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E384CE91C3E59C4000AB310 /* AudioController.m */; };
+		7E384D121C3EAB76000AB310 /* DreamAndMoon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D0A1C3EAB76000AB310 /* DreamAndMoon.jpg */; };
+		7E384D131C3EAB76000AB310 /* dream_together.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D0B1C3EAB76000AB310 /* dream_together.jpg */; };
+		7E384D141C3EAB76000AB310 /* dream_wings.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D0C1C3EAB76000AB310 /* dream_wings.jpg */; };
+		7E384D151C3EAB76000AB310 /* with_dream.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D0D1C3EAB76000AB310 /* with_dream.jpg */; };
+		7E384D161C3EAB76000AB310 /* dream.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D0E1C3EAB76000AB310 /* dream.jpg */; };
+		7E384D171C3EAB76000AB310 /* dream_saysay.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D0F1C3EAB76000AB310 /* dream_saysay.jpg */; };
+		7E384D181C3EAB76000AB310 /* dreamers.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D101C3EAB76000AB310 /* dreamers.jpg */; };
+		7E384D191C3EAB76000AB310 /* ufo.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 7E384D111C3EAB76000AB310 /* ufo.jpeg */; };
 		7E5E5BF11C279FEE000F926E /* PwdConfirmView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5E5BF01C279FEE000F926E /* PwdConfirmView.m */; };
 		7E5E5BF51C27A392000F926E /* UIDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5E5BF41C27A392000F926E /* UIDemo.m */; };
 		7E5E5BF81C27AF30000F926E /* ForgetPwdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5E5BF71C27AF30000F926E /* ForgetPwdViewController.m */; };
@@ -358,6 +366,14 @@
 		7E384CE01C3E52D4000AB310 /* dreamer.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = dreamer.mp3; sourceTree = "<group>"; };
 		7E384CE81C3E59C4000AB310 /* AudioController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioController.h; sourceTree = "<group>"; };
 		7E384CE91C3E59C4000AB310 /* AudioController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioController.m; sourceTree = "<group>"; };
+		7E384D0A1C3EAB76000AB310 /* DreamAndMoon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = DreamAndMoon.jpg; sourceTree = "<group>"; };
+		7E384D0B1C3EAB76000AB310 /* dream_together.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dream_together.jpg; sourceTree = "<group>"; };
+		7E384D0C1C3EAB76000AB310 /* dream_wings.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dream_wings.jpg; sourceTree = "<group>"; };
+		7E384D0D1C3EAB76000AB310 /* with_dream.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = with_dream.jpg; sourceTree = "<group>"; };
+		7E384D0E1C3EAB76000AB310 /* dream.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dream.jpg; sourceTree = "<group>"; };
+		7E384D0F1C3EAB76000AB310 /* dream_saysay.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dream_saysay.jpg; sourceTree = "<group>"; };
+		7E384D101C3EAB76000AB310 /* dreamers.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dreamers.jpg; sourceTree = "<group>"; };
+		7E384D111C3EAB76000AB310 /* ufo.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ufo.jpeg; sourceTree = "<group>"; };
 		7E5E5BEF1C279FEE000F926E /* PwdConfirmView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PwdConfirmView.h; sourceTree = "<group>"; };
 		7E5E5BF01C279FEE000F926E /* PwdConfirmView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PwdConfirmView.m; sourceTree = "<group>"; };
 		7E5E5BF41C27A392000F926E /* UIDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIDemo.m; sourceTree = "<group>"; };
@@ -683,6 +699,7 @@
 		7E14216C1C22A979009762E3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				7E384D091C3EAB76000AB310 /* Images */,
 				7E384CE01C3E52D4000AB310 /* dreamer.mp3 */,
 				7EE47DF31C2A546800D91C84 /* Assets.xcassets */,
 				7E5E5C051C27EBA1000F926E /* Html */,
@@ -1119,6 +1136,21 @@
 				7E384CCA1C3E3A41000AB310 /* PwdResetController.m */,
 			);
 			path = "Setting(设置)";
+			sourceTree = "<group>";
+		};
+		7E384D091C3EAB76000AB310 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				7E384D0A1C3EAB76000AB310 /* DreamAndMoon.jpg */,
+				7E384D0B1C3EAB76000AB310 /* dream_together.jpg */,
+				7E384D0C1C3EAB76000AB310 /* dream_wings.jpg */,
+				7E384D0D1C3EAB76000AB310 /* with_dream.jpg */,
+				7E384D0E1C3EAB76000AB310 /* dream.jpg */,
+				7E384D0F1C3EAB76000AB310 /* dream_saysay.jpg */,
+				7E384D101C3EAB76000AB310 /* dreamers.jpg */,
+				7E384D111C3EAB76000AB310 /* ufo.jpeg */,
+			);
+			path = Images;
 			sourceTree = "<group>";
 		};
 		7E5E5C051C27EBA1000F926E /* Html */ = {
@@ -1670,6 +1702,7 @@
 				7E9723021C3BA6A40020603D /* release_notes_ios.txt in Resources */,
 				7E5E5C2F1C27EBA1000F926E /* jxy11_howto.html in Resources */,
 				7E9723621C3CB21F0020603D /* MJRefresh.bundle in Resources */,
+				7E384D171C3EAB76000AB310 /* dream_saysay.jpg in Resources */,
 				7E5E5C2D1C27EBA1000F926E /* jczq_howto.html in Resources */,
 				7E5E5C371C27EBA1000F926E /* qlc_howto.html in Resources */,
 				7E5E5C4E1C27FB44000F926E /* dsnotice.html in Resources */,
@@ -1681,6 +1714,7 @@
 				7E5E5C251C27EBA1000F926E /* credit_help.html in Resources */,
 				7E5E5C281C27EBA1000F926E /* gdy11_howto.html in Resources */,
 				7E5E5C2C1C27EBA1000F926E /* jclq_howto.html in Resources */,
+				7E384D191C3EAB76000AB310 /* ufo.jpeg in Resources */,
 				7E9723031C3BA6A40020603D /* RongCloud.bundle in Resources */,
 				7E5E5C391C27EBA1000F926E /* rule.css in Resources */,
 				7E5E5C2B1C27EBA1000F926E /* helpGroupBuy.html in Resources */,
@@ -1689,18 +1723,24 @@
 				7E5E5C331C27EBA1000F926E /* lk11_howto.html in Resources */,
 				7EACE4F41C26F936005B8DBB /* MBProgressHUD.bundle in Resources */,
 				7EACE49F1C23B2A8005B8DBB /* SMS_SDKLocalizable.strings in Resources */,
+				7E384D141C3EAB76000AB310 /* dream_wings.jpg in Resources */,
 				7E9723061C3BA6A40020603D /* RongCloudKit.strings in Resources */,
 				7E5E5C301C27EBA1000F926E /* k2_howto.html in Resources */,
 				7E5E5C321C27EBA1000F926E /* kl8_howto.html in Resources */,
 				7E5E5C451C27EBCC000F926E /* help.json in Resources */,
 				7E5E5C461C27EBCC000F926E /* products.json in Resources */,
+				7E384D131C3EAB76000AB310 /* dream_together.jpg in Resources */,
 				7E5E5C271C27EBA1000F926E /* f9_howto.html in Resources */,
+				7E384D181C3EAB76000AB310 /* dreamers.jpg in Resources */,
+				7E384D161C3EAB76000AB310 /* dream.jpg in Resources */,
+				7E384D121C3EAB76000AB310 /* DreamAndMoon.jpg in Resources */,
 				7E5E5C441C27EBCC000F926E /* cywt.json in Resources */,
 				7E5E5C3A1C27EBA1000F926E /* sfc_howto.html in Resources */,
 				7E5E5C261C27EBA1000F926E /* dlt_howto.html in Resources */,
 				7E5E5C231C27EBA1000F926E /* bjdc_howto.html in Resources */,
 				7E5E5C2E1C27EBA1000F926E /* jxssc_howto.html in Resources */,
 				7E5E5C241C27EBA1000F926E /* coupon_help.html in Resources */,
+				7E384D151C3EAB76000AB310 /* with_dream.jpg in Resources */,
 				7EE47DF41C2A546800D91C84 /* Assets.xcassets in Resources */,
 				7E5E5C3D1C27EBA1000F926E /* x3d_howto.html in Resources */,
 				7E5E5C311C27EBA1000F926E /* k3_howto.html in Resources */,

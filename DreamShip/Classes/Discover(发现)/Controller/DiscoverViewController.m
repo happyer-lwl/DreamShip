@@ -13,6 +13,9 @@
 -(void)viewDidLoad{
     [super viewDidLoad];
     
+    UIImage *bgImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ufo" ofType:@"jpeg"]];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
+    
     [self setDisplayConversationTypes:@[@(ConversationType_PRIVATE), @(ConversationType_DISCUSSION)]];
     
     self.view.backgroundColor = [UIColor redColor];

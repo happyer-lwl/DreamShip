@@ -51,6 +51,7 @@
 #define kTitleBlueColor     RGBColor(56, 155, 250)
 #define kButtonBgBlueColor  RGBColor(45, 124, 244)
 #define kNavBgColor         RGBColor(230, 230, 230)
+#define kTableViewBGColor   RGBColor(188, 224, 246)
 
 #define kViewBgColor        RGBColor(240, 240, 240)
 

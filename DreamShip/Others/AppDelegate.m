@@ -39,7 +39,9 @@ static FMDatabase* db = nil;
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
+    // 设置状态栏
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+    // 播放背景音乐
     [self playMusic];
     
     // 设置网络监听
@@ -190,7 +192,7 @@ static FMDatabase* db = nil;
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    [AudioController playMusic];
+    //[AudioController playMusic];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
