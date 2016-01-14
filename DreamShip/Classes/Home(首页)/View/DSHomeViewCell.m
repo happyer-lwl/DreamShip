@@ -23,6 +23,9 @@
 @property (nonatomic, weak) UILabel     *timeLabel;
 @property (nonatomic, weak) UILabel     *typeLabel;
 @property (nonatomic, weak) UILabel     *contentTextLabel;
+@property (nonatomic, weak) UIImageView *picView;
+
+@property (nonatomic, weak) UIButton    *collectionView;
 
 @property (nonatomic, weak) ToolBarView *toolBar;
 
@@ -58,21 +61,38 @@
     UIImageView *bgImageView = [[UIImageView alloc] init];
     bgImageView.backgroundColor = [UIColor whiteColor];
     [self.contentView addSubview:bgImageView];
+    bgImageView.layer.cornerRadius = 5;
+    bgImageView.userInteractionEnabled = YES;
     self.bgView = bgImageView;
     
     // 头像
     UIImageView *imageV = [[UIImageView alloc] init];
     [self.bgView addSubview:imageV];
     self.iconView.backgroundColor = [UIColor whiteColor];
+    self.iconView.userInteractionEnabled = YES;
     self.iconView = imageV;
+   
+    UITapGestureRecognizer *singleFingerOne = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(user_icon_click)];
+    singleFingerOne.numberOfTapsRequired = 1; //Tap数
+    singleFingerOne.numberOfTouchesRequired = 1; // 手指数
+    singleFingerOne.delegate = self;
+    [self.iconView addGestureRecognizer:singleFingerOne];
     
     // 昵称
     UILabel *nameLabel = [[UILabel alloc] init];
-    nameLabel.textColor = kTitleBlueColor;
+    nameLabel.textColor = kTitleDarkBlueColor;
     nameLabel.font = kDSDreamCellNameFont;
     [self.bgView addSubview:nameLabel];
     self.nameLabel.backgroundColor = [UIColor whiteColor];
     self.nameLabel = nameLabel;
+    
+    // 收藏
+    UIButton *collectionBtn = [[UIButton alloc] init];
+    [collectionBtn setImage:[UIImage imageNamed:@"dream_collection"] forState:UIControlStateNormal];
+    [collectionBtn setImage:[UIImage imageNamed:@"dream_collection_selected"] forState:UIControlStateSelected];
+    [collectionBtn addTarget:self action:@selector(collectionClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.bgView addSubview:collectionBtn];
+    self.collectionView = collectionBtn;
     
     // 时间
     UILabel *timeLabel = [[UILabel alloc] init];
@@ -96,13 +116,27 @@
     [self.bgView addSubview:textL];
     self.contentTextLabel = textL;
     
+    // 图片
+    UIImageView *pic = [[UIImageView alloc] init];
+    pic.backgroundColor = kViewBgColor;
+    [self.bgView addSubview:pic];
+    pic.userInteractionEnabled = YES;
+    self.picView = pic;
+    
+    UITapGestureRecognizer *singleFingerOnePhotoView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photoView_click)];
+    singleFingerOnePhotoView.numberOfTapsRequired = 1; //Tap数
+    singleFingerOnePhotoView.numberOfTouchesRequired = 1; // 手指数
+    singleFingerOnePhotoView.delegate = self;
+    [self.picView addGestureRecognizer:singleFingerOnePhotoView];
+
+    
     [self.contentView addSubview:self.bgView];
     
     // 工具栏
     ToolBarView *toolBar = [ToolBarView toolBar];
     toolBar.delegate = self;
     self.toolBar = toolBar;
-    
+    self.toolBar.layer.cornerRadius = 5;
     [self.contentView addSubview:self.toolBar];
 }
 
@@ -117,7 +151,6 @@
     self.iconView.frame = dreamFrame.imageF;
     
     if (user.image.length) {
-        //[UIImageView setImageForImageView:self.iconView imageURL:[NSURL URLWithString:user.image]];
         [self.iconView sd_setImageWithURL:user.image placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
     }else{
         self.iconView.image = [UIImage imageNamed:@"avatar_default_big"];
@@ -125,6 +158,13 @@
     
     self.nameLabel.frame = dreamFrame.nameF;
     self.nameLabel.text = user.name;
+    
+    self.collectionView.frame = dreamFrame.collectionF;
+    if ([dream.collection isEqualToString:@"1"]) {
+        self.collectionView.selected = YES;
+    }else{
+        self.collectionView.selected = NO;
+    }
     
     self.timeLabel.frame = dreamFrame.timeF;
     self.timeLabel.text =  dream.time;
@@ -134,6 +174,11 @@
     
     self.contentTextLabel.frame = dreamFrame.textF;
     self.contentTextLabel.text = dream.text;
+    
+    self.picView.frame = dreamFrame.picF;
+    if (dream.pic_url.length) {
+        [self.picView sd_setImageWithURL:[NSURL URLWithString:dream.pic_url] placeholderImage:[UIImage imageNamed:@"actionbar_picture_icon@3x"]];
+    }
     
     self.toolBar.frame = dreamFrame.toolBarF;
     self.toolBar.curDream = dream;
@@ -151,6 +196,34 @@
     
     if ([self.delegate respondsToSelector:@selector(cellToolBarClickedWithTag:dreamFrame:)]) {
         [self.delegate cellToolBarClickedWithTag:tag dreamFrame: self.dreamFrame];
+    }
+}
+
+/**
+ *  头像回调
+ */
+-(void)user_icon_click{
+    DBLog(@"User Icon");
+    if ([self.delegate respondsToSelector:@selector(cellUserIconClicked:)]) {
+        [self.delegate cellUserIconClicked:self.dreamFrame];
+    }
+}
+
+-(void)photoView_click{
+    DBLog(@"photo");
+    if ([self.delegate respondsToSelector:@selector(cellPhotoViewClicked:)]) {
+        [self.delegate cellPhotoViewClicked:self.dreamFrame];
+    }
+}
+
+-(void)collectionClick:(UIButton *)sender{
+    if (sender.selected) {
+        DBLog(@"collection yes");
+    }else{
+        DBLog(@"collection no");
+    }
+    if ([self.delegate respondsToSelector:@selector(cellCollectionClicked:state:)]) {
+        [self.delegate cellCollectionClicked:self.dreamFrame state:sender.selected];
     }
 }
 @end

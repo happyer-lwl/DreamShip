@@ -27,6 +27,9 @@
 @property (nonatomic, assign) CGRect timeF;
 @property (nonatomic, assign) CGRect typeF;
 @property (nonatomic, assign) CGRect textF;
+@property (nonatomic, assign) CGRect picF;
+
+@property (nonatomic, assign) CGRect collectionF;
 
 /** 工具条 */
 @property (nonatomic, assign) CGRect toolBarF;

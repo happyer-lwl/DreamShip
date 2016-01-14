@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CitySelectView.h"
 
 #define kUpdateUserImage @"UPDATE_USER_IMAGE"
 
-@interface SelfInfoSetViewController : UITableViewController<UIImagePickerControllerDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface SelfInfoSetViewController : UITableViewController<UIImagePickerControllerDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, CitySelectViewDelegate>
 
 @end

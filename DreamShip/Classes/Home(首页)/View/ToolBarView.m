@@ -51,10 +51,11 @@
     self = [super initWithFrame:frame];
     
     if (self) {
-        self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"timeline_card_bottom_background"]];
+        //self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"timeline_card_bottom_background"]];
+        self.backgroundColor = kViewBgColor;
         
-        self.supportButton = [self setToolButtonWithTitle:@"赞" icon:@"timeline_icon_unlike" tag:kTagSupport];
-        self.unSupportButton = [self setToolButtonWithTitle:@"喷" icon:@"timeline_icon_unsupport" tag:kTagUnSupport];
+        self.supportButton = [self setToolButtonWithTitle:@"赞" icon:@"toolbar_icon_like" tag:kTagSupport];
+        self.unSupportButton = [self setToolButtonWithTitle:@"喷" icon:@"toolbar_icon_unlike" tag:kTagUnSupport];
         self.commentButton = [self setToolButtonWithTitle:@"指点" icon:@"timeline_icon_comment" tag:kTagComment];
     }
     
@@ -76,11 +77,12 @@
     [btn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [btn setTitle:title forState:UIControlStateNormal];
     [btn setImage:[UIImage imageNamed:icon] forState:UIControlStateNormal];
+    [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_selected", icon]] forState:UIControlStateSelected];
+    btn.imageView.contentMode = UIViewContentModeScaleAspectFit;
     btn.tag = tag;
     
     //btn.backgroundColor = color;
-    [btn setBackgroundImage:[UIImage imageNamed:@"timeline_card_bottom_background_highlighted"] forState:UIControlStateHighlighted];
-    
+//    [btn setBackgroundImage:[UIImage imageNamed:@"timeline_card_bottom_background_highlighted"] forState:UIControlStateHighlighted];
     [btn addTarget:self action:@selector(toolBarClicked:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.toolButtons addObject:btn];
@@ -125,8 +127,12 @@
     params[@"api_uid"] = @"comments";
     if (type == kTagSupport) {
         params[@"api_type"] = @"support";
+        self.supportButton.selected = YES;
+        self.unSupportButton.selected = NO;
     }else{
         params[@"api_type"] = @"unsupport";
+        self.supportButton.selected = NO;
+        self.unSupportButton.selected = YES;
     }
     params[@"dream_id"] = self.curDream.idStr;
     params[@"user_id"] = accounter.userID;

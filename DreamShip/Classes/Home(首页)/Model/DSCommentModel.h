@@ -13,7 +13,6 @@
 
 @property (nonatomic, copy)     NSString *idStr;
 @property (nonatomic, copy)     NSString *text;
-@property (nonatomic, assign)   NSInteger favour;
 @property (nonatomic, copy)     NSString *time;
 
 @property (nonatomic, strong) DSUser *user;

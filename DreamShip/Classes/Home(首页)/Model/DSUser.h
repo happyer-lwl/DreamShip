@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class AccountModel;
 @interface DSUser : NSObject
 
 @property (nonatomic, copy) NSString *user_id;
@@ -19,4 +20,7 @@
 @property (nonatomic, copy) NSString *userMail;
 
 @property (nonatomic, copy) NSString *userWords;
+@property (nonatomic, copy) NSString *userAddr;
+
++(instancetype)userWithAccountModel:(AccountModel *)account;
 @end

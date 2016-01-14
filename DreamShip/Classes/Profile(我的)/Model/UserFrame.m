@@ -23,7 +23,7 @@
     CGFloat bgPadding = 0;
     
     CGFloat imageXY = padding;
-    CGFloat imageWH = 44;
+    CGFloat imageWH = 45;
     self.imageF = CGRectMake(imageXY, imageXY, imageWH, imageWH);
     
     CGFloat nameX = CGRectGetMaxX(self.imageF) + padding;
@@ -32,7 +32,7 @@
     self.nameF = (CGRect){{nameX, nameY}, nameSize};
     
     CGFloat wordsX = CGRectGetMaxX(self.imageF) + padding;
-    CGFloat wordsY = CGRectGetMaxY(self.nameF) + padding/2;
+    CGFloat wordsY = CGRectGetMaxY(self.nameF) + padding;
     CGSize  wordsSize = [user.userWords sizeWithFont:kDSUserWordsFont];
     self.wordsF = (CGRect){{wordsX, wordsY}, wordsSize};
     

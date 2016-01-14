@@ -8,6 +8,11 @@
 
 #import "CommendViewController.h"
 
+#import "DreamDirectsVC.h"
+#import "DreamPersonsVC.h"
+#import "DreamTeamsVC.h"
+#import "DreamInvestorsVC.h"
+
 @interface CommendViewController()
 
 @property (nonatomic, weak) UITableView *tableView;
@@ -24,11 +29,16 @@
     [self setTableViewInfo];
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBar.hidden = YES;
+}
 /**
  *  设置列表相关内容
  */
 -(void)setTableViewInfo{
-    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.view.frame.size.height) style:UITableViewStylePlain];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.view.frame.size.height) style:UITableViewStyleGrouped];
     tableView.backgroundColor = kViewBgColor;
     
     tableView.delegate = self;
@@ -42,7 +52,7 @@
     
     //UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 200)];
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 160)];
-    imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"dream_wings" ofType:@"jpg"]];
+    imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DreamAndMoon" ofType:@"jpg"]];
     //[headerView addSubview:imageView];
     //headerView.backgroundColor = [UIColor blueColor];
     [self.view addSubview:imageView];
@@ -70,20 +80,53 @@
 
 #pragma mark TableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 3;
+    return 1;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 0;
+    NSInteger numOfRow = 0;
+    switch (section) {
+        case 0:
+            numOfRow = 4;
+            break;
+        case 1:
+            numOfRow = 4;
+            break;
+        case 2:
+            numOfRow = 4;
+            break;
+        default:
+            break;
+    }
+    
+    return numOfRow;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 30;
+    CGFloat cellHeight = 44;
+    switch (indexPath.section) {
+        case 0:
+            cellHeight = 100;
+            break;
+        case 1:
+            cellHeight = 100;
+            break;
+        case 2:
+            cellHeight = 100;
+            break;
+        default:
+            break;
+    }
+    return cellHeight;
 }
 
-//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-//    return 40;
-//}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 10;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 0.5;
+}
 
 //-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
 //    static NSString *headerID = @"header";
@@ -103,6 +146,25 @@
 //    return headerView;
 //}
 
+//-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+//    NSString *title = @"";
+//    switch (section) {
+//        case 0:
+//            title = @"梦想指导";
+//            break;
+//        case 1:
+//            title = @"梦想达人";
+//            break;
+//        case 2:
+//            title = @"梦想港湾";
+//            break;
+//        default:
+//            break;
+//    }
+//    
+//    return title;
+//}
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *ID = @"cell";
     
@@ -111,6 +173,41 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
     }
     
+    if (indexPath.section == 0) {
+        NSString *imageName = [NSString stringWithFormat:@"DreamIndex%ld%ld", indexPath.section, indexPath.row];
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 100)];
+        imageView.image = [UIImage imageNamed:imageName];;
+        [cell.contentView addSubview:imageView];
+    }else if (indexPath.section == 1){
+        NSString *imageName = [NSString stringWithFormat:@"DreamIndex%ld%ld", indexPath.section - 1, indexPath.row];
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 100)];
+        imageView.image = [UIImage imageNamed:imageName];;
+        [cell.contentView addSubview:imageView];
+    }else if (indexPath.section == 2){
+        NSString *imageName = [NSString stringWithFormat:@"DreamIndex%ld%ld", indexPath.section - 2, indexPath.row];
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 100)];
+        imageView.image = [UIImage imageNamed:imageName];;
+        [cell.contentView addSubview:imageView];
+    }
+    
     return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    UIViewController *vc = nil;
+    
+    if (indexPath.row == 0) {
+        vc = [[DreamDirectsVC alloc] init];
+    }else if (indexPath.row == 1){
+        vc = [[DreamPersonsVC alloc] init];
+    }else if (indexPath.row == 2){
+        vc = [[DreamTeamsVC alloc] init];
+    }else if (indexPath.row == 3){
+        vc = [[DreamInvestorsVC alloc] init];
+    }
+    
+    vc.hidesBottomBarWhenPushed = YES;
+    self.navigationController.navigationBar.hidden = NO;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 @end

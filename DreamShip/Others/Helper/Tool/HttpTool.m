@@ -38,15 +38,35 @@
 +(void)postWithUrl:(NSString *)url params:(NSDictionary *)params success:(void (^)(id))success failure:(void (^)(NSError *))failure{
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    //manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    //manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
-    [manager GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        DBLog(@"requestHeader: %@", operation.request.allHTTPHeaderFields);
-        
-        DBLog(@"responseHeader: %@", operation.response.allHeaderFields);
-        
+    [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) {
+            success(responseObject);
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
+        if (failure) {
+            failure(error);
+        }
+    }];
+}
+
++(void)posWithUrl:(NSString *)url params:(NSDictionary *)params data:(NSData *)data name:(NSString *)name fileName:(NSString *)fileName type:(NSString *)type success:(void(^)(id))success failuer:(void(^)(NSError *))failure{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    
+//    manager set
+    
+    [manager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFileData:data name:name fileName:fileName mimeType:type];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) {
+            success(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (failure) {
+            failure(error);
+        }
     }];
 }
 

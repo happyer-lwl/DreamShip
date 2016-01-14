@@ -52,7 +52,7 @@
     [confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [confirmButton setTitleColor:kTitleBlueColor forState:UIControlStateHighlighted];
     [confirmButton setTitle:@"完成" forState:UIControlStateNormal];
-    [confirmButton setBackgroundColor:kButtonBgBlueColor];
+    [confirmButton setBackgroundColor:kButtonBgDarkBlueColor];
     [confirmButton addTarget:self action:@selector(finishConfirm) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:confirmButton];
     _finishBtn = confirmButton;

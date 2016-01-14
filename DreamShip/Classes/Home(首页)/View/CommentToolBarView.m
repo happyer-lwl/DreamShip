@@ -58,10 +58,6 @@
 -(void)layoutSubviews{
     [super layoutSubviews];
     
-    DBLog(@"%@", self.subviews);
-    
-    NSInteger count = [self subviews].count;
-    
     CGFloat commentButtonW = 60;
     CGFloat inputX = 10;
     CGFloat padding = 8;

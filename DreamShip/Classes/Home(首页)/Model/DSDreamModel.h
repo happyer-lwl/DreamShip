@@ -21,6 +21,8 @@
 @property (nonatomic, assign) NSInteger unsupport_count;
 @property (nonatomic, assign) NSInteger comment_count;
 
+@property (nonatomic, copy) NSString *collection;
+
 @property (nonatomic, strong) DSUser *user;
 
 @end

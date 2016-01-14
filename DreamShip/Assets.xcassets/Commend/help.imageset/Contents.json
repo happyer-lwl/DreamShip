@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "help.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "timeline_icon_unsupport@2x.png",
+      "filename" : "help@2x.png",
       "scale" : "2x"
     },
     {

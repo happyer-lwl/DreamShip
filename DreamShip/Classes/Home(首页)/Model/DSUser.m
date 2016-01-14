@@ -7,7 +7,23 @@
 //
 
 #import "DSUser.h"
+#import "AccountModel.h"
 
 @implementation DSUser
+
++(instancetype)userWithAccountModel:(AccountModel *)account{
+    DSUser *userInfo = [[DSUser alloc] init];
+    
+    userInfo.user_id = account.userID;
+    userInfo.userAddr = account.userAddr;
+    userInfo.userMail = account.userMail;
+    userInfo.userRealName = account.userRealName;
+    userInfo.userSex = account.userSex;
+    userInfo.userWords = account.userWords;
+    userInfo.image = account.userImage;
+    userInfo.name = account.userPhone;
+    
+    return userInfo;
+}
 
 @end

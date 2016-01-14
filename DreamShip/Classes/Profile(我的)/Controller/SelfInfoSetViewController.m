@@ -10,6 +10,7 @@
 #import "SelfInfoSetMailVC.h"
 #import "SelfInfoSetSexyVC.h"
 #import "SelfInfoSetWordsVC.h"
+#import "CitySelectView.h"
 
 #import "UICustomTextField.h"
 #import "AccountModel.h"
@@ -25,6 +26,7 @@
 #define kTableTagMail   01
 #define kTableTagSex    02
 #define kTableTagWords  03
+#define kTableTagAddr   04
 
 @interface SelfInfoSetViewController()
 
@@ -35,6 +37,8 @@
 @property (nonatomic, weak) UICustomTextField *nameText;
 
 @property (nonatomic, strong) NSMutableArray *groups;
+
+@property (nonatomic, weak) CitySelectView *citySelectView;
 
 @end
 
@@ -99,7 +103,6 @@
 -(void)setTableView{
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    
     [self setTableData];
 }
 
@@ -110,13 +113,15 @@
     TableGroupModel *group = [TableGroupModel group];
     AccountModel *model = [AccountTool account];
     
+    TableItemModel *itemWords = [TableItemModel initWithTitle:@"个人签名" detailTitle:model.userWords tag:kTableTagWords];
     TableItemModel *itemMail = [TableItemModel initWithTitle:@"邮箱" detailTitle:model.userMail tag:kTableTagMail];
     TableItemModel *itemSexy = [TableItemModel initWithTitle:@"性别" detailTitle:model.userSex tag:kTableTagSex];
-    TableItemModel *itemWords = [TableItemModel initWithTitle:@"个人签名" detailTitle:model.userWords tag:kTableTagWords];
+    TableItemModel *itemAddr = [TableItemModel initWithTitle:@"地区" detailTitle:model.userAddr tag:kTableTagAddr];
     
-    NSArray *items = @[itemWords, itemMail, itemSexy];
+    NSArray *items = @[itemWords, itemMail, itemSexy, itemAddr];
     group.items = [NSArray arrayWithArray:items];
     
+    [self.groups removeAllObjects];
     [self.groups addObject:group];
     
     [self.tableView reloadData];
@@ -289,7 +294,7 @@
     params[@"imageData"] = data;
     
     DBLog(@"%@", model.userPhone);
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    //manager.responseSerializer = [AFJSONResponseSerializer serializer];
 //    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
     
     NSString *url = [NSString stringWithFormat:@"%@/imageUpload.php", Host_Url];
@@ -346,6 +351,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:ID];
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     
     TableGroupModel *group = [self.groups objectAtIndex:indexPath.section];
     TableItemModel *item = [group.items objectAtIndex:indexPath.row];
@@ -368,6 +374,34 @@
     }else if(cell.tag == kTableTagWords){
         SelfInfoSetWordsVC *wordVC = [[SelfInfoSetWordsVC alloc] init];
         [self.navigationController pushViewController:wordVC animated:YES];
+    }else if(cell.tag == kTableTagAddr){
+        CitySelectView *citySelectView = [CitySelectView citiSelectView];
+        citySelectView.delegate = self;
+        citySelectView.frame = CGRectMake(0, kScreenHeight - 220 - 64, kScreenWidth, 220);
+        if (_citySelectView == nil) {
+            _citySelectView = citySelectView;
+            [self.view addSubview:_citySelectView];
+        }
     }
+}
+
+/**
+ *  地区选择回调
+ *
+ *  @param addr 地址
+ */
+-(void)confirmPickerViewSelected:(NSString *)addr{
+    AccountModel *model = [AccountTool account];
+    
+    if ([HttpTool saveUserInfo:model.userPhone mod_key:@"addr" mod_value:addr]) {
+        model.userAddr = addr;
+        [AccountTool saveAccount:model];
+        [self setTableData];
+        [self.citySelectView removeFromSuperview];
+    }
+}
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [self.citySelectView removeFromSuperview];
 }
 @end

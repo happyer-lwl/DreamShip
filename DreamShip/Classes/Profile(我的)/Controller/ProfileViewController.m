@@ -7,6 +7,7 @@
 //
 
 #import "ProfileViewController.h"
+#import "DreamsInfoVC.h"
 
 #import "UIImageView+WebCache.h"
 
@@ -17,6 +18,7 @@
 #import "SelfInfoSetViewController.h"
 #import "TableGroupModel.h"
 #import "TableItemModel.h"
+#import "DSUser.h"
 
 #import "HomeViewController.h"
 #import "MyFocusedUserVC.h"
@@ -154,6 +156,7 @@
     }
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     
     TableGroupModel *group = [self.groups objectAtIndex:indexPath.section];
     TableItemModel  *item  = [group.items objectAtIndex:indexPath.row];
@@ -194,16 +197,29 @@
         setVC.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:setVC animated:YES];
     }else if (cell.tag == kTagMyDream){
-        HomeViewController *homeVC = [[HomeViewController alloc] init];
-        homeVC.title = @"我的梦想";
-        homeVC.dreamRange = DreamRangeSelf;
-        homeVC.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:homeVC animated:YES];
+        AccountModel *model = [AccountTool account];
+        DSUser *userInfo = [DSUser userWithAccountModel:model];
+        
+        DreamsInfoVC *dreamInfoVC = [[DreamsInfoVC alloc] init];
+        dreamInfoVC.title = model.userRealName;
+        dreamInfoVC.user = userInfo;
+        dreamInfoVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:dreamInfoVC animated:YES];
     }else if (cell.tag == kTagMyFocus){
         MyFocusedUserVC *focusedUserVC = [[MyFocusedUserVC alloc] init];
         focusedUserVC.title = @"我的关注";
         focusedUserVC.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:focusedUserVC animated:YES];
+    }else if (cell.tag == kTagMyCollection){
+        AccountModel *model = [AccountTool account];
+        DSUser *userInfo = [DSUser userWithAccountModel:model];
+        
+        DreamsInfoVC *dreamInfoVC = [[DreamsInfoVC alloc] init];
+        dreamInfoVC.title = model.userRealName;
+        dreamInfoVC.user = userInfo;
+        dreamInfoVC.api_type = @"getCollections";
+        dreamInfoVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:dreamInfoVC animated:YES];
     }
 }
 

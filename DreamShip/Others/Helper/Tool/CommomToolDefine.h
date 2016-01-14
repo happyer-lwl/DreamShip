@@ -16,4 +16,9 @@
 
 +(BOOL)writeToPlistFile:(NSString *)fileName withValue:(NSString *)value key:(NSString *)key;
 +(NSDictionary *)readPlistFile:(NSString *)fileName;
+
++(void)saveDataToDB:(NSArray *)dreams;
++(NSArray *)getDataFromDB;
+
++(UIAlertController *)alertWithTitle:(NSString *)title message:(NSString *)message ok:(void(^)(void))ok cancel:(void(^)(void))cancel;
 @end

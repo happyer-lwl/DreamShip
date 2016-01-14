@@ -76,7 +76,7 @@
     // 名字
     UILabel *nameText = [[UILabel alloc] init];
     nameText.font = kDSUserNameFont;
-    nameText.textColor = kTitleBlueColor;
+    nameText.textColor = kTitleDarkBlueColor;
     [self.bgView addSubview:nameText];
     self.nameLabel = nameText;
     

@@ -7,6 +7,8 @@
 //
 
 #import "MyFocusedUserVC.h"
+#import "PersonDetailVC.h"
+
 #import "UserModelCell.h"
 #import "UserFrame.h"
 #import "DSUser.h"
@@ -31,23 +33,21 @@
     return _userFrames;
 }
 
--(id)initWithStyle:(UITableViewStyle)style{
-    self = [super initWithStyle:UITableViewStyleGrouped];
-    if (self) {
-        
-    }
-    
-    return self;
+-(id)init{
+    return [self initWithStyle:UITableViewStyleGrouped];
 }
 
 -(void)viewDidLoad{
     [super viewDidLoad];
     
     [self setTableViewInfo];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
     
     [self getFocusedUsers];
 }
-
 -(void)setTableViewInfo{
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -95,6 +95,10 @@
     return self.userFrames.count;
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 0.5;
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     UserFrame *frame = [self.userFrames objectAtIndex:indexPath.row];
     return frame.cellHeight;
@@ -105,5 +109,14 @@
     userCell.userFrame = [self.userFrames objectAtIndex:indexPath.row];
     
     return userCell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    UserFrame *userFrame = [self.userFrames objectAtIndex:indexPath.row];
+    
+    PersonDetailVC *personDetailVC = [[PersonDetailVC alloc] init];
+    personDetailVC.user = userFrame.user;
+    
+    [self.navigationController pushViewController:personDetailVC animated:YES];
 }
 @end

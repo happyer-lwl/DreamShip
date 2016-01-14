@@ -33,6 +33,11 @@
     CGSize  nameSize = [user.name sizeWithFont:kDSDreamCellNameFont];
     self.nameF = (CGRect){{nameX, nameY}, nameSize};
     
+    CGFloat collectionWH = 30;
+    CGFloat collectionX = kScreenWidth - collectionWH - padding * 2;
+    CGFloat collectionY = padding/2;
+    self.collectionF = CGRectMake(collectionX, collectionY, collectionWH, collectionWH);
+    
     CGFloat timeX = CGRectGetMaxX(self.imageF) + padding;
     CGFloat timeY = CGRectGetMaxY(self.nameF) + padding/2;
     CGSize  timeSize = [dream.time sizeWithFont:kDSDreamCellTimeFont];
@@ -52,17 +57,27 @@
     textRect.origin.y = textY;
     self.textF = textRect;
     
-    CGFloat toolBarX = 0;
     CGFloat toolBarY = CGRectGetMaxY(self.textF) + padding;
-    CGFloat toolBarW = kScreenWidth;
+    if (self.dream.pic_url.length) {
+        CGFloat picX = padding;
+        CGFloat picY = CGRectGetMaxY(self.textF) + padding;
+        CGFloat picW = 150;
+        CGFloat picH = 150;
+        self.picF = CGRectMake(picX, picY, picW, picH);
+        
+        toolBarY = CGRectGetMaxY(self.picF) + padding;
+    }
+    
+    CGFloat toolBarX = padding / 2;
+    CGFloat toolBarW = kScreenWidth - padding;
     CGFloat toolBarH = 35;
     self.toolBarF = CGRectMake(toolBarX, toolBarY, toolBarW, toolBarH);
     
-    CGFloat bgX = 0;
+    CGFloat bgX = padding / 2;
     CGFloat bgY = 0;
-    CGFloat bgWidth = kScreenWidth;
+    CGFloat bgWidth = kScreenWidth - padding;
     self.bgViewF = CGRectMake(bgX, bgY, bgWidth, CGRectGetMaxY(self.toolBarF));
     
-    self.cellHeight = CGRectGetMaxY(self.bgViewF) + 10;
+    self.cellHeight = CGRectGetMaxY(self.bgViewF) + padding;
 }
 @end

@@ -8,6 +8,10 @@
 
 #import "CommomToolDefine.h"
 #import "NSDate+Extensiton.h"
+#import "DataBaseSharedManager.h"
+#import "DSDreamModel.h"
+
+static FMDatabase *_db;
 
 @implementation CommomToolDefine
 
@@ -110,11 +114,59 @@
     
     return YES;
 }
++(void)initialize{
+    NSString *path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"dreams.sqlite"];
+    _db = [FMDatabase databaseWithPath:path];
+    [_db open];
+    
+    [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS t_dreams (id integer PRIMARY KEY, dream blob NOT NULL, idstr text NOT NULL);"];
+}
 
 +(NSDictionary *)readPlistFile:(NSString *)fileName{
     NSString *plistPath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"plist"];
     NSDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
     
     return data;
+}
+
++(void)saveDataToDB:(NSArray *)dreams{
+    for (DSDreamModel *dream in dreams){
+        NSData *dreamData = [NSKeyedArchiver archivedDataWithRootObject:dream];
+        [[[DataBaseSharedManager sharedManager] getDB] executeUpdateWithFormat:@"INSERT INTO t_dreams(dream, idstr) VALUES (%@, %@)", dreamData, dream.idStr];
+    }
+}
+
++(NSArray *)getDataFromDB{
+    NSString *sql = nil;
+    
+    sql = @"SELECT * FROM t_dreams ORDER BY idstr DESC LIMIT 20;";
+    
+    FMResultSet *set = [_db executeQuery:sql];
+    NSMutableArray *dreams = [NSMutableArray array];
+    while (set.next) {
+        NSData *dreamData = [set objectForColumnName:@"dream"];
+        NSDictionary *dream = [NSKeyedUnarchiver unarchiveObjectWithData:dreamData];
+        [dreams addObject:dream];
+    }
+    
+    return dreams;
+}
+
++(UIAlertController *)alertWithTitle:(NSString *)title message:(NSString *)message ok:(void (^)(void))ok cancel:(void (^)(void))cancel{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message: message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"不用" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action){
+        if (cancel) {
+            cancel();
+        }
+    }];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好嘞" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (ok) {
+            ok();
+        }
+    }];
+    [alert addAction:cancelAction];
+    [alert addAction:okAction];
+    
+    return alert;
 }
 @end
