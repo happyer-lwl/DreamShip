@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ComposeToolBar.h"
 
 #define kNotificationComposed @"COMPOSED_SUCESSFUL"
 
-@interface ComposeDreamVC : UIViewController<UIScrollViewDelegate, UITextViewDelegate>
+@interface ComposeDreamVC : UIViewController<UIScrollViewDelegate, UITextViewDelegate, ComposeToolBarDelegate>
 
 @end

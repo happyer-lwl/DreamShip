@@ -13,7 +13,7 @@
 #define kUpdateCellInfoFromCell @"UpdateCellInfoFromCell"
 
 @class DSDreamFrame;
-@interface HomeDetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, CommentToolBarDelegate>
+@interface HomeDetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, CommentToolBarDelegate>
 
 @property (nonatomic, strong) DSDreamFrame *dreamFrame;
 

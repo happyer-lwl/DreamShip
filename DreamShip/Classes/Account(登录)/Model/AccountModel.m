@@ -22,6 +22,7 @@
     model.userSex = dict[@"userSex"];
     
     model.userWords = dict[@"userWords"];
+    model.userAddr = dict[@"userAddr"];
     return model;
 }
 
@@ -37,6 +38,7 @@
     [aCoder encodeObject:self.userSex forKey:@"userSex"];
     
     [aCoder encodeObject:self.userWords forKey:@"userWords"];
+    [aCoder encodeObject:self.userAddr forKey:@"userAddr"];
 }
 
 -(id)initWithCoder:(NSCoder *)aDecoder{
@@ -51,6 +53,7 @@
         self.userSex = [aDecoder decodeObjectForKey:@"userSex"];
         
         self.userWords = [aDecoder decodeObjectForKey:@"userWords"];
+        self.userAddr  = [aDecoder decodeObjectForKey:@"userAddr"];
     }
     return self;
 }

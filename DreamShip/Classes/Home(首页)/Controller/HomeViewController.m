@@ -24,12 +24,17 @@
 #import "MJRefresh.h"
 #import "UIBarButtonItem+Extension.h"
 
+#define kDreamTypeSegHeight 40
+
 @interface HomeViewController()
 
+@property (nonatomic, weak) UITableView *tableView;
 @property (nonatomic, weak) UIBarButtonItem *addDreamBarItem;
+@property (nonatomic, weak) UISegmentedControl *dreamTypeSeg;
 
 @property (nonatomic, strong) NSMutableArray *dreamFrames;
 
+@property (nonatomic, assign) BOOL bScrollUp;
 @end
 
 @implementation HomeViewController
@@ -42,19 +47,18 @@
     return _dreamFrames;
 }
 
-//-(AVAudioPlayer *)player{
-//    if (_player == nil) {
-//        _player = [[AVAudioPlayer alloc] init];
-//    }
-//    
-//    return _player;
-//}
 -(void)viewDidLoad{
     [super viewDidLoad];
+    
+    self.bScrollUp = YES;
+    
+    //self.view.backgroundColor = kTitleDarkBlueColor;
+    self.view.backgroundColor = [UIColor grayColor];
     
     [NSThread sleepForTimeInterval:kLaunchImageShowSec];
     
     [self setNavigationView];
+    [self setDreamTypeSelectView];
     [self setTableViewInfo];
     [self setHeaderRefreshView];
     
@@ -65,11 +69,9 @@
  *  设置导航
  */
 -(void)setNavigationView{
-    UIBarButtonItem *addDreamBarItem = [UIBarButtonItem itemWithAction:@selector(addDream) target:self image:@"navigationbar_add" highImage:@"navigationbar_add_highlighted"];
+    UIBarButtonItem *addDreamBarItem = [UIBarButtonItem itemWithAction:@selector(addDream) target:self image:@"navigationbar_add" highImage:@""];
     _addDreamBarItem = addDreamBarItem;
     self.navigationItem.rightBarButtonItem = addDreamBarItem;
-    
-    //self.navigationController.navigationBar.hidden = YES;
 }
 
 /**
@@ -80,43 +82,67 @@
     addDreamVC.view.backgroundColor = kViewBgColor;
     
     MainNavigationController *nav = [[MainNavigationController alloc] initWithRootViewController:addDreamVC];
-    
     [self presentViewController:nav animated:YES completion:nil];
+}
+
+-(void)setDreamTypeSelectView{
+    UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[@"全部类型", @"认真做梦", @"组队寻友", @"拉拉投资"]];
+    seg.frame = CGRectMake(-2.5, 0, kScreenWidth + 5, kDreamTypeSegHeight);
+    seg.backgroundColor = kTitleDarkBlueColor;
+    seg.selectedSegmentIndex = 0;
+    seg.tintColor = [UIColor whiteColor];
+    [self.view addSubview:seg];
+    [seg addTarget:self action:@selector(dreamTypeSegChanged) forControlEvents:UIControlEventValueChanged];
+    _dreamTypeSeg = seg;
+}
+
+/**
+ *  梦想类型选择回调
+ */
+-(void)dreamTypeSegChanged{
+    [self getNewDreams];
 }
 
 /**
  *  设置tableview
  */
 -(void)setTableViewInfo{
-    //self.tableView.backgroundColor = kViewBgColor;
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kDreamTypeSegHeight, kScreenWidth, kScreenHeight - 64 - kDreamTypeSegHeight - 44) style:UITableViewStylePlain];
+
+    tableView.backgroundColor = kViewBgColor220;
     
-    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:self.tableView.bounds];
-    bgImageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ufo" ofType:@"jpeg"]];
-    self.tableView.backgroundView = bgImageView;
+    tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.delegate = self;
+    tableView.dataSource = self;
+    tableView.userInteractionEnabled = YES;
+    [self.view addSubview:tableView];
     
-//    UIView *headerView = [[UIView alloc] init];
-//    headerView.frame = CGRectMake(0, 0, kScreenWidth, 150);
+    _tableView = tableView;
+    
+//    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:self.tableView.bounds];
+//    bgImageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DreamUFO" ofType:@"jpeg"]];
+//    self.tableView.backgroundView = bgImageView;
+//
+//    //self.tableView.backgroundColor = [UIColor whiteColor];
 //    
-//    UIImageView *headImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 10, kScreenWidth, 130)];
-//    NSString *imageFile = [[NSBundle mainBundle] pathForResource:@"DreamAndMoon" ofType:@"jpg"];
-//    headImage.image = [UIImage imageWithContentsOfFile:imageFile];
-//    
-//    [headerView addSubview:headImage];
-//    self.tableView.tableHeaderView = headerView;
-    
-    
-    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    self.tableView.userInteractionEnabled = YES;
+//    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+//    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//    self.tableView.delegate = self;
+//    self.tableView.dataSource = self;
+//    self.tableView.userInteractionEnabled = YES;
 }
 
 // 获取梦想
 -(void)getNewDreams{
+    AccountModel *account = [AccountTool account];
+    
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"api_uid"] = @"dreams";
     params[@"api_type"] = @"getData";
+    params[@"dream_type"] = [NSNumber numberWithInteger:self.dreamTypeSeg.selectedSegmentIndex];
+    params[@"cur_user_id"] = account.userID;
+    
     if (self.dreamRange == DreamRangeSelf) {
         AccountModel *account = [AccountTool account];
         params[@"user_id"] = account.userID;
@@ -130,14 +156,22 @@
 
         NSArray *dreams = [DSDreamModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
         NSArray *dreamFrames = [self dreamFramesWithDreams:dreams];
-        
+
+        [self.dreamFrames removeAllObjects];
         self.dreamFrames = [NSMutableArray arrayWithArray:dreamFrames];
 
         [self.tableView reloadData];
-        [self.tableView.mj_header endRefreshing];
+        if (dreamFrames.count == 0){
+            [self.tableView.mj_header endRefreshing];
+            [MBProgressHUD showError:@"没有数据"];
+        }else{
+            [self.tableView.mj_header endRefreshing];
+        }
+        
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
+        [self.tableView.mj_header endRefreshing];
     }];
 }
 
@@ -166,9 +200,26 @@
 }
 
 #pragma mark  TableViewDelegate/Datasource
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.dreamFrames.count;
 }
+
+//-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+//    UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[@"认真做梦", @"组队寻友", @"拉拉投资"]];
+//    seg.frame = CGRectMake(5, 0, kScreenWidth - 10, 30);
+//    seg.backgroundColor = kTitleDarkBlueColor;
+//    seg.selectedSegmentIndex = 0;
+//    seg.tintColor = [UIColor whiteColor];
+//    //[self.view addSubview:seg];
+//    [seg addTarget:self action:@selector(dreamTypeSegChanged) forControlEvents:UIControlEventValueChanged];
+//    _dreamTypeSeg = seg;
+//    
+//    return seg;
+//}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     DSDreamFrame *dreamF = [self.dreamFrames objectAtIndex:indexPath.row];
@@ -178,7 +229,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     DSHomeViewCell *cell = [DSHomeViewCell cellWithTableView:tableView];
     cell.dreamFrame = [self.dreamFrames objectAtIndex:indexPath.row];
-    cell.userInteractionEnabled = YES;
+    //cell.userInteractionEnabled = YES;
     cell.tag = indexPath.row;
     cell.delegate = self;
     
@@ -196,6 +247,36 @@
     homeDetailVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:homeDetailVC animated:YES];
 }
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    static float newx = 0;
+    static float oldx = 0;
+    newx= scrollView.contentOffset.y ;
+    if (newx != oldx ) {
+        if (newx - oldx > 5) {
+            self.bScrollUp = NO;
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                self.dreamTypeSeg.y = 0;
+                self.tableView.y = kDreamTypeSegHeight;
+                self.tableView.height = kScreenHeight - 64 - kDreamTypeSegHeight;
+                self.tabBarController.tabBar.y = kScreenHeight;
+            }];
+            
+        }else if(oldx - newx > 5){
+            self.bScrollUp = YES;
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                self.dreamTypeSeg.y = 0 - self.dreamTypeSeg.height;
+                self.tableView.y = 0;
+                self.tableView.height = kScreenHeight - 64 - 44;
+                self.tabBarController.tabBar.y = kScreenHeight - self.tabBarController.tabBar.height;
+            }];
+        }
+        oldx = newx;
+    }
+}
+
 /**
  *  观察者，更新内容
  */
@@ -203,6 +284,8 @@
     self.dreamRange = DreamRangeAll;
     [self getNewDreams];
 }
+
+#pragma mark #HomeViewCellDelegate
 /**
  *  toolBar按键回调
  *
@@ -241,4 +324,42 @@
     [self.navigationController pushViewController:homeDetailVC animated:YES];
 }
 
+-(void)cellUserIconClicked:(DSDreamFrame *)dreamFrame{
+    DBLog(@"User icon clicked");    
+}
+
+-(void)cellPhotoViewClicked:(DSDreamFrame *)dreamFrame{
+    DBLog(@"Photo clicked");
+}
+
+-(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected{
+    DBLog(@"Collection Clicked");
+    
+    AccountModel *account = [AccountTool account];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    
+    params[@"api_uid"] = @"dreams";
+    params[@"api_type"] = selected ? @"cancelCollectedDream" : @"collectDream";
+    params[@"user_id"] = account.userID;
+    params[@"dream_id"] = dreamFrame.dream.idStr;
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(id json) {
+        NSString *msg = json[@"msg"];
+        
+        [self modifyDreamFrames:dreamFrame collectState:!selected];
+        [self.tableView reloadData];
+        [MBProgressHUD showSuccess:msg];
+    } failure:^(NSError *error) {
+        DBLog(@"error %@", error.description);
+    }];
+}
+
+-(void)modifyDreamFrames:(DSDreamFrame *)dreamFrame collectState:(BOOL)collectState{
+    for (DSDreamFrame *dreamFrameIn in self.dreamFrames) {
+        if (dreamFrameIn == dreamFrame) {
+            dreamFrame.dream.collection = collectState ? @"1" : @"0";
+        }
+    }
+}
 @end

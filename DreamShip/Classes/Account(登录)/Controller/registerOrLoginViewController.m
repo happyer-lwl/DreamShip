@@ -66,21 +66,21 @@
     // Logo
     UILabel *logoTitle = [[UILabel alloc] initWithFrame:CGRectMake(10, 50, kScreenWidth - 20, 30)];
     logoTitle.text = @"梦扬";
-    logoTitle.textColor = kTitleBlueColor;
+    logoTitle.textColor = kTitleDarkBlueColor;
     logoTitle.font = [UIFont systemFontOfSize:28];
     [logoTitle setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:logoTitle];
     
     UILabel *logoDetail1Title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(logoTitle.frame) + 20, kScreenWidth - 20, 15)];
     logoDetail1Title.text = @"说出梦想";
-    logoDetail1Title.textColor = kTitleBlueColor;
+    logoDetail1Title.textColor = kTitleDarkBlueColor;
     logoDetail1Title.font = [UIFont systemFontOfSize:14];
     [logoDetail1Title setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:logoDetail1Title];
     
     UILabel *logoDetail2Title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(logoDetail1Title.frame)+5, kScreenWidth - 20, 15)];
     logoDetail2Title.text = @"我们为它扬帆启航";
-    logoDetail2Title.textColor = kTitleBlueColor;
+    logoDetail2Title.textColor = kTitleDarkBlueColor;
     logoDetail2Title.font = [UIFont systemFontOfSize:14];
     [logoDetail2Title setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:logoDetail2Title];
@@ -101,8 +101,8 @@
     
     // 注册和登录按键
     CGFloat rOlButtonX = 30;
-    UIButton *registerOrLoginButton = [[UIButton alloc] initWithFrame: CGRectMake(rOlButtonX, CGRectGetMaxY(userRegisterView.frame) + 20, kScreenWidth - 2 * rOlButtonX, 44)];
-    registerOrLoginButton.backgroundColor = kButtonBgBlueColor;
+    UIButton *registerOrLoginButton = [[UIButton alloc] initWithFrame: CGRectMake(rOlButtonX, CGRectGetMaxY(userRegisterView.frame) + 25, kScreenWidth - 2 * rOlButtonX, 44)];
+    registerOrLoginButton.backgroundColor = kButtonBgDarkBlueColor;
     [registerOrLoginButton setTitle:@"注 册" forState:UIControlStateNormal];
     registerOrLoginButton.layer.cornerRadius = 5;
     registerOrLoginButton.tag = kRegisterTag;
@@ -224,6 +224,7 @@
             [dict setObject:dataDict[@"sex"] forKey:@"userSex"];
             [dict setObject:dataDict[@"id"] forKey:@"userID"];
             [dict setObject:dataDict[@"words"] forKey:@"userWords"];
+            [dict setObject:dataDict[@"addr"] forKey:@"userAddr"];
             
             AccountModel *model = [AccountModel accountWithDictionary:dict];
             [AccountTool saveAccount:model];

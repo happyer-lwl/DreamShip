@@ -11,7 +11,7 @@
 #import "DSHomeViewCell.h"
 
 @class DSDreamModel;
-@interface HomeViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate>
+@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, assign) DreamRange dreamRange;
 @property (nonatomic, assign) DSDreamModel *dreamModel;

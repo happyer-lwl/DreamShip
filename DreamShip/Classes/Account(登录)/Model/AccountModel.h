@@ -21,5 +21,6 @@
 
 @property (nonatomic, copy) NSString *userWords;
 
+@property (nonatomic, copy) NSString *userAddr;
 +(instancetype)accountWithDictionary:(NSDictionary *)dict;
 @end

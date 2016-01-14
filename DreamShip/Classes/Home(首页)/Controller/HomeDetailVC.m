@@ -14,6 +14,7 @@
 #import "DSDreamModel.h"
 #import "DSUser.h"
 #import "DSCommentModel.h"
+#import "DSCommentsFrame.h"
 
 #import "UIBarButtonItem+Extension.h"
 #import "MJExtension.h"
@@ -25,10 +26,11 @@
 #import "AccountTool.h"
 
 #import "CommentToolBarView.h"
+#import "DSCommentCell.h"
 
 @interface HomeDetailVC ()
 
-@property (nonatomic, strong) NSMutableArray *commentArray;
+@property (nonatomic, strong) NSMutableArray *commentFrameArray;
 @property (nonatomic, weak) CommentToolBarView *commentToolBar;
 
 @property (nonatomic, weak) UITableView *tableView;
@@ -37,12 +39,12 @@
 
 @implementation HomeDetailVC
 
--(NSMutableArray *)commentArray{
-    if (_commentArray == nil) {
-        _commentArray = [NSMutableArray array];
+-(NSMutableArray *)commentFrameArray{
+    if (_commentFrameArray == nil) {
+        _commentFrameArray = [NSMutableArray array];
     }
     
-    return _commentArray;
+    return _commentFrameArray;
 }
 
 -(void)setDreamFrame:(DSDreamFrame *)dreamFrame{
@@ -75,18 +77,19 @@
  *  设置TableView信息
  */
 -(void)setTableViewInfo{
-    UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-    tableView.backgroundColor = [UIColor clearColor];
-    tableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
-        [self updateComments];
-    }];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.view.height - kToolBarHeight - 64) style:UITableViewStylePlain];
     
-    _tableView = tableView;
-    
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
+    tableView.backgroundColor = [UIColor whiteColor];
+    tableView.delegate = self;
+    tableView.dataSource = self;
     
     [self.view addSubview:tableView];
+    _tableView = tableView;
+    
+//    self.tableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
+//        [self updateComments];
+//    }];
+//    [self.tableView.mj_header beginRefreshing];
 }
 
 /**
@@ -101,13 +104,28 @@
     params[@"dream_id"] = dreamModel.idStr;
     
     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
-        NSArray *arry = [DSCommentModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
-        [self.commentArray removeAllObjects];
-        [self.commentArray addObjectsFromArray:arry];
+        NSArray *comments = [DSCommentModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
+        NSArray *commentFrames = [self commentFramesWithComments:comments];
+        
+        [self.commentFrameArray removeAllObjects];
+        [self.commentFrameArray addObjectsFromArray:commentFrames];
+        
         [self.tableView reloadData];
     } failure:^(NSError *error) {
 
     }];
+}
+
+-(NSArray *)commentFramesWithComments:(NSArray*)comments{
+    // 将WBStatus数组转为 WBStatusFrame数组
+    NSMutableArray *newFrames = [NSMutableArray array];
+    for (DSCommentModel *comment in comments) {
+        CommentsFrame *frame = [[CommentsFrame alloc]init];
+        frame.comment = comment;
+        [newFrames addObject:frame];
+    }
+    
+    return newFrames;
 }
 
 -(void)setCommentToolBar{
@@ -125,7 +143,6 @@
 }
 
 -(void)keyboardChanged:(NSNotification *)notification{
-    DBLog(@"%@", notification);
     
     NSDictionary *userInfo = notification.userInfo;
     
@@ -208,22 +225,26 @@
 
 #pragma mark - Table view data source
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 2;
+    return 3;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if (section == 0) {
+    if (section != 2) {
         return 1;
     }else{
-        return self.commentArray.count;
+        return self.commentFrameArray.count;
     }
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0) {
         return self.dreamFrame.cellHeight;
-    }else{
-        return 60;
+    }else if (indexPath.section == 1){
+        return 35;
+    }
+    else{
+        CommentsFrame *frame = [self.commentFrameArray objectAtIndex:indexPath.row];
+        return frame.cellHeight;
     }
 }
 
@@ -245,13 +266,16 @@
         cell.dreamFrame = self.dreamFrame;
         cell.delegate = self;
         return cell;
-    }else{
+    }else if(indexPath.section == 1){
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        
-        DSCommentModel *model = [self.commentArray objectAtIndex:indexPath.row];
-        
-        [cell.imageView sd_setImageWithURL:[NSURL URLWithString:model.user.image] placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
-        cell.textLabel.text = model.text;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.textLabel.text = @"评论";
+        cell.textLabel.textColor = kTitleBlueColor;
+        return cell;
+    }
+    else{
+        DSCommentCell *cell = [DSCommentCell cellWithTableView:tableView];
+        cell.commentFrame = [self.commentFrameArray objectAtIndex:indexPath.row];
         
         return cell;
     }
@@ -319,7 +343,6 @@
     switch (tag) {
         case kTagSupport:
         case kTagUnSupport:
-            DBLog(@"HomeDetail   %@", dreamFrame);
             break;
         case kTagComment:
             [self commentDream:dreamFrame];
@@ -328,7 +351,30 @@
             break;
     }
     
-    
     [kNotificationCenter postNotificationName:kUpdateCellInfoFromCell object:nil];
 }
+
+-(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected{
+    AccountModel *account = [AccountTool account];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    
+    params[@"api_uid"] = @"dreams";
+    params[@"api_type"] = selected ? @"cancelCollectedDream" : @"collectDream";
+    params[@"user_id"] = account.userID;
+    params[@"dream_id"] = dreamFrame.dream.idStr;
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(id json) {
+        NSString *msg = json[@"msg"];
+        
+        self.dreamFrame.dream.collection = selected ? @"0" : @"1";
+        [self.tableView reloadData];
+        [MBProgressHUD showSuccess:msg];
+        
+        [kNotificationCenter postNotificationName:kUpdateCellInfoFromCell object:nil];
+    } failure:^(NSError *error) {
+        DBLog(@"error %@", error.description);
+    }];
+}
+
 @end
