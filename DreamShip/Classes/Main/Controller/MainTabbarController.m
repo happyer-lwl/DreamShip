@@ -35,10 +35,10 @@
     [self addChildVc:home title:@"梦 吧" image:@"tabbar_home" selectImage:@"tabbar_home_selected"];
     
     DreamNaviVC *commend = [[DreamNaviVC alloc] init];
-    [self addChildVc:commend title:@"梦 向" image:@"tabbar_message_center" selectImage:@"tabbar_message_center_selected"];
+    [self addChildVc:commend title:@"梦 向" image:@"tabbar_discover" selectImage:@"tabbar_discover_selected"];
     
     DiscoverViewController *discover = [[DiscoverViewController alloc] init];
-    [self addChildVc:discover title:@"梦 信" image:@"tabbar_discover" selectImage:@"tabbar_discover_selected"];
+    [self addChildVc:discover title:@"梦 信" image:@"tabbar_message_center" selectImage:@"tabbar_message_center_selected"];
     
     ProfileViewController *profile = [[ProfileViewController alloc] init];
     [self addChildVc:profile title:@"梦 我" image:@"tabbar_profile" selectImage:@"tabbar_profile_selected"];

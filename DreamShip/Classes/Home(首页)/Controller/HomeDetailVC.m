@@ -13,6 +13,9 @@
 #import "DSDreamFrame.h"
 #import "DSDreamModel.h"
 #import "DSUser.h"
+#import "UserFrame.h"
+#import "UserModelCell.h"
+#import "PersonDetailVC.h"
 #import "DSCommentModel.h"
 #import "DSCommentsFrame.h"
 
@@ -63,7 +66,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 /**
@@ -85,11 +87,6 @@
     
     [self.view addSubview:tableView];
     _tableView = tableView;
-    
-//    self.tableView.mj_header = [MJRefreshHeader headerWithRefreshingBlock:^{
-//        [self updateComments];
-//    }];
-//    [self.tableView.mj_header beginRefreshing];
 }
 
 /**
@@ -276,8 +273,16 @@
     else{
         DSCommentCell *cell = [DSCommentCell cellWithTableView:tableView];
         cell.commentFrame = [self.commentFrameArray objectAtIndex:indexPath.row];
+        cell.delegate = self;
+        cell.userInteractionEnabled = YES;
         
         return cell;
+    }
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.section == 2) {
+        //DBLog(@"Comment cell clicked");
     }
 }
 
@@ -377,4 +382,10 @@
     }];
 }
 
+-(void)commentCellUserIconClicked:(CommentsFrame *)commentsFrame{
+    PersonDetailVC *detailVC = [[PersonDetailVC alloc] init];
+    detailVC.user = commentsFrame.comment.user;
+    detailVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
 @end

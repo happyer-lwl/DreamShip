@@ -127,7 +127,7 @@
     shareBtn.centerY = CGRectGetMaxY(imageView.frame) - 200;
     [shareBtn addTarget:self action:@selector(shareBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     [imageView addSubview:shareBtn];
-    shareBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 20, 0, 0);
+    shareBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
     shareBtn.hidden = YES;
 //    shareBtn.titleEdgeInsets    影响文字
 //    shareBtn.imageEdgeInsets    影响Image
@@ -141,7 +141,7 @@
     [finishBtn setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
     [finishBtn setTitle:@"开始扬梦" forState:(UIControlStateNormal)];
 
-    finishBtn.centerX = shareBtn.centerX - 100;
+    finishBtn.centerX = shareBtn.centerX - 50;
     finishBtn.centerY = _scrollView.height * 0.75;
     finishBtn.size = finishBtn.currentBackgroundImage.size;
     

@@ -11,6 +11,9 @@
 #import "PwdResetController.h"
 #import "AudioController.h"
 
+#import "LWLFileManager.h"
+#import "SDWebImageManager.h"
+
 #define kTagPwdReset    1
 #define kTagClear       2
 #define kTagBgAudio     3
@@ -22,6 +25,7 @@
 
 @property (nonatomic, strong) NSMutableArray* setGroups;
 @property (nonatomic, weak) UISwitch *audioSwitch;
+@property (nonatomic, weak) UIButton *quitButton;
 
 @end
 
@@ -40,10 +44,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView.backgroundColor = RGBColor(240, 240, 240);
+    self.tableView.backgroundColor = kViewBgColor;
 
     self.navigationItem.title = @"设置";
     self.tableView.tableHeaderView.height = 0;
+    self.tableView.separatorColor = kViewBgColor;
     
     [self setSwitchInfo];
     [self setGroupSetting];
@@ -82,8 +87,11 @@
 -(void)setGroupSetting{
     TableGroupModel* group = [[TableGroupModel alloc]init];
     
+    float tmpSize = [[SDImageCache sharedImageCache] getSize] / 1024.0 / 1024.0;
+    NSString *tmpSizeStr = tmpSize >= 1 ? [NSString stringWithFormat:@"%.2fM",tmpSize] : [NSString stringWithFormat:@"%.2fK",tmpSize * 1024];
+    
     TableItemModel* itemPwd = [TableItemModel initWithTitle:@"密码重置" tag:kTagPwdReset];
-    TableItemModel* itemClear = [TableItemModel initWithTitle:@"清空缓存" tag:kTagClear];
+    TableItemModel* itemClear = [TableItemModel initWithTitle:@"清除缓存" detailTitle:tmpSizeStr tag:kTagClear];
     TableItemModel* itemBgAudio = [TableItemModel initWithTitle:@"背景音乐: 追梦人" tag:kTagBgAudio];
     
     group.items = @[itemPwd, itemClear, itemBgAudio];
@@ -125,7 +133,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     if (section == 1) {
-        return 345;
+        return 0.4 * kScreenHeight;
     }else{
         return 20;
     }
@@ -136,7 +144,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
     if (!cell) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:ID];
     }
     
     TableGroupModel* group = [self.setGroups objectAtIndex:indexPath.section];
@@ -146,14 +154,29 @@
     cell.tag = item.tag;
     
     if (cell.tag == kTagQuit) {
-        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.textColor = [UIColor redColor];
+        UIButton *quitButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, kScreenWidth - 20, 44)];
+        quitButton.backgroundColor = kButtonBgIconGray;
+        [quitButton setTitle:item.title forState:UIControlStateNormal];
+        [quitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [quitButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        quitButton.layer.cornerRadius = 3;
+        quitButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+        [quitButton addTarget:self action:@selector(quitToMain) forControlEvents:UIControlEventTouchUpInside];
+        
+        _quitButton = quitButton;
+        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        [cell.contentView addSubview:quitButton];
+        cell.backgroundColor = [UIColor clearColor];
     }else if (cell.tag == kTagBgAudio){
         UISwitch *audioSwitch = [[UISwitch alloc] init];
         audioSwitch.frame = CGRectMake(0, 0, 50, 25);
         audioSwitch.on = [KUserDefaults boolForKey:@"background_audio"];
         [audioSwitch addTarget:self action:@selector(audioSwitchChanged:) forControlEvents:UIControlEventValueChanged];
         cell.accessoryView = audioSwitch;
+    }else if (cell.tag == kTagClear){
+        cell.detailTextLabel.text = item.detailTitle;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }else{
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
@@ -171,9 +194,6 @@
             break;
         case kTagBgAudio:
             break;
-        case kTagQuit:
-            [self quitToMain];
-            break;
         default:
             break;
     }
@@ -190,8 +210,22 @@
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"确定要清空缓存吗?" message:@"" preferredStyle: UIAlertControllerStyleAlert];
     UIAlertAction* actionOk = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        //        FMDatabase* db = [[DataBaseSharedManager sharedManager] getDB];
-        //        [db executeUpdate:@"drop table mod"];
+        [MBProgressHUD showMessage:@"Cleaning"];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[SDImageCache sharedImageCache] clearDisk];
+            
+           dispatch_async(dispatch_get_main_queue(), ^{
+               float tmpSize = [[SDImageCache sharedImageCache] getSize] / 1024.0 / 1024.0;
+               NSString *tmpSizeStr = tmpSize >= 1 ? [NSString stringWithFormat:@"%.2fM",tmpSize] : [NSString stringWithFormat:@"%.2fK",tmpSize * 1024];
+               
+               UITableViewCell *clearCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]];
+               clearCell.detailTextLabel.text = tmpSizeStr;
+               
+               [MBProgressHUD hideHUD];
+           });
+        });
+        
+        
     }];
     UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];

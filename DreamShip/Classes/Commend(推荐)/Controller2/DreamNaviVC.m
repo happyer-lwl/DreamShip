@@ -14,7 +14,8 @@
 #import "DreamTeamsVC.h"
 #import "DreamInvestorsVC.h"
 
-#define kScrollImagePages 5
+#define kScrollImagePages   5
+#define kPartCellHeight     (kScreenHeight - 64 - 44) / 4
 
 @interface DreamNaviVC()
 
@@ -35,7 +36,9 @@ static NSString *ID = @"indexCell";
 
 -(NSArray *)collectionContentArray{
     if (_collectionContentArray == nil) {
-        _collectionContentArray = [NSArray arrayWithObjects:@"梦想鸡汤",@"梦想达人",@"梦想团队", nil];
+        NSArray *section0 = @[@"梦想鸡汤",@"梦想达人",@"梦想团队"];
+        NSArray *section1 = @[@"梦想天使吧",@"梦想交换吧",@"梦想成真吧"];
+        _collectionContentArray = @[section0, section1];
     }
     
     return _collectionContentArray;
@@ -47,7 +50,7 @@ static NSString *ID = @"indexCell";
         UIScrollView *scroll = [[UIScrollView alloc]init];
         CGFloat scrollX = 0;
         CGFloat scrollY = 1;
-        scroll.frame = CGRectMake(scrollX, scrollY, kScreenWidth- 2 * scrollX, 130);
+        scroll.frame = CGRectMake(scrollX, scrollY, kScreenWidth- 2 * scrollX, kPartCellHeight);
         
         _scrollView = scroll;
         [self.view addSubview:_scrollView];
@@ -91,8 +94,8 @@ static NSString *ID = @"indexCell";
         pageControl.x = _scrollView.width - 50;
         pageControl.y = _scrollView.height - 10;
         pageControl.numberOfPages = kScrollImagePages - 1;
-        pageControl.currentPageIndicatorTintColor = [UIColor whiteColor];
-        pageControl.pageIndicatorTintColor = RGBColor(189, 189, 189);
+        pageControl.currentPageIndicatorTintColor = kPageControlCurColor;
+        pageControl.pageIndicatorTintColor = kPageControlColor;
         
         _pageControl = pageControl;
         [self.view addSubview:_pageControl];
@@ -133,7 +136,7 @@ static NSString *ID = @"indexCell";
 -(void)setCollectionViewInfo{
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
 
-    UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.headerView.frame) + 10, kScreenWidth - 20, 130) collectionViewLayout:flowLayout];
+    UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.headerView.frame) + 10, kScreenWidth - 20, kPartCellHeight * 2) collectionViewLayout:flowLayout];
     [self.view addSubview:collectionView];
     _collectionView = collectionView;
     
@@ -167,11 +170,12 @@ static NSString *ID = @"indexCell";
 
 #pragma mark UICollectionViewDelegate
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
-    return 1;
+    return self.collectionContentArray.count;
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-    return self.collectionContentArray.count;
+    NSArray *sectionArr  = [self.collectionContentArray objectAtIndex:section];
+    return sectionArr.count;
 }
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
@@ -190,17 +194,27 @@ static NSString *ID = @"indexCell";
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     IndexViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ID forIndexPath:indexPath];
     
-    if (indexPath.row == 0) {
-        cell.image = [UIImage imageNamed:@"help"];
-//        cell.backgroundColor = [UIColor redColor];
-    }else if (indexPath.row == 1){
-        cell.image = [UIImage imageNamed:@"person"];
-//        cell.backgroundColor = [UIColor blueColor];
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            cell.image = [UIImage imageNamed:@"help"];
+        }else if (indexPath.row == 1){
+            cell.image = [UIImage imageNamed:@"person"];
+        }else{
+            cell.image = [UIImage imageNamed:@"team"];
+        }
     }else{
-        cell.image = [UIImage imageNamed:@"team"];
-//        cell.backgroundColor = [UIColor greenColor];
+        if (indexPath.row == 0) {
+            cell.image = [UIImage imageNamed:@"angle"];
+        }else if (indexPath.row == 1){
+            cell.image = [UIImage imageNamed:@"change"];
+        }else{
+            cell.image = [UIImage imageNamed:@"successful"];
+        }
     }
-    cell.label.text = [self.collectionContentArray objectAtIndex:indexPath.row];
+    
+    NSArray *sectionArray = [self.collectionContentArray objectAtIndex:indexPath.section];
+    
+    cell.label.text = [sectionArray objectAtIndex:indexPath.row];
     cell.label.textColor = kTitleDarkBlueColor;
     cell.label.font = [UIFont systemFontOfSize:14];
     
@@ -210,12 +224,16 @@ static NSString *ID = @"indexCell";
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     UIViewController *vc = nil;
     
-    if (indexPath.row == 0) {
-        vc = [[DreamDirectsVC alloc] init];
-    }else if (indexPath.row == 1){
-        vc = [[DreamPersonsVC alloc] init];
-    }else if (indexPath.row == 2){
-        vc = [[DreamTeamsVC alloc] init];
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            vc = [[DreamDirectsVC alloc] init];
+        }else if (indexPath.row == 1){
+            vc = [[DreamPersonsVC alloc] init];
+        }else if (indexPath.row == 2){
+            vc = [[DreamTeamsVC alloc] init];
+        }
+    }else{
+        
     }
     
     vc.hidesBottomBarWhenPushed = YES;

@@ -68,9 +68,9 @@
     // 头像
     UIImageView *imageV = [[UIImageView alloc] init];
     [self.bgView addSubview:imageV];
+    self.iconView = imageV;
     self.iconView.backgroundColor = [UIColor whiteColor];
     self.iconView.userInteractionEnabled = YES;
-    self.iconView = imageV;
    
     UITapGestureRecognizer *singleFingerOne = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(user_icon_click)];
     singleFingerOne.numberOfTapsRequired = 1; //Tap数
@@ -120,8 +120,8 @@
     UIImageView *pic = [[UIImageView alloc] init];
     pic.backgroundColor = kViewBgColor;
     [self.bgView addSubview:pic];
-    pic.userInteractionEnabled = YES;
     self.picView = pic;
+    pic.userInteractionEnabled = YES;
     
     UITapGestureRecognizer *singleFingerOnePhotoView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photoView_click)];
     singleFingerOnePhotoView.numberOfTapsRequired = 1; //Tap数
@@ -157,7 +157,7 @@
     }
     
     self.nameLabel.frame = dreamFrame.nameF;
-    self.nameLabel.text = user.name;
+    self.nameLabel.text = user.userRealName;
     
     self.collectionView.frame = dreamFrame.collectionF;
     if ([dream.collection isEqualToString:@"1"]) {

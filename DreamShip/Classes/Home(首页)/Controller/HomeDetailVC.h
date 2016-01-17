@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "DSHomeViewCell.h"
+#import "UserModelCell.h"
+#import "DSCommentCell.h"
 #import "CommentToolBarView.h"
 
 #define kUpdateCellInfoFromCell @"UpdateCellInfoFromCell"
 
 @class DSDreamFrame;
-@interface HomeDetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, CommentToolBarDelegate>
+@interface HomeDetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, CommentToolBarDelegate, CommentModelCellDelegate>
 
 @property (nonatomic, strong) DSDreamFrame *dreamFrame;
 

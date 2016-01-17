@@ -7,12 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-
 @class UserFrame;
+
+@protocol UserModelCellDelegate <NSObject>
+
+-(void)cellUserIconClickedWithUserFrame:(UserFrame*)userFrame;
+
+@end
+
 @interface UserModelCell : UITableViewCell
 
 +(instancetype)cellWithTableView:(UITableView *)tableView;
 
 @property (nonatomic, strong) UserFrame *userFrame;
+@property (nonatomic, weak) id<UserModelCellDelegate> delegate;
 
 @end

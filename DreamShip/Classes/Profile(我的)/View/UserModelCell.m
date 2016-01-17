@@ -73,6 +73,13 @@
     [self.bgView addSubview:iconView];
     self.iconView = iconView;
     
+    UITapGestureRecognizer *singleFingerOne = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(user_icon_click)];
+    singleFingerOne.numberOfTapsRequired = 1; //Tap数
+    singleFingerOne.numberOfTouchesRequired = 1; // 手指数
+    singleFingerOne.delegate = self;
+    [self.iconView addGestureRecognizer:singleFingerOne];
+
+    
     // 名字
     UILabel *nameText = [[UILabel alloc] init];
     nameText.font = kDSUserNameFont;
@@ -86,5 +93,12 @@
     wordsLabel.textColor = [UIColor grayColor];
     [self.bgView addSubview:wordsLabel];
     self.wordsLabel = wordsLabel;
+}
+
+-(void)user_icon_click{
+    DBLog(@"User Icon Click");
+    if ([self.delegate respondsToSelector:@selector(cellUserIconClickedWithUserFrame:)]) {
+        [self.delegate cellUserIconClickedWithUserFrame:self.userFrame];
+    }
 }
 @end

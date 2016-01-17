@@ -68,13 +68,21 @@
     UIImageView *bgView = [[UIImageView alloc] init];
     bgView.backgroundColor = [UIColor whiteColor];
     [self.contentView addSubview:bgView];
+    bgView.userInteractionEnabled = YES;
     self.bgView = bgView;
     
     // 头像
     UIImageView *iconView = [[UIImageView alloc] init];
-    iconView.layer.cornerRadius = 22;
     [self.bgView addSubview:iconView];
     self.iconView = iconView;
+    self.iconView.layer.cornerRadius = 22;
+    self.iconView.userInteractionEnabled = YES;
+    
+    UITapGestureRecognizer *singleFingerOne = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(comment_user_icon_click)];
+    singleFingerOne.numberOfTapsRequired = 1; //Tap数
+    singleFingerOne.numberOfTouchesRequired = 1; // 手指数
+    singleFingerOne.delegate = self;
+    [self.iconView addGestureRecognizer:singleFingerOne];
     
     // 名字
     UILabel *nameText = [[UILabel alloc] init];
@@ -82,6 +90,8 @@
     nameText.textColor = kTitleDarkBlueColor;
     [self.bgView addSubview:nameText];
     self.nameLabel = nameText;
+    self.nameLabel.userInteractionEnabled = YES;
+    
     
     // 时间
     UILabel *timeText = [[UILabel alloc] init];
@@ -97,5 +107,12 @@
     wordsLabel.textColor = [UIColor grayColor];
     [self.bgView addSubview:wordsLabel];
     self.commentLabel = wordsLabel;
+}
+
+-(void)comment_user_icon_click{
+    DBLog(@"Comment cell user icon");
+    if ([self.delegate respondsToSelector:@selector(commentCellUserIconClicked:)]) {
+        [self.delegate commentCellUserIconClicked:self.commentFrame];
+    }
 }
 @end

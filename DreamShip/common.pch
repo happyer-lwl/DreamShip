@@ -38,6 +38,7 @@
 
 #define kNotificationCenter [NSNotificationCenter defaultCenter]
 #define kDocumentPath [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
+#define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]
 
 #define degreesToRadian(x) (M_PI * (x) / 180.0) 
 
@@ -60,6 +61,9 @@
 #define kViewBgColor        RGBColor(240, 240, 240)
 #define kViewBgColor220     RGBColor(220, 220, 220)
 #define kViewTabbarNormal   RGBColor(123, 123, 123)
+
+#define kPageControlColor       RGBColor(189, 189, 189)
+#define kPageControlCurColor    [UIColor whiteColor]
 
 #define kLaunchImageShowSec 0
 

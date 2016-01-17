@@ -101,6 +101,8 @@
  *  发送梦想
  */
 -(void)composeADream{
+    [MBProgressHUD showMessage:@"正在发送"];
+    
     AccountModel *model = [AccountTool account];
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -122,6 +124,7 @@
 
     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
         DBLog(@"%@", json);
+        [MBProgressHUD hideHUD];
         [MBProgressHUD showSuccess:@"发表成功"];
         [kNotificationCenter postNotificationName:kNotificationComposed object:nil];
         [self performSelector:@selector(cancelView) withObject:self afterDelay:1];
@@ -134,44 +137,41 @@
     params[@"api_uid"] = @"dreams";
     params[@"api_type"] = @"composeDream";
     
-    UIImage *newImage = [self scaleToSize:self.photoView.image size:CGSizeMake(500, 500)];
-    
-    NSData *data = nil;
-    NSString *imageName = @"";
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYMMddHHmmss"];
-    NSString *dateStr = [formatter stringFromDate:[NSDate date]];
-    if (UIImagePNGRepresentation(newImage) == nil) {
-        data = UIImageJPEGRepresentation(newImage, 1);
-        imageName = [NSString stringWithFormat:@"%@.jpg", dateStr];
-    }else{
-        data = UIImagePNGRepresentation(newImage);
-        imageName = [NSString stringWithFormat:@"%@.png", dateStr];
-    }
-    
-    NSMutableDictionary *paramsTemp = nil;
-    
-    params[@"pic"] = data;
-    params[@"imageName"] = imageName;
-    
-    DBLog(@"%@", data);
-    
-    [HttpTool postWithUrl:[NSString stringWithFormat:@"%@", Host_Url] params:params success:^(NSDictionary* json) {
-        [MBProgressHUD showSuccess:@"发表成功"];
-        [kNotificationCenter postNotificationName:kNotificationComposed object:nil];
-        [self performSelector:@selector(cancelView) withObject:self afterDelay:1];
-    } failure:^(NSError *error) {
-        DBLog(@"%@", error.description);
-    }];
-    
-//    [HttpTool posWithUrl:@"http://192.168.1.101/imageUpload_dream.php" params:paramsTemp data:data name:@"pic" fileName:@"hello.png" type:@"image/png" success:^(NSDictionary *json) {
-//        DBLog(@"%@", json);
-//        [MBProgressHUD showSuccess:@"发表成功"];
-//        [kNotificationCenter postNotificationName:kNotificationComposed object:nil];
-//        [self performSelector:@selector(cancelView) withObject:self afterDelay:1];
-//    } failuer:^(NSError *error) {
-//        DBLog(@"Error %@", error.description);
-//    }];
+    __block UIImage* _newImage = nil;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        _newImage = [self scaleToSize:self.photoView.image size:CGSizeMake(500, 500)];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSData *data = nil;
+            NSString *imageName = @"";
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"YYMMddHHmmss"];
+            NSString *dateStr = [formatter stringFromDate:[NSDate date]];
+            if (UIImagePNGRepresentation(_newImage) == nil) {
+                data = UIImageJPEGRepresentation(_newImage, 1);
+                imageName = [NSString stringWithFormat:@"%@.jpg", dateStr];
+            }else{
+                data = UIImagePNGRepresentation(_newImage);
+                imageName = [NSString stringWithFormat:@"%@.png", dateStr];
+            }
+            
+            params[@"pic"] = data;
+            params[@"imageName"] = imageName;
+            
+            DBLog(@"%@", data);
+            
+            [HttpTool postWithUrl:[NSString stringWithFormat:@"%@", Host_Url] params:params success:^(NSDictionary* json) {
+                [MBProgressHUD hideHUD];
+                [MBProgressHUD showSuccess:@"发送成功"];
+                [kNotificationCenter postNotificationName:kNotificationComposed object:nil];
+                [self performSelector:@selector(cancelView) withObject:self afterDelay:1];
+            } failure:^(NSError *error) {
+                [MBProgressHUD hideHUD];
+                [MBProgressHUD showError:@"网络错误"];
+                DBLog(@"%@", error.description);
+            }];
+        });
+    });
 }
 
 /**

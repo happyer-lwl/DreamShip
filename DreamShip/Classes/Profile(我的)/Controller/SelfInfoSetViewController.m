@@ -241,8 +241,11 @@
         image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     }
     
+    [MBProgressHUD showMessage:@"正在上传"];
+    
     CGSize imageSize = self.selfImageView.size;
-    UIImage *newImage = [self scaleToSize:image size:imageSize];
+    //UIImage *newImage = [self scaleToSize:image size:imageSize];
+    UIImage *newImage = [self scaleToSize:image size:CGSizeMake(300, 300)];
     [self.selfImageView setImage:newImage forState:UIControlStateNormal];
     
     NSData *data = nil;
@@ -276,6 +279,7 @@
     UIGraphicsBeginImageContext(size);
     
     [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+
     UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
@@ -299,20 +303,15 @@
     
     NSString *url = [NSString stringWithFormat:@"%@/imageUpload.php", Host_Url];
     [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, NSDictionary* responseObject) {
+        [MBProgressHUD hideHUD];
+        [MBProgressHUD showSuccess:@"上传成功"];
         DBLog(@"Sucess :%@", responseObject);
         [kNotificationCenter postNotificationName:kUpdateUserImage object:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [MBProgressHUD hideHUD];
+        [MBProgressHUD showMessage:@"网络失败"];
         DBLog(@"Error :%@", error.description);
     }];
-
-//    [manager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-//        //[formData appendPartWithFileData:data name:@"imageData" fileName:@"imageData" mimeType:@"image/png"];
-//        [formData appendPartWithFormData:data name:@"imageData"];
-//    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        DBLog(@"Sucess :%@", responseObject);
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        DBLog(@"Error :%@", error.description);
-//    }];
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{

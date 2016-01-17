@@ -135,6 +135,7 @@
 		7E70C46F1C390B2000137CB1 /* CommomToolDefine.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E70C46E1C390B2000137CB1 /* CommomToolDefine.m */; };
 		7E70C4721C3913C400137CB1 /* NSDate+Extensiton.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E70C4711C3913C400137CB1 /* NSDate+Extensiton.m */; };
 		7E7B6D801C456EC7008B5867 /* PersonDetailVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E7B6D7F1C456EC7008B5867 /* PersonDetailVC.m */; };
+		7E942F211C48C0CD00DF9E4F /* LWLFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E942F201C48C0CD00DF9E4F /* LWLFileManager.m */; };
 		7E9714EF1C3B5F620020603D /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E9714EE1C3B5F620020603D /* libiconv.tbd */; };
 		7E9714F11C3B5F6B0020603D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E9714F01C3B5F6B0020603D /* libresolv.tbd */; };
 		7E9715691C3B74470020603D /* MJDictionaryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E9715531C3B74470020603D /* MJDictionaryCache.m */; };
@@ -482,6 +483,8 @@
 		7E70C4711C3913C400137CB1 /* NSDate+Extensiton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extensiton.m"; sourceTree = "<group>"; };
 		7E7B6D7E1C456EC7008B5867 /* PersonDetailVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonDetailVC.h; sourceTree = "<group>"; };
 		7E7B6D7F1C456EC7008B5867 /* PersonDetailVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonDetailVC.m; sourceTree = "<group>"; };
+		7E942F1F1C48C0CD00DF9E4F /* LWLFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWLFileManager.h; sourceTree = "<group>"; };
+		7E942F201C48C0CD00DF9E4F /* LWLFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWLFileManager.m; sourceTree = "<group>"; };
 		7E9714EE1C3B5F620020603D /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		7E9714F01C3B5F6B0020603D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		7E9715521C3B74470020603D /* MJDictionaryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJDictionaryCache.h; sourceTree = "<group>"; };
@@ -1218,6 +1221,8 @@
 				7E70C46E1C390B2000137CB1 /* CommomToolDefine.m */,
 				7E384CE81C3E59C4000AB310 /* AudioController.h */,
 				7E384CE91C3E59C4000AB310 /* AudioController.m */,
+				7E942F1F1C48C0CD00DF9E4F /* LWLFileManager.h */,
+				7E942F201C48C0CD00DF9E4F /* LWLFileManager.m */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -1997,6 +2002,7 @@
 				7EACE4AF1C23B715005B8DBB /* NewFeatureViewController.m in Sources */,
 				7E9723B41C3CC3080020603D /* UserFrame.m in Sources */,
 				7EACE4E31C23E303005B8DBB /* TableGroupModel.m in Sources */,
+				7E942F211C48C0CD00DF9E4F /* LWLFileManager.m in Sources */,
 				7E1421D11C22ADE2009762E3 /* MainNavigationController.m in Sources */,
 				7E204EAD1C28FD9B0034F057 /* AFURLConnectionOperation.m in Sources */,
 				7E204EC11C29306C0034F057 /* DSDreamFrame.m in Sources */,
@@ -2151,6 +2157,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: weilong liu (Y3667XU59X)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -2195,6 +2202,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: weilong liu (Y3667XU59X)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2221,7 +2229,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: weilong liu (Y3667XU59X)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/DreamShip/lib/SMS_SDK",
@@ -2253,7 +2261,7 @@
 					"-licucore",
 					"-Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lwl.DreamShip;
+				PRODUCT_BUNDLE_IDENTIFIER = com.runlwl.dreamship;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2263,7 +2271,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: weilong liu (Y3667XU59X)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/DreamShip/lib/SMS_SDK",
@@ -2295,7 +2303,7 @@
 					"-licucore",
 					"-Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.lwl.DreamShip;
+				PRODUCT_BUNDLE_IDENTIFIER = com.runlwl.dreamship;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -231,6 +231,7 @@
             
             [self.userLoginView.userName resignFirstResponder];
             [self.userLoginView.userPwd resignFirstResponder];
+            [MBProgressHUD hideHUD];
             [kKeyWindow switchRootViewController];
             [self dismissViewControllerAnimated:YES completion:nil];
         }else if ([result isEqualToString:@"201"]){

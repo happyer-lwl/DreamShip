@@ -11,11 +11,13 @@
 
 #import "HomeDetailVC.h"
 #import "ComposeDreamVC.h"
+#import "PersonDetailVC.h"
 
 #import "DSHomeViewCell.h"
 #import "DSDreamFrame.h"
 #import "DSDreamModel.h"
 #import "DSUser.h"
+#import "UserFrame.h"
 
 #import "AccountModel.h"
 #import "AccountTool.h"
@@ -119,18 +121,6 @@
     [self.view addSubview:tableView];
     
     _tableView = tableView;
-    
-//    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:self.tableView.bounds];
-//    bgImageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DreamUFO" ofType:@"jpeg"]];
-//    self.tableView.backgroundView = bgImageView;
-//
-//    //self.tableView.backgroundColor = [UIColor whiteColor];
-//    
-//    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-//    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//    self.tableView.delegate = self;
-//    self.tableView.dataSource = self;
-//    self.tableView.userInteractionEnabled = YES;
 }
 
 // 获取梦想
@@ -181,10 +171,6 @@
         [self getNewDreams];
     }];
     [self.tableView.mj_header beginRefreshing];
-}
-
--(void)getMoreDreams:(UIRefreshControl *)refreshControl{
-    
 }
 
 -(NSArray *)dreamFramesWithDreams:(NSArray*)dreams{
@@ -325,7 +311,12 @@
 }
 
 -(void)cellUserIconClicked:(DSDreamFrame *)dreamFrame{
-    DBLog(@"User icon clicked");    
+    DBLog(@"User icon clicked");
+    
+    PersonDetailVC *detailVC = [[PersonDetailVC alloc] init];
+    detailVC.user = dreamFrame.dream.user;
+    detailVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 -(void)cellPhotoViewClicked:(DSDreamFrame *)dreamFrame{
