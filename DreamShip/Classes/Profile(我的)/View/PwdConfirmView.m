@@ -36,6 +36,8 @@
     name.backgroundColor = [UIColor whiteColor];
     name.clearButtonMode = UITextFieldViewModeWhileEditing;
     name.keyboardType = UIKeyboardTypeDefault;
+    name.secureTextEntry = YES;
+    name.autocapitalizationType = UITextAutocapitalizationTypeNone;
     _userPwd = name;
     [self addSubview:name];
     name.delegate = self;
@@ -49,6 +51,7 @@
     pwd.clearButtonMode = UITextFieldViewModeWhileEditing;
     pwd.keyboardType = UIKeyboardTypeDefault;
     pwd.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    pwd.secureTextEntry = YES;
     _userPwdConfirm = pwd;
     [self addSubview:pwd];
     pwd.delegate = self;

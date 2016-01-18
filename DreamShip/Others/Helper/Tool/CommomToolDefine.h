@@ -21,4 +21,8 @@
 +(NSArray *)getDataFromDB;
 
 +(UIAlertController *)alertWithTitle:(NSString *)title message:(NSString *)message ok:(void(^)(void))ok cancel:(void(^)(void))cancel;
+
++(NSString *)MD5_32:(NSString *)str;
++(NSString *)MD5_16:(NSString *)str;
+
 @end

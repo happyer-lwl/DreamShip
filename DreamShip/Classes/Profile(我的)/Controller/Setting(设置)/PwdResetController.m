@@ -47,7 +47,7 @@
     _pwdCV = pwdConfirmView;
     
     // 修改确认
-    UIButton *confirmButton = [[UIButton alloc] initWithFrame: CGRectMake(10, CGRectGetMaxY(pwdConfirmView.frame) + 40, kScreenWidth - 2 * 10, 44)];
+    UIButton *confirmButton = [[UIButton alloc] initWithFrame: CGRectMake(10, CGRectGetMaxY(pwdConfirmView.frame) + 20, kScreenWidth - 2 * 10, 44)];
     confirmButton.layer.cornerRadius = 5;
     [confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [confirmButton setTitleColor:kTitleBlueColor forState:UIControlStateHighlighted];
@@ -62,46 +62,25 @@
 -(void)finishConfirm{
     NSString *pwd           = self.pwdCV.userPwd.text;
     NSString *pwdConfirm    = self.pwdCV.userPwdConfirm.text;
-    AccountModel *model = [AccountTool account];
+    AccountModel *accountModel = [AccountTool account];
+    
+    NSString *pwdMD5 = [CommomToolDefine MD5_16:pwd];
     
     if (pwd.length <= 6) {
         [MBProgressHUD showError:@"密码长度不能低于6位"];
     }else if (![pwd isEqualToString:pwdConfirm]){
         [MBProgressHUD showError:@"两次输入密码不一致"];
-    }else if ([model.userPwd isEqualToString:pwd]){
+    }else if ([accountModel.userPwd isEqualToString:pwd]){
         [MBProgressHUD showError:@"新密码与旧密码一致"];
-    }else{
-        NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        params[@"api_uid"] = @"users";
-        params[@"api_type"] = @"modUser";
-        params[@"phone"] = model.userPhone;
-        params[@"pwd"] = pwd;
-        
-        if ([HttpTool saveUserInfo:model.userPhone mod_key:@"pwd" mod_value:pwd]){
-            [MBProgressHUD showSuccess:@"修改成功"];
-            if ([self respondsToSelector:@selector(backToPreView)]) {
-                [self performSelector:@selector(backToPreView) withObject:self afterDelay:1];
-            }
-        }
-        
-        FMDatabase *db = [[DataBaseSharedManager sharedManager] getDB];
-        NSString *updateStr = [NSString stringWithFormat:@"UPDATE users set pwd='%@' where phone='%@'", pwd, model.userPhone];
-        DBLog(@"%@", updateStr);
-        if ([db executeUpdate:updateStr]){
+    }else{       
+        if ([HttpTool saveUserInfo:accountModel.userPhone mod_key:@"pwd" mod_value:pwdMD5]){
             [MBProgressHUD showSuccess:@"修改成功"];
             
-            if ([self respondsToSelector:@selector(backToPreView)]) {
-                [self performSelector:@selector(backToPreView) withObject:self afterDelay:1];
-            }
+            accountModel.userPwd = pwd;
+            [AccountTool saveAccount:accountModel];
+            
+            [self.navigationController popViewControllerAnimated:YES];
         }
     }
-}
-
--(void)backToPreView{
-    registerOrLoginViewController *registerOrLoginVC = [[registerOrLoginViewController alloc] init];
-
-    [self presentViewController:registerOrLoginVC animated:YES completion:^{
-            [self dismissViewControllerAnimated:YES completion:nil];
-    }];
 }
 @end

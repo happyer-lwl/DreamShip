@@ -16,7 +16,7 @@
 //#define _TEST_ 1
 
 #ifdef _TEST_
-    #define Host_Url @"http://192.168.1.101/"
+    #define Host_Url @"http://localhost/"
 #else
     //#define Host_Url @"http://www.runlwl.win/"
 #define Host_Url @"http://121.42.38.84"

@@ -13,6 +13,8 @@
 
 #import "LWLFileManager.h"
 #import "SDWebImageManager.h"
+#import "AccountModel.h"
+#import "AccountTool.h"
 
 #define kTagPwdReset    1
 #define kTagClear       2
@@ -247,6 +249,10 @@
                 
                 [self dismissViewControllerAnimated:YES completion:nil];
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                
+                AccountModel *accountModel = [AccountTool account];
+                accountModel.userPwd = @"";
+                [AccountTool saveAccount:accountModel];
                 
                 registerOrLoginViewController *loginVC = [[registerOrLoginViewController alloc] init];
                 [self presentViewController:loginVC animated:YES completion:nil];

@@ -139,7 +139,7 @@
     
     __block UIImage* _newImage = nil;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        _newImage = [self scaleToSize:self.photoView.image size:CGSizeMake(500, 500)];
+        _newImage = [self scaleToSize:self.photoView.image size:CGSizeMake(150, 150)];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             NSData *data = nil;

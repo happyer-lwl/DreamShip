@@ -43,16 +43,12 @@ static FMDatabase* db = nil;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     // 播放背景音乐
     [self playMusic];
-    
     // 设置网络监听
     //[self setNetStatusCheck];
-    
     // 设置APNs推送
     [self setAPNs];
-
     // 设置IMSDK
     [[RCIM sharedRCIM] initWithAppKey:kRongCloudAppKey];
-    
     // 注册腾讯Bugly监测
     [[CrashReporter sharedInstance] installWithAppId:kAppBuglyID];
     // 短信验证注册
@@ -61,7 +57,7 @@ static FMDatabase* db = nil;
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
     AccountModel *model = [AccountTool account];
-    if (model.userPhone.length) {
+    if (model.userPwd.length) {
         [self.window switchRootViewController];
     }else{
         self.window.rootViewController = [[registerOrLoginViewController alloc] init];

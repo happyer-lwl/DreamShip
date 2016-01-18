@@ -11,7 +11,12 @@
 #import "DataBaseSharedManager.h"
 #import "DSDreamModel.h"
 
+#import <CommonCrypto/CommonDigest.h>
+
 static FMDatabase *_db;
+
+#define MD5_STR_LEN16 16
+#define MD5_STR_LEN32 32
 
 @implementation CommomToolDefine
 
@@ -154,12 +159,12 @@ static FMDatabase *_db;
 
 +(UIAlertController *)alertWithTitle:(NSString *)title message:(NSString *)message ok:(void (^)(void))ok cancel:(void (^)(void))cancel{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message: message preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"不用" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action){
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action){
         if (cancel) {
             cancel();
         }
     }];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"好嘞" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (ok) {
             ok();
         }
@@ -168,5 +173,37 @@ static FMDatabase *_db;
     [alert addAction:okAction];
     
     return alert;
+}
+
++(NSString *)MD5_32:(NSString *)str{
+    const char *cStr = [str UTF8String];
+    
+    unsigned char result[MD5_STR_LEN32];
+    
+    CC_MD5(cStr, MD5_STR_LEN32, result);
+    
+    NSMutableString *ret = [NSMutableString stringWithCapacity:MD5_STR_LEN32];
+    
+    for (int i = 0; i < MD5_STR_LEN32; i++) {
+        [ret appendFormat:@"%02x", result[i]];
+    }
+    
+    return ret;
+}
+
++(NSString *)MD5_16:(NSString *)str{
+    const char *cStr = [str UTF8String];
+    
+    unsigned char result[MD5_STR_LEN16];
+    
+    CC_MD5(cStr, MD5_STR_LEN16, result);
+    
+    NSMutableString *ret = [NSMutableString stringWithCapacity:MD5_STR_LEN16];
+    
+    for (int i = 0; i < MD5_STR_LEN16; i++) {
+        [ret appendFormat:@"%02x", result[i]];
+    }
+    
+    return ret;
 }
 @end

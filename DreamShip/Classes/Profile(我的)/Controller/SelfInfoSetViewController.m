@@ -244,8 +244,7 @@
     [MBProgressHUD showMessage:@"正在上传"];
     
     CGSize imageSize = self.selfImageView.size;
-    //UIImage *newImage = [self scaleToSize:image size:imageSize];
-    UIImage *newImage = [self scaleToSize:image size:CGSizeMake(300, 300)];
+    UIImage *newImage = [self scaleToSize:image size:imageSize];
     [self.selfImageView setImage:newImage forState:UIControlStateNormal];
     
     NSData *data = nil;
@@ -298,9 +297,6 @@
     params[@"imageData"] = data;
     
     DBLog(@"%@", model.userPhone);
-    //manager.responseSerializer = [AFJSONResponseSerializer serializer];
-//    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    
     NSString *url = [NSString stringWithFormat:@"%@/imageUpload.php", Host_Url];
     [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, NSDictionary* responseObject) {
         [MBProgressHUD hideHUD];
@@ -309,7 +305,7 @@
         [kNotificationCenter postNotificationName:kUpdateUserImage object:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [MBProgressHUD hideHUD];
-        [MBProgressHUD showMessage:@"网络失败"];
+        [MBProgressHUD showError:@"网络失败"];
         DBLog(@"Error :%@", error.description);
     }];
 }

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PwdConfirmView : UIView
+@interface PwdConfirmView : UIView<UITextFieldDelegate>
 
 @property (nonatomic, weak) UITextField *userPwd;
 @property (nonatomic, weak) UITextField *userPwdConfirm;

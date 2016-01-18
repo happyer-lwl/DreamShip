@@ -144,6 +144,7 @@
     if (self.registerOrLoginButton.tag == kRegisterTag) {
         NSString *userName = self.userRegisterView.userName.text;
         NSString *userPwd = self.userRegisterView.userPwd.text;
+        NSString *userPwdMd5 = [CommomToolDefine MD5_16:userPwd];
         
         NSLog(@"Register:   name:%@, pwd:%@", userName, userPwd);
         
@@ -161,13 +162,13 @@
                     params[@"api_uid"] = @"users";
                     params[@"api_type"] = @"regUser";
                     params[@"phone"] = userName;
-                    params[@"pwd"] = userPwd;
+                    params[@"pwd"] = userPwdMd5;
                     
                     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary *json) {
                         NSString *result = [json[@"result"] stringValue];
                         
                         if ([result isEqualToString:@"200"]) {
-                            [self loginIn:userName pwd:userPwd];  //登录
+                            [self loginIn:userName pwd:userPwdMd5];  //登录
                         }else if ([result isEqualToString:@"201"]){
                             [MBProgressHUD showError:@"当前用户已经存在，请直接登录!"];
                         }else{
@@ -187,12 +188,14 @@
         NSString *userName = self.userLoginView.userName.text;
         NSString *userPwd = self.userLoginView.userPwd.text;
         
+        NSString *userPwdMd5 = [CommomToolDefine MD5_16:userPwd];
+        
         if (userName.length == 0) {
             [MBProgressHUD showError:@"请先输入手机号"];
         }else if (userPwd.length == 0){
             [MBProgressHUD showError:@"请输入密码"];
         }else{
-            [self loginIn:userName pwd:userPwd];
+            [self loginIn:userName pwd:userPwdMd5];
         }
     }
 }
@@ -204,7 +207,6 @@
     params[@"api_type"] = @"loginIn";
     params[@"phone"] = name;
     params[@"pwd"] = pwd;
-    
     DBLog(@"%@", Host_Url);
     DBLog(@"%@", params);
     
