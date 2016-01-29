@@ -48,6 +48,11 @@
       "idiom" : "iphone",
       "filename" : "AppIconDark-60@3x.png",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "car",
+      "size" : "60x60",
+      "scale" : "3x"
     }
   ],
   "info" : {
