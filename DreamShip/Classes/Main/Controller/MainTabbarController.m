@@ -29,8 +29,6 @@
 
     [MBProgressHUD hideHUD];
     
-    [self.tabBar setBackgroundImage:[UIImage imageNamed:@"bg_dark_blue_44"]];
-    
     HomeViewController *home = [[HomeViewController alloc] init];
     [self addChildVc:home title:@"梦 吧" image:@"tabbar_home" selectImage:@"tabbar_home_selected"];
     
@@ -58,9 +56,7 @@
     childVC.tabBarItem.image = [UIImage imageNamed:image];
     if (IOS7) {
         childVC.tabBarItem.selectedImage = [[UIImage imageNamed:selectedImage] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-        childVC.tabBarItem.selectedImage = [UIImage imageNamed:selectedImage];
     }else{
-        childVC.tabBarItem.selectedImage = [[UIImage imageNamed:selectedImage] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         childVC.tabBarItem.selectedImage = [UIImage imageNamed:selectedImage];
     }
     
@@ -70,14 +66,13 @@
     [childVC.tabBarItem setTitleTextAttributes:profileAttri forState:UIControlStateNormal];
     profileAttri[NSFontAttributeName] = [UIFont boldSystemFontOfSize:12];
     [childVC.tabBarItem setTitleTextAttributes:profileAttri forState:UIControlStateNormal];
-    profileAttri[NSForegroundColorAttributeName] = kTitleBlueColor;
+    profileAttri[NSForegroundColorAttributeName] = kViewTabbarSelected;
     [childVC.tabBarItem setTitleTextAttributes:profileAttri forState:UIControlStateSelected];
     [childVC.tabBarItem setTitleTextAttributes:profileAttri forState:UIControlStateSelected];
     // 设置子控制器的背景颜色, 设置view会创建该窗口，如果不设置则不会提前设置
     // childVC.view.backgroundColor = WBRandomColor;
     
     MainNavigationController* nav = [[MainNavigationController alloc]initWithRootViewController:childVC];
-    
     [self addChildViewController:nav];
 }
 @end

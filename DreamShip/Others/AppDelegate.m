@@ -12,23 +12,23 @@
 #import "UIWindow+Extension.h"
 #import "registerOrLoginViewController.h"
 #import "NewFeatureViewController.h"
+#import "MainTabbarController.h"
 
 #import <Bugly/CrashReporter.h>
 #import <SMS_SDK/SMSSDK.h>
 #import "DataBaseSharedManager.h"
 
-//IMSDK Headers
-//#import "IMSDK.h"
-//#import "IMMyself.h"
-
-#import <RongIMKit/RongIMKit.h>
 #import "AudioController.h"
 
 #import "AFNetworking.h"
+#import "HttpTool.h"
+#import "MJExtension.h"
+
 #import "UIKit+AFNetworking.h"
 
+#import "DSUser.h"
+
 #define kAppBuglyID         @"900016290"
-#define kRongCloudAppKey    @"8luwapkvuq99l"
 
 static FMDatabase* db = nil;
 
@@ -45,14 +45,17 @@ static FMDatabase* db = nil;
     [self playMusic];
     // 设置网络监听
     //[self setNetStatusCheck];
-    // 设置APNs推送
-    [self setAPNs];
     // 设置IMSDK
     [[RCIM sharedRCIM] initWithAppKey:kRongCloudAppKey];
+    // 设置APNs推送
+    [self setAPNs];
+    
     // 注册腾讯Bugly监测
     [[CrashReporter sharedInstance] installWithAppId:kAppBuglyID];
     // 短信验证注册
     [SMSSDK registerApp: MOB_SMS_APPKEY withSecret:MOB_SMS_SECRET];
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
@@ -62,8 +65,6 @@ static FMDatabase* db = nil;
     }else{
         self.window.rootViewController = [[registerOrLoginViewController alloc] init];
     }
-    //self.window.rootViewController = [[registerOrLoginViewController alloc] init];
-    //self.window.rootViewController = [[NewFeatureViewController alloc] init];
     
     [self.window makeKeyAndVisible];
     
@@ -175,16 +176,18 @@ static FMDatabase* db = nil;
 }
 
 -(void)didReceiveMessageNotification:(NSNotification *)notification{
-    [UIApplication sharedApplication].applicationIconBadgeNumber =
-    [UIApplication sharedApplication].applicationIconBadgeNumber + 1;
+    NSInteger iconBadgeNum = [UIApplication sharedApplication].applicationIconBadgeNumber + 1;
+    [UIApplication sharedApplication].applicationIconBadgeNumber = iconBadgeNum;
+
+    [kNotificationCenter postNotificationName:kNotificationUpdataBadge object:nil];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents]; // 让后台可以处理多媒体的事件
-    NSLog(@"%s",__FUNCTION__);
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setActive:YES error:nil];
-    [session setCategory:AVAudioSessionCategoryPlayback error:nil]; //后台播放
+//    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents]; // 让后台可以处理多媒体的事件
+//    NSLog(@"%s",__FUNCTION__);
+//    AVAudioSession *session = [AVAudioSession sharedInstance];
+//    [session setActive:YES error:nil];
+//    [session setCategory:AVAudioSessionCategoryPlayback error:nil]; //后台播放
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -201,6 +204,80 @@ static FMDatabase* db = nil;
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     
+}
+
+-(void)getUserInfoWithUserId:(NSString *)userId completion:(void (^)(RCUserInfo *))completion{
+
+    [self getUserWithUserID:userId finish:^(DSUser *user) {
+        RCUserInfo *userInfo = [[RCUserInfo alloc] init];
+        
+        userInfo.userId = userId;
+        userInfo.name = user.userRealName;
+        userInfo.portraitUri = user.image;
+        
+        completion(userInfo);
+    }];
+}
+
+-(void)connectServerWithToken{
+    NSString *token = [KUserDefaults objectForKey:@"RongCloudToken"];
+    
+    [[RCIM sharedRCIM] connectWithToken:token success:^(NSString *userId) {
+        DBLog(@"Sucessfull with userId: %@.", userId);
+        
+        [RCIM sharedRCIM].userInfoDataSource = self;
+    } error:^(RCConnectErrorCode status) {
+        DBLog(@"Error: %ld", (long)status);
+    } tokenIncorrect:^{
+        DBLog(@"token 无效 ，请确保生成token 使用的appkey 和初始化时的appkey 一致");
+    }];
+}
+
+-(DSUser *)getUserWithUserID:(NSString *)userID finish:(void(^)(DSUser *user))finish{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"users";
+    params[@"api_type"] = @"getUserWithID";
+    params[@"user_id"] = userID;
+    
+    DSUser *user = [[DSUser alloc] init];
+    
+    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary *json) {
+        NSString *result = [json[@"result"] stringValue];
+        NSDictionary *dataDict = json[@"data"];
+        
+        DBLog(@"%@", json);
+        if ([result isEqualToString:@"200"]) {//登录
+            
+            user.name = dataDict[@"name"];
+            user.userRealName = dataDict[@"userRealName"];
+            user.image = dataDict[@"image"];
+            user.userMail = dataDict[@"userMail"];
+            user.user_id = dataDict[@"user_id"];
+            user.userAddr = dataDict[@"userAddr"];
+            user.userSex = dataDict[@"sex"];
+            user.userWords = dataDict[@"userWords"];
+            
+            finish(user);
+            
+        }else if ([result isEqualToString:@"201"]){
+            [MBProgressHUD hideHUD];
+            [MBProgressHUD showError:@"当前用户不存在11，请确认!"];
+        }
+    } failure:^(NSError *error) {
+        [MBProgressHUD hideHUD];
+        [MBProgressHUD showError:@"网络错误!"];
+    }];
+    
+    return user;
+}
+
+-(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
+    if ([[url scheme] isEqualToString:@"dreamship"]) {
+        [application setApplicationIconBadgeNumber:10];
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 @end

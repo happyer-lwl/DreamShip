@@ -16,7 +16,7 @@
 -(void)cellToolBarClickedWithTag:(NSInteger)tag dreamFrame:(DSDreamFrame*)dreamFrame;
 -(void)cellUserIconClicked:(DSDreamFrame *)dreamFrame;
 -(void)cellPhotoViewClicked:(DSDreamFrame *)dreamFrame;
--(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected;
+-(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected view:(UIView *)view;
 
 @end
 

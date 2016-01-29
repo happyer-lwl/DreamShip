@@ -12,6 +12,8 @@
 #import "SelfInfoSetWordsVC.h"
 #import "CitySelectView.h"
 
+#import "UINavigationBar+BackgroundColor.h"
+
 #import "UICustomTextField.h"
 #import "AccountModel.h"
 #import "AccountTool.h"
@@ -59,7 +61,7 @@
 -(void)viewDidLoad{
     [super viewDidLoad];
     self.view.backgroundColor = kViewBgColor;
-
+    
     [self setNavigationView];
     [self setTableView];
     
@@ -94,6 +96,8 @@
         [AccountTool saveAccount:model];
         self.navigationItem.rightBarButtonItem.enabled = NO;
         [self.nameText resignFirstResponder];
+        
+        [kNotificationCenter postNotificationName:kUpdateUserImage object:nil];
     }
 }
 
@@ -205,6 +209,11 @@
  */
 -(void)chooseFromImagePhoto{
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    [imagePicker.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_background_fire"] forBarMetrics:UIBarMetricsDefault];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
+    [imagePicker.navigationBar setTitleTextAttributes:dict];
+    
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePicker.allowsEditing = NO;
     imagePicker.delegate = self;
@@ -218,6 +227,11 @@
  */
 -(void)chooseFromCamera{
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    [imagePicker.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_background_fire"] forBarMetrics:UIBarMetricsDefault];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
+    [imagePicker.navigationBar setTitleTextAttributes:dict];
+    
     imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePicker.allowsEditing = YES;
     imagePicker.delegate = self;
@@ -244,7 +258,7 @@
     [MBProgressHUD showMessage:@"正在上传"];
     
     CGSize imageSize = self.selfImageView.size;
-    UIImage *newImage = [self scaleToSize:image size:imageSize];
+    UIImage *newImage = [CommomToolDefine scaleToSize:image size:imageSize];
     [self.selfImageView setImage:newImage forState:UIControlStateNormal];
     
     NSData *data = nil;
@@ -271,19 +285,7 @@
     
     [self uploadSelfImage:data name:imageName];
 }
-/**
- 缩放
- */
--(UIImage *)scaleToSize:(UIImage *)image size:(CGSize)size{
-    UIGraphicsBeginImageContext(size);
-    
-    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
 
-    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return scaledImage;
-}
 /**
  上传图片
  */
@@ -295,6 +297,9 @@
     params[@"userPhone"] = model.userPhone;
     params[@"imageName"] = imageName;
     params[@"imageData"] = data;
+    params[@"userName"] = model.userRealName;
+    params[@"appKey"] = kRongCloudAppKey;
+    params[@"appSecret"] = kRongCloudAppSecret;
     
     DBLog(@"%@", model.userPhone);
     NSString *url = [NSString stringWithFormat:@"%@/imageUpload.php", Host_Url];
@@ -311,7 +316,7 @@
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
-    
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark CustomTextFieldDelegate

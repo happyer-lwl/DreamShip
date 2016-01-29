@@ -159,12 +159,12 @@ static FMDatabase *_db;
 
 +(UIAlertController *)alertWithTitle:(NSString *)title message:(NSString *)message ok:(void (^)(void))ok cancel:(void (^)(void))cancel{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message: message preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action){
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action){
         if (cancel) {
             cancel();
         }
     }];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (ok) {
             ok();
         }
@@ -205,5 +205,36 @@ static FMDatabase *_db;
     }
     
     return ret;
+}
+
+/**
+ 缩放
+ */
++(UIImage *)scaleToSize:(UIImage *)image size:(CGSize)size{
+    UIGraphicsBeginImageContext(size);
+    
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return scaledImage;
+}
+
++(void)addNoDataForView:(UIView *)view{
+    UIView *cryView = [[UIView alloc] init];
+    cryView.frame = CGRectMake(kScreenWidth/2 - 100, kScreenHeight / 2 - 100, 200, 139);
+    
+    UIImageView *imageView = [[UIImageView alloc] init];
+    imageView.frame = CGRectMake(0, 0, 200, 139);
+    imageView.image = [UIImage imageNamed:@"nodata_cry"];
+    [cryView addSubview:imageView];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.frame = CGRectMake(0, 150, 180, 50);
+    label.text = @"暂时没有数据";
+    label.textAlignment = NSTextAlignmentCenter;
+    [cryView addSubview:label];
+    
+    [view addSubview:cryView];
 }
 @end

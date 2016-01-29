@@ -10,4 +10,7 @@
 
 @interface registerOrLoginViewController : UIViewController
 
+// 登录一下
++(void)loginIn:(NSString *)name pwd:(NSString *)pwd;
+
 @end

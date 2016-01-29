@@ -9,6 +9,10 @@
 #import "UIWindow+Extension.h"
 #import "MainTabbarController.h"
 #import "NewFeatureViewController.h"
+#import "registerOrLoginViewController.h"
+
+#import "AccountModel.h"
+#import "AccountTool.h"
 
 @implementation UIWindow (Extension)
 
@@ -22,8 +26,15 @@
     NSString *currentVersion = [info objectForKey:versionKey];
     DBLog(@"%@", currentVersion);
     if ([currentVersion isEqualToString:preVersion]) {
+        AccountModel *userModel = [AccountTool account];
+        
+        [registerOrLoginViewController loginIn:userModel.userPhone pwd:userModel.userPwd];
         // 创建根控制器
         self.rootViewController = [[MainTabbarController alloc] init];
+        
+        NSString *badgeValue = [NSString stringWithFormat:@"%ld",(long)[UIApplication sharedApplication].applicationIconBadgeNumber];
+        UITabBarController *bagdeVC = self.rootViewController.tabBarController;
+        [[bagdeVC.viewControllers objectAtIndex:2].tabBarItem setBadgeValue:badgeValue];
     }else{
         // 当前版本号存进沙盒
         [[NSUserDefaults standardUserDefaults] setObject:currentVersion forKey:versionKey];

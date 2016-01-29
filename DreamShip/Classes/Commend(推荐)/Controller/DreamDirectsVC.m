@@ -32,7 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.title = @"梦想鸡汤";
+    self.title = @"逐梦令";
     self.navigationController.navigationBarHidden = NO;
     self.view.backgroundColor = kViewBgColor;
     

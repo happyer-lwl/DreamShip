@@ -7,39 +7,45 @@
 //
 
 #import "DiscoverViewController.h"
+#import "SingleChatVC.h"
+#import "PersonDetailVC.h"
+#import "UITabBar+littleRedDotBadge.h"
+
+#import <RongIMKit/RongIMKit.h>
 
 @implementation DiscoverViewController
 
 -(void)viewDidLoad{
     [super viewDidLoad];
     
-    UIImage *bgImage = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DreamUFO" ofType:@"jpeg"]];
-    self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
-    
     [self setDisplayConversationTypes:@[@(ConversationType_PRIVATE), @(ConversationType_DISCUSSION)]];
     
     self.view.backgroundColor = [UIColor redColor];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"列表" style:UIBarButtonItemStylePlain target:self action:@selector(openListInfo)];
-    
-    [self signIn];
 }
 
--(void)openListInfo{
+-(void)onSelectedTableRow:(RCConversationModelType)conversationModelType conversationModel:(RCConversationModel *)model atIndexPath:(NSIndexPath *)indexPath{
     
+    SingleChatVC *conVC = [[SingleChatVC alloc] initWithConversationType:ConversationType_PRIVATE targetId:model.targetId];
+    
+    conVC.userName = model.conversationTitle;
+    conVC.title = model.conversationTitle;
+    conVC.targetId = model.targetId;
+    conVC.hidesBottomBarWhenPushed = YES;
+    
+    NSInteger AppIconBadgeNum = [UIApplication sharedApplication].applicationIconBadgeNumber - model.unreadMessageCount;
+    [UIApplication sharedApplication].applicationIconBadgeNumber = AppIconBadgeNum;
+    [kNotificationCenter postNotificationName:kNotificationUpdataBadge object:nil];
+    
+    [self.navigationController pushViewController:conVC animated:YES];
 }
 
--(void)signIn{
-    NSString *token = @"UmxUvmGofoc1yF3CcpUXxeUO7UUKkLoTmIelV1RTHhAs9yHaVjuhtHzTiGkjGSY9tVOTAfff2RXu3RGeVmbysA==";
-    [[RCIM sharedRCIM] connectWithToken:token success:^(NSString *userId) {
-        DBLog(@"Sucessfull with userId: %@.", userId);
+-(void)didTapCellPortrait:(RCConversationModel *)model{
+    PersonDetailVC *detailVC = [[PersonDetailVC alloc] init];
+    
+    [SingleChatVC getUserWithUserID:model.targetId finish:^(DSUser *user) {
+        detailVC.user = user;
         
-        [[RCIM sharedRCIM] setUserInfoDataSource:self];
-        
-    } error:^(RCConnectErrorCode status) {
-        DBLog(@"Error: %ld", (long)status);
-    } tokenIncorrect:^{
-        DBLog(@"token 无效 ，请确保生成token 使用的appkey 和初始化时的appkey 一致");
+        [self.navigationController pushViewController:detailVC animated:YES];
     }];
 }
 @end

@@ -78,6 +78,6 @@
     CGFloat bgWidth = kScreenWidth - padding;
     self.bgViewF = CGRectMake(bgX, bgY, bgWidth, CGRectGetMaxY(self.toolBarF));
     
-    self.cellHeight = CGRectGetMaxY(self.bgViewF) + padding;
+    self.cellHeight = CGRectGetMaxY(self.bgViewF) + padding / 2;
 }
 @end

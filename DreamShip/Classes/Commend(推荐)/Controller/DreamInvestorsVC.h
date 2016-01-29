@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DreamInvestorsVC : UIViewController
+@interface DreamInvestorsVC : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
 @end

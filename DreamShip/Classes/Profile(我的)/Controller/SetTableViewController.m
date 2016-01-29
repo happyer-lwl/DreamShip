@@ -50,7 +50,6 @@
 
     self.navigationItem.title = @"设置";
     self.tableView.tableHeaderView.height = 0;
-    self.tableView.separatorColor = kViewBgColor;
     
     [self setSwitchInfo];
     [self setGroupSetting];
@@ -157,7 +156,7 @@
     
     if (cell.tag == kTagQuit) {
         UIButton *quitButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, kScreenWidth - 20, 44)];
-        quitButton.backgroundColor = kButtonBgIconGray;
+        quitButton.backgroundColor = kBtnFireColorNormal;
         [quitButton setTitle:item.title forState:UIControlStateNormal];
         [quitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [quitButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];

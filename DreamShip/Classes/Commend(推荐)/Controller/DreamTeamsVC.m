@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"梦想团队";
+    self.title = @"寻梦团";
     self.navigationController.navigationBarHidden = NO;
     self.view.backgroundColor = kViewBgColor;
 }

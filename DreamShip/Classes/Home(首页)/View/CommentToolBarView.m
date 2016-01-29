@@ -28,12 +28,12 @@
         input.backgroundColor = kViewBgColor;
         input.keyboardType = UIKeyboardTypeDefault;
         input.borderStyle = UITextBorderStyleRoundedRect;
-        input.placeholder = @"大侠,请指教点什么吧...";
+        input.placeholder = @"追梦者,请指教...";
         _inputTextField = input;
         [self addSubview:input];
         
         UIButton *comment = [[UIButton alloc] init];
-        [comment setTitleColor:kTitleBlueColor forState:UIControlStateNormal];
+        [comment setTitleColor:kTitleFireColorNormal forState:UIControlStateNormal];
         [comment setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
         [comment setTitle:@"指点" forState:UIControlStateNormal];
         [comment addTarget:self action:@selector(commentClick) forControlEvents:UIControlEventTouchUpInside];

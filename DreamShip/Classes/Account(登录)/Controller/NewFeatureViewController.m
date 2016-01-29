@@ -37,7 +37,7 @@
             imageView.height = scrollH;
             imageView.x = scrollW * i;
             imageView.y = 0;
-            imageView.backgroundColor = kTitleBlueColor;
+            imageView.backgroundColor = kBtnFireColorNormal;
             imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"new_feature_%d", i + 1]];
             
             if (i == 3) {

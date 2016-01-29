@@ -10,11 +10,16 @@
 #import "DreamsInfoVC.h"
 
 #import "UIImageView+WebCache.h"
+#import "UIButton+WebCache.h"
+#import "UINavigationBar+BackgroundColor.h"
 
 #import "AccountTool.h"
 #import "AccountModel.h"
 
 #import "SetTableViewController.h"
+#import "ProfileUserPointsVC.h"
+#import "DreamProgressVC.h"
+#import "HelpCenterVC.h"
 #import "SelfInfoSetViewController.h"
 #import "TableGroupModel.h"
 #import "TableItemModel.h"
@@ -38,6 +43,11 @@
 
 @property (nonatomic, strong) NSMutableArray* groups;
 
+@property (nonatomic, weak) UITableView *tableView;
+@property (nonatomic, weak) UIImageView *headerView;
+@property (nonatomic, weak) UIButton    *userImageBtn;
+@property (nonatomic, weak) UILabel     *userNameLabel;
+
 @end
 
 @implementation ProfileViewController
@@ -49,20 +59,14 @@
     return _groups;
 }
 
--(id)init{
-    return [self initWithStyle:UITableViewStyleGrouped];
-}
-
 -(void)viewDidLoad{
     [super viewDidLoad];
     
-    self.tableView.backgroundColor = RGBColor(240, 240, 240);
+    self.navigationItem.title = @"";
+    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:0];
     
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    
-    self.tableView.contentInset = UIEdgeInsetsMake(-35, 0, 0, 0);
-//    self.tableView.scrollEnabled = NO;
+    [self setHeadView];
+    [self setTableViewUI];
     
     [self setGroup1];
     [self setGroup2];
@@ -73,11 +77,84 @@
     [self.tableView reloadData];
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationItem.title = @"";
+    
+    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:0];
+    
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
+    [self performSelector:@selector(updateNavBackgroundAlpha) withObject:self afterDelay:0.2];
+}
+
+-(void)updateNavBackgroundAlpha{
+    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:1];
+}
+
+-(void)setHeadView{
+    AccountModel *account = [AccountTool account];
+
+    UIImageView *headBgImageView = [[UIImageView alloc] init];
+    headBgImageView.frame = CGRectMake(0, 0, kScreenWidth, 1.0/4.0 * kScreenHeight);
+    headBgImageView.backgroundColor = kBtnFireColorNormal;
+    headBgImageView.image = [UIImage imageNamed:@"Dream2"];
+    headBgImageView.userInteractionEnabled = YES;
+    self.headerView = headBgImageView;
+    
+    CGFloat buttonWH = 80;
+    UIButton *userImageBtn = [[UIButton alloc] init];
+    userImageBtn.x = kScreenWidth/2.0 - buttonWH/2;
+    userImageBtn.y = 30;
+    userImageBtn.width = buttonWH;
+    userImageBtn.height = buttonWH;
+    userImageBtn.backgroundColor = [UIColor whiteColor];
+    userImageBtn.layer.cornerRadius = 40;
+    userImageBtn.layer.borderColor = [UIColor whiteColor].CGColor;
+    userImageBtn.layer.borderWidth = 2;
+    userImageBtn.layer.masksToBounds = YES;
+    [userImageBtn addTarget:self action:@selector(selfInfoSetView) forControlEvents:UIControlEventTouchUpInside];
+    [userImageBtn sd_setBackgroundImageWithURL:[NSURL URLWithString:account.userImage] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
+    self.userImageBtn = userImageBtn;
+    [self.headerView addSubview:userImageBtn];
+    
+    UILabel *userName = [[UILabel alloc] init];
+    userName.frame = CGRectMake(0, CGRectGetMaxY(self.userImageBtn.frame) + 10, kScreenWidth, 30);
+    userName.text = account.userRealName;
+    userName.textColor = [UIColor whiteColor];
+    userName.textAlignment = NSTextAlignmentCenter;
+    userName.userInteractionEnabled = YES;
+    self.userNameLabel = userName;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selfInfoSetView)];
+    tap.numberOfTapsRequired = 1;
+    tap.numberOfTouchesRequired = 1;
+    [userName addGestureRecognizer:tap];
+    
+    [self.headerView addSubview:userName];
+    
+    [self.view addSubview:self.headerView];
+}
+
+-(void)setTableViewUI{
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenWidth, kScreenHeight - self.headerView.height) style:UITableViewStyleGrouped];
+    tableView.backgroundColor =kViewBgColor;
+    tableView.delegate = self;
+    tableView.dataSource = self;
+    tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    [self.view addSubview:tableView];
+    self.tableView = tableView;
+}
+
 /**
  *  设置头像后更新
  */
 -(void)updateUserImage{
-    [self.tableView reloadData];
+    AccountModel *account = [AccountTool account];
+    [self.userImageBtn sd_setBackgroundImageWithURL:[NSURL URLWithString:account.userImage] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
 }
 
 -(void)setGroup1{
@@ -87,15 +164,15 @@
     TableItemModel *item = [TableItemModel initWithTitle:model.userRealName detailTitle:model.userWords tag:kTagMine];
     group.items = @[item];
     
-    [self.groups addObject:group];
+    //[self.groups addObject:group];
 }
 
 -(void)setGroup2{
     TableGroupModel *group = [TableGroupModel group];
     
-    TableItemModel *item1 = [TableItemModel initWithTitle:@"我做的梦" tag:kTagMyDream];
-    TableItemModel *item2 = [TableItemModel initWithTitle:@"我的收藏" tag:kTagMyCollection];
-    TableItemModel *item3 = [TableItemModel initWithTitle:@"我的关注" tag:kTagMyFocus];
+    TableItemModel *item1 = [TableItemModel initWithTitle:@"我做的梦" icon:@"vip" tag:kTagMyDream];
+    TableItemModel *item2 = [TableItemModel initWithTitle:@"我的收藏" icon:@"collect" tag:kTagMyCollection];
+    TableItemModel *item3 = [TableItemModel initWithTitle:@"我的关注" icon:@"like" tag:kTagMyFocus];
     group.items = @[item1, item2, item3];
     
     [self.groups addObject:group];
@@ -105,16 +182,20 @@
 -(void)setGroup3{
     TableGroupModel *group = [TableGroupModel group];
     
-    TableItemModel *item1 = [TableItemModel initWithTitle:@"梦想积分" tag:kTagDreamCredit];
-    TableItemModel *item2 = [TableItemModel initWithTitle:@"梦想高度" tag:kTagDreamLevel];
-    TableItemModel *item3 = [TableItemModel initWithTitle:@"帮助中心" tag:kTagHelpCenter];
-    TableItemModel *item4 = [TableItemModel initWithTitle:@"设置" tag:kTagSetting];
+    TableItemModel *item1 = [TableItemModel initWithTitle:@"梦想积分" icon:@"album" tag:kTagDreamCredit];
+    TableItemModel *item2 = [TableItemModel initWithTitle:@"梦想高度" icon:@"pay" tag:kTagDreamLevel];
+    TableItemModel *item3 = [TableItemModel initWithTitle:@"帮助中心" icon:@"draft" tag:kTagHelpCenter];
+    TableItemModel *item4 = [TableItemModel initWithTitle:@"设置" icon:@"card" tag:kTagSetting];
     group.items = @[item1, item2, item3, item4];
     
     [self.groups addObject:group];
 }
 
-
+-(void)selfInfoSetView{
+    SelfInfoSetViewController *selfVC = [[SelfInfoSetViewController alloc] init];
+    selfVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:selfVC animated:YES];
+}
 #pragma mark tableViewDelegate/ dataSource
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.groups.count;
@@ -127,19 +208,11 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == 0) {
-        return 88;
-    }else{
-        return 44;
-    }
+    return 44;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    if (section == 0) {
-        return 0;
-    }else{
-        return 10;
-    }
+    return 10;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
@@ -164,30 +237,33 @@
     
     cell.tag = item.tag;
     
-    if (indexPath.section == 0) {
-        NSURL *imageUrl = [NSURL URLWithString:model.userImage];
-        if (model.userImage.length) {
-            [cell.imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
-        }else{
-            cell.imageView.image = [UIImage imageNamed:@"avatar_default_big"];
-        }
-        cell.imageView.layer.cornerRadius = 40;
-        cell.imageView.layer.masksToBounds = YES;
-        cell.imageView.backgroundColor = [UIColor lightGrayColor];
-        NSString *title = [NSString stringWithFormat:@"追梦人: %@", item.title];
-        NSString *detailTitle = [NSString stringWithFormat:@"  %@", item.detailTitle];
-        cell.textLabel.text = title;
-//        cell.detailTextLabel.text = detailTitle;
-    }else{
+//    if (indexPath.section == 0) {
+//        NSURL *imageUrl = [NSURL URLWithString:model.userImage];
+//        if (model.userImage.length) {
+//            [cell.imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"avatar_default_big"]];
+//        }else{
+//            cell.imageView.image = [UIImage imageNamed:@"avatar_default_big"];
+//        }
+//        cell.imageView.layer.cornerRadius = 40;
+//        cell.imageView.layer.masksToBounds = YES;
+//        cell.imageView.backgroundColor = [UIColor lightGrayColor];
+//        NSString *title = [NSString stringWithFormat:@"追梦人: %@", item.title];
+//        NSString *detailTitle = [NSString stringWithFormat:@"  %@", item.detailTitle];
+//        cell.textLabel.text = title;
+////        cell.detailTextLabel.text = detailTitle;
+//    }else{
         cell.textLabel.text = item.title;
-    }
+        if (item.icon.length) {
+            cell.imageView.image = [UIImage imageNamed:item.icon];
+        }
+//    }
     
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+
     if (cell.tag == kTagMine){
         SelfInfoSetViewController *selfVC = [[SelfInfoSetViewController alloc] init];
         selfVC.hidesBottomBarWhenPushed = YES;
@@ -204,6 +280,7 @@
         dreamInfoVC.title = model.userRealName;
         dreamInfoVC.user = userInfo;
         dreamInfoVC.hidesBottomBarWhenPushed = YES;
+        
         [self.navigationController pushViewController:dreamInfoVC animated:YES];
     }else if (cell.tag == kTagMyFocus){
         MyFocusedUserVC *focusedUserVC = [[MyFocusedUserVC alloc] init];
@@ -220,6 +297,15 @@
         dreamInfoVC.api_type = @"getCollections";
         dreamInfoVC.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:dreamInfoVC animated:YES];
+    }else if (cell.tag == kTagDreamCredit){
+        ProfileUserPointsVC *userPointsVC = [[ProfileUserPointsVC alloc] init];
+        [self.navigationController pushViewController:userPointsVC animated:YES];
+    }else if (cell.tag == kTagDreamLevel){
+        DreamProgressVC *dreamProgress = [[DreamProgressVC alloc] init];
+        [self.navigationController pushViewController:dreamProgress animated:YES];
+    }else if (cell.tag == kTagHelpCenter){
+        HelpCenterVC *helpCenterVC = [[HelpCenterVC alloc] init];
+        [self.navigationController pushViewController:helpCenterVC animated:YES];
     }
 }
 

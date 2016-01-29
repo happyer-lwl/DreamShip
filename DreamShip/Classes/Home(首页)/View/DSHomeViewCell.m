@@ -61,7 +61,7 @@
     UIImageView *bgImageView = [[UIImageView alloc] init];
     bgImageView.backgroundColor = [UIColor whiteColor];
     [self.contentView addSubview:bgImageView];
-    bgImageView.layer.cornerRadius = 5;
+    bgImageView.layer.cornerRadius = 3;
     bgImageView.userInteractionEnabled = YES;
     self.bgView = bgImageView;
     
@@ -80,7 +80,7 @@
     
     // 昵称
     UILabel *nameLabel = [[UILabel alloc] init];
-    nameLabel.textColor = kTitleDarkBlueColor;
+    nameLabel.textColor = kTitleFireColorNormal;
     nameLabel.font = kDSDreamCellNameFont;
     [self.bgView addSubview:nameLabel];
     self.nameLabel.backgroundColor = [UIColor whiteColor];
@@ -135,8 +135,9 @@
     // 工具栏
     ToolBarView *toolBar = [ToolBarView toolBar];
     toolBar.delegate = self;
+    toolBar.backgroundColor = kViewBgColor;
     self.toolBar = toolBar;
-    self.toolBar.layer.cornerRadius = 5;
+    self.toolBar.layer.cornerRadius = 3;
     [self.contentView addSubview:self.toolBar];
 }
 
@@ -217,13 +218,8 @@
 }
 
 -(void)collectionClick:(UIButton *)sender{
-    if (sender.selected) {
-        DBLog(@"collection yes");
-    }else{
-        DBLog(@"collection no");
-    }
-    if ([self.delegate respondsToSelector:@selector(cellCollectionClicked:state:)]) {
-        [self.delegate cellCollectionClicked:self.dreamFrame state:sender.selected];
+    if ([self.delegate respondsToSelector:@selector(cellCollectionClicked:state:view:)]) {
+        [self.delegate cellCollectionClicked:self.dreamFrame state:sender.selected view:sender];
     }
 }
 @end

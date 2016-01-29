@@ -15,6 +15,7 @@
 
 #import "MJExtension.h"
 #import "HttpTool.h"
+#import "MJRefresh.h"
 
 #import "AccountModel.h"
 #import "AccountTool.h"
@@ -22,6 +23,7 @@
 @interface MyFocusedUserVC()
 
 @property (nonatomic, strong) NSMutableArray *userFrames;
+@property (nonatomic, weak) UITableView *tableView;
 
 @end
 @implementation MyFocusedUserVC
@@ -31,10 +33,6 @@
         _userFrames = [NSMutableArray array];
     }
     return _userFrames;
-}
-
--(id)init{
-    return [self initWithStyle:UITableViewStyleGrouped];
 }
 
 -(void)viewDidLoad{
@@ -48,9 +46,20 @@
     
     [self getFocusedUsers];
 }
+
 -(void)setTableViewInfo{
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
+    UITableView *tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    
+    tableView.backgroundColor = kViewBgColorDarker;
+    tableView.delegate = self;
+    tableView.dataSource = self;
+    [self.view addSubview:tableView];
+    _tableView = tableView;
+
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self getFocusedUsers];
+    }];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 -(void)getFocusedUsers{
@@ -68,10 +77,17 @@
         
         self.userFrames = [NSMutableArray arrayWithArray:userFrames];
         
+        if (userFrames.count == 0) {
+            [CommomToolDefine addNoDataForView:self.view];
+        }
+        
         [self.tableView reloadData];
+        [self.tableView.mj_header endRefreshing];
+        
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
+        [self.tableView.mj_header endRefreshing];
     }];
 }
 

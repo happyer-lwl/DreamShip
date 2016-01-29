@@ -63,7 +63,7 @@
     //[self.placehoder drawAtPoint:CGPointMake(5, 8) withAttributes:attri];  换行不正确
     
     // 控件rect中换行没问题
-    CGRect placeHolderRect = CGRectMake(5, 8, rect.size.width - 10, rect.size.height - 2 * 8);
+    CGRect placeHolderRect = CGRectMake(0, 8, rect.size.width, rect.size.height - 2 * 8);
     [self.placehoder drawInRect:placeHolderRect withAttributes:attri];
 }
 

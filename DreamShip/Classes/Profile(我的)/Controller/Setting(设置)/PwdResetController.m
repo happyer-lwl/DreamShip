@@ -23,26 +23,18 @@
 
 @implementation PwdResetController
 
--(id)init{
-    self = [super init];
-    if (self) {
-        
-        self.view.backgroundColor = [UIColor whiteColor];
-        self.title = @"密码重置";
-        [self setSubviews];
-    }
-    
-    return self;
-}
-
 -(void)viewDidLoad{
     [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.title = @"密码重置";
+    [self setSubviews];
 }
 
 // 设置UI子控件
 -(void)setSubviews{
     // 密码和密码确认
-    PwdConfirmView *pwdConfirmView = [[PwdConfirmView alloc] initWithFrame:CGRectMake(10, 9, kScreenWidth - 20, 90)];
+    PwdConfirmView *pwdConfirmView = [[PwdConfirmView alloc] initWithFrame:CGRectMake(10, 70, kScreenWidth - 20, 90)];
     [self.view addSubview:pwdConfirmView];
     _pwdCV = pwdConfirmView;
     
@@ -50,9 +42,9 @@
     UIButton *confirmButton = [[UIButton alloc] initWithFrame: CGRectMake(10, CGRectGetMaxY(pwdConfirmView.frame) + 20, kScreenWidth - 2 * 10, 44)];
     confirmButton.layer.cornerRadius = 5;
     [confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [confirmButton setTitleColor:kTitleBlueColor forState:UIControlStateHighlighted];
+    [confirmButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
     [confirmButton setTitle:@"完成" forState:UIControlStateNormal];
-    [confirmButton setBackgroundColor:kButtonBgDarkBlueColor];
+    [confirmButton setBackgroundColor:kBtnFireColorNormal];
     [confirmButton addTarget:self action:@selector(finishConfirm) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:confirmButton];
     _finishBtn = confirmButton;

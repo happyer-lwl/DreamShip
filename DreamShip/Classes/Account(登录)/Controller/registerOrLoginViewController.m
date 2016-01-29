@@ -20,6 +20,9 @@
 #import "AccountTool.h"
 #import "UIWindow+Extension.h"
 
+#import <RongIMKit/RongIMKit.h>
+#import <RongIMLib/RongIMLib.h>
+
 #define kRegisterTag 0
 #define kLoginTag    1
 
@@ -66,21 +69,21 @@
     // Logo
     UILabel *logoTitle = [[UILabel alloc] initWithFrame:CGRectMake(10, 50, kScreenWidth - 20, 30)];
     logoTitle.text = @"梦扬";
-    logoTitle.textColor = kTitleDarkBlueColor;
+    logoTitle.textColor = kTitleFireColorNormal;
     logoTitle.font = [UIFont systemFontOfSize:28];
     [logoTitle setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:logoTitle];
     
     UILabel *logoDetail1Title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(logoTitle.frame) + 20, kScreenWidth - 20, 15)];
     logoDetail1Title.text = @"说出梦想";
-    logoDetail1Title.textColor = kTitleDarkBlueColor;
+    logoDetail1Title.textColor = kTitleFireColorNormal;
     logoDetail1Title.font = [UIFont systemFontOfSize:14];
     [logoDetail1Title setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:logoDetail1Title];
     
     UILabel *logoDetail2Title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(logoDetail1Title.frame)+5, kScreenWidth - 20, 15)];
     logoDetail2Title.text = @"我们为它扬帆启航";
-    logoDetail2Title.textColor = kTitleDarkBlueColor;
+    logoDetail2Title.textColor = kTitleFireColorNormal;
     logoDetail2Title.font = [UIFont systemFontOfSize:14];
     [logoDetail2Title setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:logoDetail2Title];
@@ -102,7 +105,7 @@
     // 注册和登录按键
     CGFloat rOlButtonX = 30;
     UIButton *registerOrLoginButton = [[UIButton alloc] initWithFrame: CGRectMake(rOlButtonX, CGRectGetMaxY(userRegisterView.frame) + 25, kScreenWidth - 2 * rOlButtonX, 44)];
-    registerOrLoginButton.backgroundColor = kButtonBgDarkBlueColor;
+    registerOrLoginButton.backgroundColor = kBtnFireColorNormal;
     [registerOrLoginButton setTitle:@"注 册" forState:UIControlStateNormal];
     registerOrLoginButton.layer.cornerRadius = 5;
     registerOrLoginButton.tag = kRegisterTag;
@@ -120,7 +123,7 @@
     
     // 协议按键
     UIButton *protocolButton = [[UIButton alloc] initWithFrame: CGRectMake(100, CGRectGetMaxY(registerProtocolTitle.frame) + 5, kScreenWidth - 2 * 100, 13)];
-    [protocolButton setTitleColor:kButtonBgBlueColor forState:UIControlStateNormal];
+    [protocolButton setTitleColor:kBtnLinkBlueColor forState:UIControlStateNormal];
     [protocolButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
     [protocolButton setTitle:@"梦扬的协议" forState:UIControlStateNormal];
     protocolButton.titleLabel.font = [UIFont systemFontOfSize:14];
@@ -130,7 +133,7 @@
     
     // 注册和登录切换按键
     UIButton *changeButton = [[UIButton alloc] initWithFrame: CGRectMake(100, CGRectGetMaxY(registerOrLoginButton.frame) + 70, kScreenWidth - 2 * 100, 44)];
-    [changeButton setTitleColor:kTitleBlueColor forState:UIControlStateNormal];
+    [changeButton setTitleColor:kTitleFireColorNormal forState:UIControlStateNormal];
     [changeButton setTitle:@"要不去登录？" forState:UIControlStateNormal];
     [changeButton addTarget:self action:@selector(changeClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:changeButton];
@@ -163,6 +166,8 @@
                     params[@"api_type"] = @"regUser";
                     params[@"phone"] = userName;
                     params[@"pwd"] = userPwdMd5;
+                    params[@"appKey"] = kRongCloudAppKey;
+                    params[@"appSecret"] = kRongCloudAppSecret;
                     
                     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary *json) {
                         NSString *result = [json[@"result"] stringValue];
@@ -217,6 +222,9 @@
         
         DBLog(@"%@", json);
         if ([result isEqualToString:@"200"]) {//登录
+            
+            [KUserDefaults setObject:json[@"msg"] forKey:@"RongCloudToken"];
+            
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
             [dict setObject:name forKey:@"userPhone"];
             [dict setObject:pwd forKey:@"userPwd"];
@@ -230,6 +238,9 @@
             
             AccountModel *model = [AccountModel accountWithDictionary:dict];
             [AccountTool saveAccount:model];
+            
+            AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+            [delegate connectServerWithToken];
             
             [self.userLoginView.userName resignFirstResponder];
             [self.userLoginView.userPwd resignFirstResponder];
@@ -249,6 +260,53 @@
     } failure:^(NSError *error) {
         [MBProgressHUD hideHUD];
         [MBProgressHUD showError:@"网络错误!"];
+    }];
+}
+
++(void)loginIn:(NSString *)name pwd:(NSString *)pwd{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"api_uid"] = @"users";
+    params[@"api_type"] = @"loginIn";
+    params[@"phone"] = name;
+    params[@"pwd"] = pwd;
+    DBLog(@"%@", Host_Url);
+    DBLog(@"%@", params);
+    
+    [MBProgressHUD showMessage:@"正在登录"];
+    [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary *json) {
+        NSString *result = [json[@"result"] stringValue];
+        NSDictionary *dataDict = json[@"data"];
+        
+        DBLog(@"%@", json);
+        if ([result isEqualToString:@"200"]) {//登录
+            
+            [KUserDefaults setObject:json[@"msg"] forKey:@"RongCloudToken"];
+            
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            [dict setObject:name forKey:@"userPhone"];
+            [dict setObject:pwd forKey:@"userPwd"];
+            [dict setObject:dataDict[@"mail"] forKey:@"userMail"];
+            [dict setObject:dataDict[@"name"] forKey:@"userRealName"];
+            [dict setObject:dataDict[@"image"] forKey:@"userImage"];
+            [dict setObject:dataDict[@"sex"] forKey:@"userSex"];
+            [dict setObject:dataDict[@"id"] forKey:@"userID"];
+            [dict setObject:dataDict[@"words"] forKey:@"userWords"];
+            [dict setObject:dataDict[@"addr"] forKey:@"userAddr"];
+            
+            AccountModel *model = [AccountModel accountWithDictionary:dict];
+            [AccountTool saveAccount:model];
+            
+            AppDelegate *delegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+            [delegate connectServerWithToken];
+        }else if ([result isEqualToString:@"201"]){
+            DBLog(@"当前用户不存在，请确认!");
+        }else if ([result isEqualToString:@"202"]){
+            DBLog(@"密码错误!");
+        }else{
+            DBLog(@"数据错误!");
+        }
+    } failure:^(NSError *error) {
+        DBLog(@"网络错误!");
     }];
 }
 

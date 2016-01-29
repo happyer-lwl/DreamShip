@@ -72,9 +72,9 @@
     // 发送验证码
     UIButton *sendCodeButton = [[UIButton alloc] initWithFrame: CGRectMake(CGRectGetMaxX(pwd.frame) + 20, CGRectGetMaxY(name.frame) + 6, 120, cellHeight - 10)];
     sendCodeButton.layer.cornerRadius = 5;
-    [sendCodeButton setBackgroundColor:kButtonBgDarkBlueColor];
+    [sendCodeButton setBackgroundColor:kBtnFireColorNormal];
     [sendCodeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [sendCodeButton setTitleColor:kTitleBlueColor forState:UIControlStateHighlighted];
+    [sendCodeButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
     [sendCodeButton setTitle:@"发送验证码" forState:UIControlStateNormal];
     [sendCodeButton addTarget:self action:@selector(sendCodeClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sendCodeButton];
@@ -83,9 +83,9 @@
     // 确认
     UIButton *confirmButton = [[UIButton alloc] initWithFrame: CGRectMake(10, CGRectGetMaxY(pwd.frame) + 40, kScreenWidth - 20, cellHeight)];
     confirmButton.layer.cornerRadius = 5;
-    [confirmButton setBackgroundColor:kButtonBgDarkBlueColor];
+    [confirmButton setBackgroundColor:kBtnFireColorNormal];
     [confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [confirmButton setTitleColor:kTitleBlueColor forState:UIControlStateHighlighted];
+    [confirmButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
     [confirmButton setTitle:@"确认" forState:UIControlStateNormal];
     [confirmButton addTarget:self action:@selector(confirmClick) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:confirmButton];

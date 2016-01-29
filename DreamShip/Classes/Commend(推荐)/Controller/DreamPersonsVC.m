@@ -39,7 +39,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = @"梦想达人";
+    self.title = @"追梦人";
     self.navigationController.navigationBarHidden = NO;
     self.view.backgroundColor = kViewBgColor;
     
@@ -61,7 +61,10 @@
     [self.view addSubview:tableView];
     _tableView = tableView;
     
-    [self getFocusedUsers];
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self getFocusedUsers];
+    }];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 -(void)getFocusedUsers{
@@ -78,10 +81,16 @@
         
         self.userFrames = [NSMutableArray arrayWithArray:userFrames];
         
+        if (self.userFrames.count == 0) {
+            [CommomToolDefine addNoDataForView:self.view];
+        }
+        
         [self.tableView reloadData];
+        [self.tableView.mj_header endRefreshing];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
+        [self.tableView.mj_header endRefreshing];
     }];
 }
 

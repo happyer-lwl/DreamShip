@@ -8,6 +8,7 @@
 
 #import "HomeViewController.h"
 #import "MainNavigationController.h"
+//#import "MJPhotoBrowser.h"
 
 #import "HomeDetailVC.h"
 #import "ComposeDreamVC.h"
@@ -25,6 +26,7 @@
 #import "MJExtension.h"
 #import "MJRefresh.h"
 #import "UIBarButtonItem+Extension.h"
+#import "UITabBar+littleRedDotBadge.h"
 
 #define kDreamTypeSegHeight 40
 
@@ -33,6 +35,7 @@
 @property (nonatomic, weak) UITableView *tableView;
 @property (nonatomic, weak) UIBarButtonItem *addDreamBarItem;
 @property (nonatomic, weak) UISegmentedControl *dreamTypeSeg;
+@property (nonatomic, weak) UIImageView *animationImageView;
 
 @property (nonatomic, strong) NSMutableArray *dreamFrames;
 
@@ -54,9 +57,6 @@
     
     self.bScrollUp = YES;
     
-    //self.view.backgroundColor = kTitleDarkBlueColor;
-    self.view.backgroundColor = [UIColor grayColor];
-    
     [NSThread sleepForTimeInterval:kLaunchImageShowSec];
     
     [self setNavigationView];
@@ -65,6 +65,8 @@
     [self setHeaderRefreshView];
     
     [kNotificationCenter addObserver:self selector:@selector(getNewDreams) name:kNotificationComposed object:nil];
+    [kNotificationCenter addObserver:self selector:@selector(updateBadgeNum) name:kNotificationUpdataBadge object:nil];
+    [kNotificationCenter postNotificationName:kNotificationUpdataBadge object:nil];
 }
 
 /**
@@ -90,9 +92,9 @@
 -(void)setDreamTypeSelectView{
     UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[@"全部类型", @"认真做梦", @"组队寻友", @"拉拉投资"]];
     seg.frame = CGRectMake(-2.5, 0, kScreenWidth + 5, kDreamTypeSegHeight);
-    seg.backgroundColor = kTitleDarkBlueColor;
+    seg.backgroundColor = kViewBgColorDarkest;
     seg.selectedSegmentIndex = 0;
-    seg.tintColor = [UIColor whiteColor];
+    seg.tintColor = kViewBgColor;
     [self.view addSubview:seg];
     [seg addTarget:self action:@selector(dreamTypeSegChanged) forControlEvents:UIControlEventValueChanged];
     _dreamTypeSeg = seg;
@@ -111,7 +113,7 @@
 -(void)setTableViewInfo{
     UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kDreamTypeSegHeight, kScreenWidth, kScreenHeight - 64 - kDreamTypeSegHeight - 44) style:UITableViewStylePlain];
 
-    tableView.backgroundColor = kViewBgColor220;
+    tableView.backgroundColor = kViewBgColorDarkest;
     
     tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -150,14 +152,12 @@
         [self.dreamFrames removeAllObjects];
         self.dreamFrames = [NSMutableArray arrayWithArray:dreamFrames];
 
-        [self.tableView reloadData];
         if (dreamFrames.count == 0){
-            [self.tableView.mj_header endRefreshing];
-            [MBProgressHUD showError:@"没有数据"];
-        }else{
-            [self.tableView.mj_header endRefreshing];
+            [CommomToolDefine addNoDataForView:self.view];
         }
         
+        [self.tableView reloadData];
+        [self.tableView.mj_header endRefreshing];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
@@ -197,7 +197,7 @@
 //-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
 //    UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[@"认真做梦", @"组队寻友", @"拉拉投资"]];
 //    seg.frame = CGRectMake(5, 0, kScreenWidth - 10, 30);
-//    seg.backgroundColor = kTitleDarkBlueColor;
+//    seg.backgroundColor = kBtnFireColorNormal;
 //    seg.selectedSegmentIndex = 0;
 //    seg.tintColor = [UIColor whiteColor];
 //    //[self.view addSubview:seg];
@@ -227,7 +227,7 @@
     
     HomeDetailVC *homeDetailVC = [[HomeDetailVC alloc] init];
     [homeDetailVC setDreamFrame:selectedDream];
-
+    homeDetailVC.bLastPageIn = NO;
     [kNotificationCenter addObserver:self selector:@selector(updateCellInfo) name:kUpdateCellInfoFromCell object:nil];
     
     homeDetailVC.hidesBottomBarWhenPushed = YES;
@@ -242,21 +242,19 @@
         if (newx - oldx > 5) {
             self.bScrollUp = NO;
             
-            [UIView animateWithDuration:0.5 animations:^{
+            [UIView animateWithDuration:0.2 animations:^{
                 self.dreamTypeSeg.y = 0;
                 self.tableView.y = kDreamTypeSegHeight;
                 self.tableView.height = kScreenHeight - 64 - kDreamTypeSegHeight;
-                self.tabBarController.tabBar.y = kScreenHeight;
             }];
             
         }else if(oldx - newx > 5){
             self.bScrollUp = YES;
             
-            [UIView animateWithDuration:0.5 animations:^{
+            [UIView animateWithDuration:0.2 animations:^{
                 self.dreamTypeSeg.y = 0 - self.dreamTypeSeg.height;
                 self.tableView.y = 0;
                 self.tableView.height = kScreenHeight - 64 - 44;
-                self.tabBarController.tabBar.y = kScreenHeight - self.tabBarController.tabBar.height;
             }];
         }
         oldx = newx;
@@ -320,10 +318,20 @@
 }
 
 -(void)cellPhotoViewClicked:(DSDreamFrame *)dreamFrame{
-    DBLog(@"Photo clicked");
+    NSMutableArray *photoArray = [NSMutableArray array];
+//    
+//    MJPhotoBrowser *photoBrowser = [[MJPhotoBrowser alloc] init];
+//    MJPhoto *photo = [[MJPhoto alloc] init];
+//    DSDreamModel *dream = dreamFrame.dream;
+//    photo.url = dream.pic_url;
+//    [photoArray addObject:photo];
+//    
+//    photoBrowser.photos = photoArray;
+//    photoBrowser.currentPhotoIndex = 0;
+//    [photoBrowser show];
 }
 
--(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected{
+-(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected view:(id)view{
     DBLog(@"Collection Clicked");
     
     AccountModel *account = [AccountTool account];
@@ -339,11 +347,55 @@
         NSString *msg = json[@"msg"];
         
         [self modifyDreamFrames:dreamFrame collectState:!selected];
+        
         [self.tableView reloadData];
         [MBProgressHUD showSuccess:msg];
     } failure:^(NSError *error) {
         DBLog(@"error %@", error.description);
     }];
+}
+
+-(void)animationWithView:(UIView *)view{
+    CGPoint endPoint = CGPointMake(0, 0);
+    //CGPoint endPoint = CGPointMake(330, 300);
+    CGRect rc = [view.superview convertRect:view.frame toView:self.view];
+    CGFloat rcCenterX = rc.origin.x + rc.size.width / 2;
+    CGFloat rcCenterY = rc.origin.y + rc.size.height / 2;
+    CGPoint startPoint = [self.view convertPoint:CGPointMake(rcCenterX, rcCenterY) toView:self.view];
+    
+    UIImageView *imageView = [[UIImageView alloc] init];
+    imageView.frame = CGRectMake(startPoint.x, startPoint.y, 30, 30);
+    imageView.image = [UIImage imageNamed:@"card_icon_favorite_highlighted"];
+    //_animationImageView = imageView;
+    
+    CALayer *layer = [[CALayer alloc] init];
+    layer.contents = imageView.layer.contents;
+    layer.frame = imageView.frame;
+    layer.opacity = 1;
+    [self.view.layer addSublayer:layer];
+    
+    CAKeyframeAnimation *CHAnimation=[CAKeyframeAnimation animationWithKeyPath:@"collection"];
+    
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:startPoint];
+    
+    //贝塞尔曲线中间点
+    float sx = startPoint.x;
+    float sy = startPoint.y;
+    float ex = endPoint.x;
+    float ey = endPoint.y;
+    float x = sx+(ex-sx)/3;
+    float y = sy+(ey-sy)*0.5-300;
+    CGPoint centerPoint = CGPointMake(x,y);
+    [path addQuadCurveToPoint:endPoint controlPoint:centerPoint];
+    
+    CHAnimation.path = path.CGPath;
+    CHAnimation.removedOnCompletion = NO;
+    CHAnimation.fillMode = kCAFillModeBoth;
+    CHAnimation.duration = 1.5;
+    CHAnimation.delegate = self;
+    
+    [layer addAnimation:CHAnimation forKey:@"collection"];
 }
 
 -(void)modifyDreamFrames:(DSDreamFrame *)dreamFrame collectState:(BOOL)collectState{
@@ -352,5 +404,18 @@
             dreamFrame.dream.collection = collectState ? @"1" : @"0";
         }
     }
+}
+
+-(void)updateBadgeNum{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger badgeNum = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        if (badgeNum != 0) {
+//            [self.tabBarController.tabBar showBadgeOnItemIndex:2];
+            [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:[NSString stringWithFormat: @"%ld", (long)badgeNum]];
+        }else{
+//            [self.tabBarController.tabBar hideBadgeOnItemIndex:2];
+            [[self.tabBarController.tabBar.items objectAtIndex:2] setBadgeValue:nil];
+        }
+    });
 }
 @end

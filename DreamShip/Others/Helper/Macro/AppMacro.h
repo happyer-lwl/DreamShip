@@ -29,8 +29,12 @@
 //NSUserDefaults
 #define KUserDefaults [NSUserDefaults standardUserDefaults]
 
+//判断设备是否是iphone4
+#define iPhone4 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 960), [[UIScreen mainScreen] currentMode].size) : NO)
 //判断设备是否是iphone5
 #define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+//判断设备是否是iphone6
+#define iPhone6 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1334), [[UIScreen mainScreen] currentMode].size) : NO)
 
 //AppDelegate
 #define KAPP_DELEGATE (AppDelegate *)[UIApplication sharedApplication].delegate

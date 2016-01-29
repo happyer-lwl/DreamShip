@@ -57,7 +57,8 @@
         
         CGFloat headViewH = 30;
         UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, headViewH)];
-        view.backgroundColor = [UIColor colorWithRed:0 green:24/255.0 blue:47/255.0 alpha:1.0];
+        view.backgroundColor = kBtnFireColorNormal;
+        
         [self addSubview:view];
         
         UIButton *closeButton = [[UIButton alloc] init];
@@ -65,7 +66,7 @@
         closeButton.layer.cornerRadius = 2;
         [closeButton setTitle:@"关闭" forState:UIControlStateNormal];
         [closeButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [closeButton setTitleColor:kTitleDarkBlueColor forState:UIControlStateHighlighted];
+        [closeButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
         [closeButton addTarget:self action:@selector(closeAddr) forControlEvents:UIControlEventTouchUpInside];
         _closeButton = closeButton;
         [view addSubview:closeButton];
@@ -83,8 +84,8 @@
         confirmButton.layer.cornerRadius = 2;
         [confirmButton setTitle:@"好 了" forState:UIControlStateNormal];
         [confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [confirmButton setTitleColor:kTitleBlueColor forState:UIControlStateHighlighted];
-        [confirmButton setBackgroundColor:kButtonBgDarkBlueColor];
+        [confirmButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
+        [confirmButton setBackgroundColor:kBtnFireColorNormal];
         [confirmButton addTarget:self action:@selector(confirmAddr) forControlEvents:UIControlEventTouchUpInside];
         _confirmButton = confirmButton;
         [self addSubview:confirmButton];

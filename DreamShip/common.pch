@@ -37,6 +37,9 @@
 #define kKeyWindow [UIApplication sharedApplication].keyWindow
 
 #define kNotificationCenter [NSNotificationCenter defaultCenter]
+#define kNotificationUpdataBadge @"kNotificationUpdataBadge"
+
+
 #define kDocumentPath [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
 #define kCachePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]
 
@@ -49,18 +52,22 @@
 #define RGBColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
 
 // Dream
-#define kTitleBlueColor     RGBColor(56, 155, 250)
-#define kTitleDarkBlueColor RGBColor(0,  24,  47)
-#define kButtonBgBlueColor  RGBColor(45, 124, 244)
-#define kButtonBgDarkBlueColor  RGBColor(0,  24,  47)
-#define kButtonBgIconGray   RGBColor(38, 38, 38)
+#define kTitleFireColorNormal       RGBColor(240,  90, 40)
+#define kTitleFireColorHighlighted  RGBColor(255,  150,  0)
+
+#define kBtnLinkBlueColor   RGBColor(45, 124, 244)
+#define kBtnFireColorNormal RGBColor(240,  90, 40)
 
 #define kNavBgColor         RGBColor(230, 230, 230)
 #define kTableViewBGColor   RGBColor(188, 224, 246)
 
-#define kViewBgColor        RGBColor(240, 240, 240)
-#define kViewBgColor220     RGBColor(220, 220, 220)
+#define kViewBgColor        RGBColor(245, 245, 245)
+#define kViewBgColorDarker  RGBColor(210, 210, 210)
+#define kViewBgColorDarkest RGBColor(150, 150, 150)
+#define kViewBgColorPlaceHoder RGBColor(190, 190, 190)
+
 #define kViewTabbarNormal   RGBColor(123, 123, 123)
+#define kViewTabbarSelected RGBColor(255,  109,  0)
 
 #define kPageControlColor       RGBColor(189, 189, 189)
 #define kPageControlCurColor    [UIColor whiteColor]
@@ -72,5 +79,11 @@ typedef NS_ENUM(NSInteger, DreamRange){
     DreamRangeSelf,
     DreamRangeFriend
 };
+
+#define WS(weakSelf) __weak __typeof(&*self)weakSelf = self;
+
+// 融云
+#define kRongCloudAppKey    @"8luwapkvuq99l"
+#define kRongCloudAppSecret @"It3mAiQtrU"
 
 #endif /* Weibo_pch */

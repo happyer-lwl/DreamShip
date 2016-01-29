@@ -13,9 +13,11 @@
 #import "DreamPersonsVC.h"
 #import "DreamTeamsVC.h"
 #import "DreamInvestorsVC.h"
+#import "DreamChangeVC.h"
+#import "DreamShowVC.h"
 
 #define kScrollImagePages   5
-#define kPartCellHeight     (kScreenHeight - 64 - 44) / 4
+#define kPartCellHeight     (kScreenHeight - 44) / 4
 
 @interface DreamNaviVC()
 
@@ -25,7 +27,9 @@
 @property (nonatomic, weak) UIScrollView *scrollView;
 @property (nonatomic, weak) UIPageControl *pageControl;
 
+@property (nonatomic, strong) NSArray *collectionImageArray;
 @property (nonatomic, strong) NSArray *collectionContentArray;
+@property (nonatomic, strong) NSArray *collectionClassArray;
 
 @property (nonatomic, strong) NSTimer *timer;
 @end
@@ -36,12 +40,32 @@ static NSString *ID = @"indexCell";
 
 -(NSArray *)collectionContentArray{
     if (_collectionContentArray == nil) {
-        NSArray *section0 = @[@"梦想鸡汤",@"梦想达人",@"梦想团队"];
-        NSArray *section1 = @[@"梦想天使吧",@"梦想交换吧",@"梦想成真吧"];
+        NSArray *section0 = @[@"逐梦令",@"追梦人",@"寻梦团"];
+        NSArray *section1 = @[@"助梦人",@"技能交换吧",@"梦游吧"];
         _collectionContentArray = @[section0, section1];
     }
     
     return _collectionContentArray;
+}
+
+-(NSArray *)collectionClassArray{
+    if (_collectionClassArray == nil) {
+        NSArray *sectionClass0 = @[@"DreamDirectsVC", @"DreamPersonsVC", @"DreamTeamsVC"];
+        NSArray *sectionClass1 = @[@"DreamInvestorsVC", @"DreamChangeVC", @"DreamShowVC"];
+        _collectionClassArray = @[sectionClass0, sectionClass1];
+    }
+    
+    return _collectionClassArray;
+}
+
+-(NSArray *)collectionImageArray{
+    if (_collectionImageArray == nil) {
+        NSArray *sectionClass0 = @[@"help", @"person", @"team"];
+        NSArray *sectionClass1 = @[@"angle", @"change", @"successful"];
+        _collectionImageArray = @[sectionClass0, sectionClass1];
+    }
+    
+    return _collectionImageArray;
 }
 
 -(UIScrollView *)scrollView{
@@ -49,7 +73,7 @@ static NSString *ID = @"indexCell";
     if (_scrollView == nil) {
         UIScrollView *scroll = [[UIScrollView alloc]init];
         CGFloat scrollX = 0;
-        CGFloat scrollY = 1;
+        CGFloat scrollY = 0;
         scroll.frame = CGRectMake(scrollX, scrollY, kScreenWidth- 2 * scrollX, kPartCellHeight);
         
         _scrollView = scroll;
@@ -60,11 +84,11 @@ static NSString *ID = @"indexCell";
         for (int i = 0; i < kScrollImagePages; i++) {
             UIImageView *imageView = [[UIImageView alloc]init];
             imageView.width = scrollW;
-            imageView.height = scrollH;
+            imageView.height = kPartCellHeight;
             imageView.x = scrollW * i;
             imageView.y = 0;
             imageView.backgroundColor = kViewBgColor;
-            imageView.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:[ NSString  stringWithFormat:@"Dream%d", i%4] ofType:@"jpg"]];
+            imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"Dream%d", i%4]];
             [_scrollView addSubview:imageView];
         }
         
@@ -88,9 +112,6 @@ static NSString *ID = @"indexCell";
     if (_pageControl == nil) {
         // 添加PageControll 分页，展示目前看的是第几页
         UIPageControl *pageControl = [[UIPageControl alloc]init];
-        //    pageControl.width = 100;
-        //    pageControl.height = 50;    // 如果没有高度，则没有背景，但子控件可以显示
-        //    pageControl.userInteractionEnabled = NO;    //禁止点击，height设置为0，一样不能点击
         pageControl.x = _scrollView.width - 50;
         pageControl.y = _scrollView.height - 10;
         pageControl.numberOfPages = kScrollImagePages - 1;
@@ -99,6 +120,7 @@ static NSString *ID = @"indexCell";
         
         _pageControl = pageControl;
         [self.view addSubview:_pageControl];
+        [self.view bringSubviewToFront:_pageControl];
     }
     
     return _pageControl;
@@ -108,13 +130,13 @@ static NSString *ID = @"indexCell";
     [super viewDidLoad];
     
     self.view.backgroundColor = kViewBgColor;
-    
+
     [self scrollView];
     [self pageControl];
     [self setHeaderView];
     [self setCollectionViewInfo];
     
-    _timer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(updataNextImageList) userInfo:nil repeats:YES];
+    //_timer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(updataNextImageList) userInfo:nil repeats:YES];
 }
 
 -(void)updataNextImageList{
@@ -155,7 +177,7 @@ static NSString *ID = @"indexCell";
 #pragma mark - ScrollContorll 代理实现
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     // 停下来的当前页数
-    NSLog(@"%@", NSStringFromCGPoint(scrollView.contentOffset));
+    //NSLog(@"%@", NSStringFromCGPoint(scrollView.contentOffset));
     
     // 计算页数
     double page = scrollView.contentOffset.x / scrollView.width;
@@ -193,29 +215,13 @@ static NSString *ID = @"indexCell";
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     IndexViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ID forIndexPath:indexPath];
-    
-    if (indexPath.section == 0) {
-        if (indexPath.row == 0) {
-            cell.image = [UIImage imageNamed:@"help"];
-        }else if (indexPath.row == 1){
-            cell.image = [UIImage imageNamed:@"person"];
-        }else{
-            cell.image = [UIImage imageNamed:@"team"];
-        }
-    }else{
-        if (indexPath.row == 0) {
-            cell.image = [UIImage imageNamed:@"angle"];
-        }else if (indexPath.row == 1){
-            cell.image = [UIImage imageNamed:@"change"];
-        }else{
-            cell.image = [UIImage imageNamed:@"successful"];
-        }
-    }
+    NSArray *imageSection = [self.collectionImageArray objectAtIndex:indexPath.section];
+    cell.image = [UIImage imageNamed:[imageSection objectAtIndex:indexPath.row]];
     
     NSArray *sectionArray = [self.collectionContentArray objectAtIndex:indexPath.section];
     
     cell.label.text = [sectionArray objectAtIndex:indexPath.row];
-    cell.label.textColor = kTitleDarkBlueColor;
+    cell.label.textColor = kViewTabbarNormal;
     cell.label.font = [UIFont systemFontOfSize:14];
     
     return cell;
@@ -224,20 +230,13 @@ static NSString *ID = @"indexCell";
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     UIViewController *vc = nil;
     
-    if (indexPath.section == 0) {
-        if (indexPath.row == 0) {
-            vc = [[DreamDirectsVC alloc] init];
-        }else if (indexPath.row == 1){
-            vc = [[DreamPersonsVC alloc] init];
-        }else if (indexPath.row == 2){
-            vc = [[DreamTeamsVC alloc] init];
-        }
-    }else{
-        
+    NSArray *section = [self.collectionClassArray objectAtIndex:indexPath.section];
+    Class obj = NSClassFromString([section objectAtIndex:indexPath.row]);
+    if ([obj isSubclassOfClass:[UIViewController class]]) {
+        vc = [[obj alloc] init];
+        vc.hidesBottomBarWhenPushed = YES;
+        vc.navigationController.navigationBar.hidden = NO;
+        [self.navigationController pushViewController:vc animated:YES];
     }
-    
-    vc.hidesBottomBarWhenPushed = YES;
-    vc.navigationController.navigationBar.hidden = NO;
-    [self.navigationController pushViewController:vc animated:YES];
 }
 @end

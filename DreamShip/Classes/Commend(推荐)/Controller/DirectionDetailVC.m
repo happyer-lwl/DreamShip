@@ -20,7 +20,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = kViewBgColor;
-    self.title = @"梦想就在那儿";
+    self.title = @"梦想在前方";
     
     UITextView *textView = [[UITextView alloc] init];
     textView.frame = self.view.frame;

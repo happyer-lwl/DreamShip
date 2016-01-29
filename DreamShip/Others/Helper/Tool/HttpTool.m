@@ -82,6 +82,8 @@
     params[@"phone"] = model.userPhone;
     params[@"mod_key"] = mod_key;
     params[@"mod_value"] = mod_value;
+    params[@"appKey"] = kRongCloudAppKey;
+    params[@"appSecret"] = kRongCloudAppSecret;
     
     __block BOOL updateState = YES;
     

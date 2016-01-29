@@ -38,7 +38,7 @@ UIKIT_EXTERN NSString *const CONVERSATION_CELL_STATUS_SEND_HASREAD;
 /*!
  进度
  */
-@property(nonatomic) NSInteger progress;
+@property(nonatomic) NSInteger progress1;
 
 @end
 #endif

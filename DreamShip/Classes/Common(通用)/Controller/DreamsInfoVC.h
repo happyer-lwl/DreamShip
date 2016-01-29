@@ -15,4 +15,5 @@
 
 @property (nonatomic, strong) DSUser *user;
 @property (nonatomic, copy) NSString *api_type;
+
 @end

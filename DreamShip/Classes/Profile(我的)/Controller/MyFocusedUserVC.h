@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MyFocusedUserVC : UITableViewController<UITableViewDelegate, UITableViewDataSource>
+@interface MyFocusedUserVC : UIViewController<UITableViewDelegate, UITableViewDataSource>
 
 @end

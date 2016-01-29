@@ -17,21 +17,46 @@
     return item;
 }
 
++(instancetype)initWithTitle:(NSString *)title icon:(NSString *)icon{
+    TableItemModel *item = [[TableItemModel alloc] init];
+    item.title = title;
+    item.icon = icon;
+    
+    return item;
+}
+
 +(instancetype)initWithTitle:(NSString *)title tag:(NSInteger)tag{
     TableItemModel *item = [[TableItemModel alloc] init];
-    
     item.title = title;
     item.tag = tag;
 
     return item;
 }
 
++(instancetype)initWithTitle:(NSString *)title icon:(NSString *)icon tag:(NSInteger)tag{
+    TableItemModel *item = [[TableItemModel alloc] init];
+    item.title = title;
+    item.tag = tag;
+    item.icon = icon;
+    
+    return item;
+}
+
 +(instancetype)initWithTitle:(NSString *)title detailTitle:(NSString *)detailTitle tag:(NSInteger)tag{
     TableItemModel *item = [[TableItemModel alloc] init];
-    
     item.title = title;
     item.detailTitle = detailTitle;
     item.tag = tag;
+    
+    return item;
+}
+
++(instancetype)initWithTitle:(NSString *)title detailTitle:(NSString *)detailTitle icon:(NSString *)icon tag:(NSInteger)tag{
+    TableItemModel *item = [[TableItemModel alloc] init];
+    item.title = title;
+    item.detailTitle = detailTitle;
+    item.tag = tag;
+    item.icon = icon;
     
     return item;
 }

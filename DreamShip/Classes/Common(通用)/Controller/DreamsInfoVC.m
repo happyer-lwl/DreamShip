@@ -46,10 +46,7 @@
 
 -(void)viewDidLoad{
     [super viewDidLoad];
-    
-    //self.view.backgroundColor = kTitleDarkBlueColor;
-    self.view.backgroundColor = [UIColor grayColor];
-    
+
     [NSThread sleepForTimeInterval:kLaunchImageShowSec];
     
     [self setTableViewInfo];
@@ -73,10 +70,9 @@
  *  设置tableview
  */
 -(void)setTableViewInfo{
-    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - 64) style:UITableViewStylePlain];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight) style:UITableViewStylePlain];
     
-    tableView.backgroundColor = kViewBgColor220;
-    
+    tableView.backgroundColor = kViewBgColorDarker;
     tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     tableView.delegate = self;
@@ -106,17 +102,14 @@
         NSArray *dreams = [DSDreamModel mj_objectArrayWithKeyValuesArray:json[@"data"]];
         NSArray *dreamFrames = [self dreamFramesWithDreams:dreams];
         
-        [self.dreamFrames removeAllObjects];
         self.dreamFrames = [NSMutableArray arrayWithArray:dreamFrames];
         
-        [self.tableView reloadData];
-        if (dreamFrames.count == 0){
-            [self.tableView.mj_header endRefreshing];
-            [MBProgressHUD showError:@"没有数据"];
-        }else{
-            [self.tableView.mj_header endRefreshing];
+        if (dreamFrames.count == 0) {
+            [CommomToolDefine addNoDataForView:self.view];
         }
         
+        [self.tableView reloadData];
+        [self.tableView.mj_header endRefreshing];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
@@ -238,7 +231,7 @@
     DBLog(@"Photo clicked");
 }
 
--(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected{
+-(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected view:(UIView *)view{
     DBLog(@"Collection Clicked");
     
     AccountModel *account = [AccountTool account];

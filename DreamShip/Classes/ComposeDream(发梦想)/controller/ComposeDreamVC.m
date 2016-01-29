@@ -86,7 +86,7 @@
 -(void)setDreamTypeSegView{
     UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[@"认真做梦", @"组队寻友", @"拉拉投资"]];
     seg.frame = CGRectMake(0, 0, 160, 25);
-    seg.backgroundColor = kTitleDarkBlueColor;
+    seg.backgroundColor = kBtnFireColorNormal;
     seg.selectedSegmentIndex = 0;
     seg.tintColor = [UIColor whiteColor];
     self.navigationItem.titleView = seg;
@@ -139,7 +139,7 @@
     
     __block UIImage* _newImage = nil;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        _newImage = [self scaleToSize:self.photoView.image size:CGSizeMake(150, 150)];
+        _newImage = [CommomToolDefine scaleToSize:self.photoView.image size:CGSizeMake(150, 150)];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             NSData *data = nil;
@@ -175,18 +175,6 @@
 }
 
 /**
- 缩放
- */
--(UIImage *)scaleToSize:(UIImage *)image size:(CGSize)size{
-    UIGraphicsBeginImageContext(size);
-    
-    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return scaledImage;
-}
-/**
  *  关闭窗口
  */
 -(void)cancelView{
@@ -205,6 +193,7 @@
     textView.font = [UIFont systemFontOfSize:20];
     textView.placehoder = @"做个梦吧...";
     [self.view addSubview:textView];
+    [textView becomeFirstResponder];
     
     self.textView = textView;
     
@@ -305,6 +294,11 @@
     }
     
     UIImagePickerController *ipc = [[UIImagePickerController alloc] init];
+    [ipc.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_background_fire"] forBarMetrics:UIBarMetricsDefault];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
+    [ipc.navigationBar setTitleTextAttributes:dict];
+    
     ipc.sourceType = type;
     ipc.delegate = self;
     

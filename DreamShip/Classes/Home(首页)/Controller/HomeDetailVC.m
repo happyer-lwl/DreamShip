@@ -72,16 +72,16 @@
  *  设置导航内容
  */
 -(void)setNavigationInfo{
-    self.title = self.dreamFrame.dream.user.name;
+    self.navigationItem.title = self.dreamFrame.dream.user.userRealName;
 }
 
 /**
  *  设置TableView信息
  */
 -(void)setTableViewInfo{
-    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.view.height - kToolBarHeight - 64) style:UITableViewStylePlain];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - kToolBarHeight) style:UITableViewStylePlain];
     
-    tableView.backgroundColor = [UIColor whiteColor];
+    tableView.backgroundColor = kViewBgColorDarker;
     tableView.delegate = self;
     tableView.dataSource = self;
     
@@ -127,10 +127,12 @@
 
 -(void)setCommentToolBar{
     CommentToolBarView *commentToolBar = [CommentToolBarView CommentToolBar];
-    commentToolBar.frame = CGRectMake(0, self.view.height - kToolBarHeight - 64, kScreenWidth, kToolBarHeight);
+    commentToolBar.frame = CGRectMake(0, self.view.y + self.view.height - kToolBarHeight - 64, kScreenWidth, kToolBarHeight);
     _commentToolBar = commentToolBar;
     [kNotificationCenter addObserver:self selector:@selector(keyboardChanged:) name:UIKeyboardWillChangeFrameNotification object:nil];
     self.commentToolBar.delegate = self;
+    
+    DBLog(@"height %f  y %f", self.view.height, self.view.y);
     
     [self.view addSubview:commentToolBar];
 }
@@ -148,6 +150,7 @@
     
     [UIView animateWithDuration:duration animations:^{
         self.commentToolBar.y = keyboradF.origin.y - self.commentToolBar.height - 64;
+        DBLog(@"%f, %f", self.commentToolBar.y, keyboradF.origin.y);
     }];
 }
 
@@ -267,7 +270,7 @@
         UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textLabel.text = @"评论";
-        cell.textLabel.textColor = kTitleBlueColor;
+        cell.textLabel.textColor = kTitleFireColorNormal;
         return cell;
     }
     else{
@@ -359,7 +362,7 @@
     [kNotificationCenter postNotificationName:kUpdateCellInfoFromCell object:nil];
 }
 
--(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected{
+-(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected view:(UIView *)view{
     AccountModel *account = [AccountTool account];
     
     NSMutableDictionary *params = [NSMutableDictionary dictionary];

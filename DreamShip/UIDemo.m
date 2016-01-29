@@ -94,7 +94,7 @@
  UIButton
  */
 //UIButton *changeButton = [[UIButton alloc] initWithFrame: CGRectMake(100, CGRectGetMaxY(registerOrLoginButton.frame) + 70, kScreenWidth - 2 * 100, 44)];
-//[changeButton setTitleColor:kTitleBlueColor forState:UIControlStateNormal];
+//[changeButton kTitleFireColorNormal forState:UIControlStateNormal];
 //[changeButton setTitle:@"要不去登录？" forState:UIControlStateNormal];
 //[changeButton addTarget:self action:@selector(changeClick) forControlEvents:UIControlEventTouchUpInside];
 //[self.view addSubview:changeButton];
@@ -103,7 +103,7 @@
 
 //UILabel *logoDetail1Title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(logoTitle.frame) + 20, kScreenWidth - 20, 15)];
 //logoDetail1Title.text = @"说出梦想";
-//logoDetail1Title.textColor = kTitleBlueColor;
+//logoDetail1Title.textColor = kTitleFireColorNormal;
 //logoDetail1Title.font = [UIFont systemFontOfSize:14];
 //[logoDetail1Title setTextAlignment:NSTextAlignmentCenter];
 //[self.view addSubview:logoDetail1Title];

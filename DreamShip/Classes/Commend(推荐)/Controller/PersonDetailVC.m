@@ -8,6 +8,8 @@
 
 #import "PersonDetailVC.h"
 #import "DreamsInfoVC.h"
+#import "SingleChatVC.h"
+#import "PersonOtherNameVC.h"
 
 #import "DSUser.h"
 #import "AccountModel.h"
@@ -33,6 +35,8 @@
 #define kCellTagFocus       7
 #define kCellTagSendMsg     8
 
+#define kCellTagRemark      9
+
 @interface PersonDetailVC ()
 
 @property (nonatomic, strong) NSMutableArray *groups;
@@ -40,6 +44,8 @@
 @property (nonatomic, weak)   UIButton       *focusButton;
 @property (nonatomic, weak)   UIButton       *sendButton;
 @property (nonatomic, assign) BOOL           bFocused;
+
+@property (nonatomic, copy)   NSString       *otherName;
 
 @end
 
@@ -73,14 +79,14 @@
     
     [self getUserFocusStatus];
     [self setGroup1];
+    [self setGroup6];
     [self setGroup2];
     [self setGroup3];
     [self setGroup4];
     [self setGroup5];
     
     [kNotificationCenter addObserver:self selector:@selector(updateUserImage) name:kUpdateUserImage object:nil];
-    
-    [self.tableView reloadData];
+    [kNotificationCenter addObserver:self selector:@selector(getUserFocusStatus) name:kUpdateUserRemark object:nil];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
@@ -149,6 +155,15 @@
     [self.groups addObject:group];
 }
 
+-(void)setGroup6{
+    TableGroupModel *group = [TableGroupModel group];
+    
+    TableItemModel *item = [TableItemModel initWithTitle:@"备注" detailTitle:self.user.userRealName tag:kCellTagRemark];
+    group.items = @[item];
+    
+    [self.groups addObject:group];
+}
+
 #pragma mark tableViewDelegate/ dataSource
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.groups.count;
@@ -163,9 +178,9 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0) {
         return 88;
-    }else if (indexPath.section == 1){
-        return 1.0/15.0*kScreenHeight;
     }else if (indexPath.section == 2){
+        return 1.0/15.0*kScreenHeight;
+    }else if (indexPath.section == 3){
         return 1.0/12.0*kScreenHeight;
     }else{
         return 44;
@@ -175,7 +190,7 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     if (section == 0) {
         return 0.5;
-    }else if (section == 3){
+    }else if (section == 4){
         return 20;
     }else{
         return 10;
@@ -202,10 +217,10 @@
     
     if (cell.tag == kCellTagFocus) {
         UIButton *focusButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, kScreenWidth - 20, 44)];
-        focusButton.backgroundColor = kButtonBgIconGray;
+        focusButton.backgroundColor = kBtnFireColorNormal;
         [focusButton setTitle:item.title forState:UIControlStateNormal];
         [focusButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [focusButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [focusButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
         focusButton.layer.cornerRadius = 3;
         focusButton.titleLabel.textAlignment = NSTextAlignmentCenter;
         [focusButton addTarget:self action:@selector(focusOnCurUser) forControlEvents:UIControlEventTouchUpInside];
@@ -217,10 +232,10 @@
         cell.backgroundColor = [UIColor clearColor];
     }else if (cell.tag == kCellTagSendMsg) {
         UIButton *sendButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, kScreenWidth - 20, 44)];
-        sendButton.backgroundColor = kButtonBgIconGray;
+        sendButton.backgroundColor = kBtnFireColorNormal;
         [sendButton setTitle:item.title forState:UIControlStateNormal];
         [sendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [sendButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [sendButton setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
         sendButton.layer.cornerRadius = 3;
         sendButton.titleLabel.textAlignment = NSTextAlignmentCenter;
         [sendButton addTarget:self action:@selector(sendMessageToCurUser) forControlEvents:UIControlEventTouchUpInside];
@@ -253,7 +268,12 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }else{
             cell.textLabel.text = item.title;
-            cell.detailTextLabel.text = item.detailTitle;
+            if (cell.tag == kCellTagRemark){
+                cell.detailTextLabel.text = self.otherName;
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            }else{
+                cell.detailTextLabel.text = item.detailTitle;
+            }
         }
     }
     return cell;
@@ -290,6 +310,16 @@
         }else{
             [MBProgressHUD showError:@"邮箱为空"];
         }
+    }else if (cell.tag == kCellTagRemark){
+        if (self.bFocused) {
+            PersonOtherNameVC *otherNameVC = [[PersonOtherNameVC alloc] init];
+            otherNameVC.otherName = cell.detailTextLabel.text;
+            otherNameVC.user = self.user;
+            [self.navigationController pushViewController:otherNameVC animated:YES];
+        }else{
+            UIAlertController *alert = [CommomToolDefine alertWithTitle:@"提示" message:@"关注后才可以修改哦!" ok:nil cancel:nil];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
     }
 }
 
@@ -297,7 +327,15 @@
  *  发消息
  */
 -(void)sendMessageToCurUser{
+    SingleChatVC *chatVC = [[SingleChatVC alloc] initWithConversationType:ConversationType_PRIVATE targetId:self.user.userRealName];
+    chatVC.title = self.user.userRealName;
+    chatVC.targetId = self.user.name;
     
+    UIBarButtonItem *returnButtonItem = [[UIBarButtonItem alloc] init];
+    returnButtonItem.title = @"返回";
+    self.navigationItem.backBarButtonItem = returnButtonItem;
+    
+    [self.navigationController pushViewController:chatVC animated:YES];
 }
 
 /**
@@ -322,6 +360,7 @@
     params[@"api_type"] = @"createFocus";
     params[@"user_id_from"] = account.userID;
     params[@"user_id_to"] = self.user.user_id;
+    params[@"user_id_to_name"] = self.user.userRealName;
     
     [HttpTool postWithUrl:Host_Url params:params success:^(NSDictionary *json) {
         NSNumber *result = json[@"result"];
@@ -377,6 +416,8 @@
     
     [HttpTool postWithUrl:Host_Url params:params success:^(NSDictionary *json) {
         NSNumber *iExistedResult = json[@"result"];
+        self.otherName = json[@"data"];
+        
         if ([iExistedResult integerValue] ==  200) {
             self.bFocused = YES;
             [self.focusButton setTitle:@"取 消 关 注" forState:UIControlStateNormal];
@@ -384,6 +425,8 @@
             self.bFocused = NO;
             [self.focusButton setTitle:@"关 注 他" forState:UIControlStateNormal];
         }
+        
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];

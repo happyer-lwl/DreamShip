@@ -20,5 +20,5 @@
 @property (nonatomic, strong) DSDreamFrame *dreamFrame;
 
 -(void)setDreamFrame:(DSDreamFrame *)dreamFrame;
-
+@property (nonatomic, assign) BOOL bLastPageIn; // 是否从我的进入的
 @end
