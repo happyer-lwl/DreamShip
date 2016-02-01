@@ -51,14 +51,14 @@
     [attriText addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:18] range: [titleStr rangeOfString:suffix]];
     [attriText addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:20] range: [titleStr rangeOfString:account.userRealName]];
     label.attributedText = attriText;
-    label.frame = CGRectMake(20, 100, kScreenWidth - 40, 30);
+    label.frame = CGRectMake(20, 10, kScreenWidth - 40, 30);
     label.textColor = kTitleFireColorNormal;
     label.numberOfLines = 0;
     [self.view addSubview:label];
 
     UILabel *pointsLabel = [[UILabel alloc] init];
     pointsLabel.x = 60;
-    pointsLabel.y = 215;
+    pointsLabel.y = 125;
     pointsLabel.width = kScreenWidth - 50;
     pointsLabel.height = 30;
     pointsLabel.textAlignment = NSTextAlignmentCenter;
@@ -70,9 +70,9 @@
     [self.view bringSubviewToFront:pointsLabel];
 
     UITextView *aboutlabel = [[UITextView alloc] init];
-    aboutlabel.frame = CGRectMake(25, 310, kScreenWidth - 25, 200);
+    aboutlabel.frame = CGRectMake(25, 220, kScreenWidth - 25, 200);
     aboutlabel.backgroundColor = kViewBgColor;
-    aboutlabel.text = @"积分用途:\nO(∩_∩)O~这个暂时还不能说，加油得积分吧!\n\n如何获取:\n每发表一次梦想会获得3积分";
+    aboutlabel.text = @"积分用途:\nO(∩_∩)O~这个暂时还不能说，加油得积分吧!\n\n如何获取:\n1、注册即获得5积分\n2、说出一次梦想，获得3积分\n3、展示一项技能，获得3积分";
     aboutlabel.textColor = kTitleFireColorNormal;
     aboutlabel.font = [UIFont systemFontOfSize:16];
     aboutlabel.editable = NO;
@@ -104,7 +104,7 @@
 -(void)circleAnimation{
     self.shapeLayer = [CAShapeLayer layer];
     self.shapeLayer.frame = CGRectMake(0, 0, 160, 160);
-    self.shapeLayer.position = CGPointMake(kScreenWidth - 150, 230);
+    self.shapeLayer.position = CGPointMake(kScreenWidth - 150, 140);
     self.shapeLayer.fillColor = [UIColor clearColor].CGColor;
     
     // 设置线条的宽度和颜色

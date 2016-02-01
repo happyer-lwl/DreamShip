@@ -123,7 +123,7 @@
     self.picView = pic;
     pic.userInteractionEnabled = YES;
     
-    UITapGestureRecognizer *singleFingerOnePhotoView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photoView_click)];
+    UITapGestureRecognizer *singleFingerOnePhotoView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photoView_click:)];
     singleFingerOnePhotoView.numberOfTapsRequired = 1; //Tap数
     singleFingerOnePhotoView.numberOfTouchesRequired = 1; // 手指数
     singleFingerOnePhotoView.delegate = self;
@@ -210,10 +210,10 @@
     }
 }
 
--(void)photoView_click{
+-(void)photoView_click:(UIImageView *)imageVIew{
     DBLog(@"photo");
-    if ([self.delegate respondsToSelector:@selector(cellPhotoViewClicked:)]) {
-        [self.delegate cellPhotoViewClicked:self.dreamFrame];
+    if ([self.delegate respondsToSelector:@selector(cellPhotoViewClicked:view:)]) {
+        [self.delegate cellPhotoViewClicked:self.dreamFrame view:imageVIew];
     }
 }
 

@@ -11,6 +11,7 @@
 
 #import "DSUser.h"
 #import "HttpTool.h"
+#import <RongIMKit/RongIMKit.h>
 @interface SingleChatVC ()
 
 @end

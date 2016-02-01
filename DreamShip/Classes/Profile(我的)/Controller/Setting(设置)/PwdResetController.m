@@ -34,7 +34,7 @@
 // 设置UI子控件
 -(void)setSubviews{
     // 密码和密码确认
-    PwdConfirmView *pwdConfirmView = [[PwdConfirmView alloc] initWithFrame:CGRectMake(10, 70, kScreenWidth - 20, 90)];
+    PwdConfirmView *pwdConfirmView = [[PwdConfirmView alloc] initWithFrame:CGRectMake(10, 5, kScreenWidth - 20, 90)];
     [self.view addSubview:pwdConfirmView];
     _pwdCV = pwdConfirmView;
     

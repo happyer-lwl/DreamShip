@@ -11,7 +11,7 @@
 
 #import "UIImageView+WebCache.h"
 #import "UIButton+WebCache.h"
-#import "UINavigationBar+BackgroundColor.h"
+//#import "UINavigationBar+BackgroundColor.h"
 
 #import "AccountTool.h"
 #import "AccountModel.h"
@@ -63,7 +63,8 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"";
-    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:0];
+    self.navigationController.navigationBar.hidden = YES;
+    //[self.navigationController.navigationBar nav_setBackgroundColorAlpha:0];
     
     [self setHeadView];
     [self setTableViewUI];
@@ -81,19 +82,19 @@
     [super viewWillAppear:animated];
     self.navigationItem.title = @"";
     
-    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:0];
-    
+    self.navigationController.navigationBar.hidden = YES;
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     
-    [self performSelector:@selector(updateNavBackgroundAlpha) withObject:self afterDelay:0.2];
+    self.navigationController.navigationBar.hidden = NO;
+    //[self performSelector:@selector(updateNavBackgroundAlpha) withObject:self afterDelay:0.2];
 }
 
--(void)updateNavBackgroundAlpha{
-    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:1];
-}
+//-(void)updateNavBackgroundAlpha{
+//    [self.navigationController.navigationBar nav_setBackgroundColorAlpha:1];
+//}
 
 -(void)setHeadView{
     AccountModel *account = [AccountTool account];
@@ -140,7 +141,7 @@
 }
 
 -(void)setTableViewUI{
-    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenWidth, kScreenHeight - self.headerView.height) style:UITableViewStyleGrouped];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenWidth, kScreenHeight - self.headerView.height - self.tabBarController.tabBar.height) style:UITableViewStyleGrouped];
     tableView.backgroundColor =kViewBgColor;
     tableView.delegate = self;
     tableView.dataSource = self;

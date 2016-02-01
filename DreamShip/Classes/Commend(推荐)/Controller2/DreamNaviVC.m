@@ -11,7 +11,7 @@
 
 #import "DreamDirectsVC.h"
 #import "DreamPersonsVC.h"
-#import "DreamTeamsVC.h"
+#import "GroupsListVC.h"
 #import "DreamInvestorsVC.h"
 #import "DreamChangeVC.h"
 #import "DreamShowVC.h"
@@ -50,7 +50,7 @@ static NSString *ID = @"indexCell";
 
 -(NSArray *)collectionClassArray{
     if (_collectionClassArray == nil) {
-        NSArray *sectionClass0 = @[@"DreamDirectsVC", @"DreamPersonsVC", @"DreamTeamsVC"];
+        NSArray *sectionClass0 = @[@"DreamDirectsVC", @"DreamPersonsVC", @"GroupsListVC"];
         NSArray *sectionClass1 = @[@"DreamInvestorsVC", @"DreamChangeVC", @"DreamShowVC"];
         _collectionClassArray = @[sectionClass0, sectionClass1];
     }
@@ -130,7 +130,7 @@ static NSString *ID = @"indexCell";
     [super viewDidLoad];
     
     self.view.backgroundColor = kViewBgColor;
-
+    
     [self scrollView];
     [self pageControl];
     [self setHeaderView];

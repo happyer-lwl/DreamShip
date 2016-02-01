@@ -56,7 +56,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = kViewBgColor;
     
     [self setNavigationInfo];
     [self setTableViewInfo];
@@ -79,9 +78,8 @@
  *  设置TableView信息
  */
 -(void)setTableViewInfo{
-    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - kToolBarHeight) style:UITableViewStylePlain];
-    
-    tableView.backgroundColor = kViewBgColorDarker;
+    //UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - kToolBarHeight - 64) style:UITableViewStylePlain];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - kToolBarHeight - 64) style:UITableViewStylePlain];
     tableView.delegate = self;
     tableView.dataSource = self;
     
@@ -133,7 +131,6 @@
     self.commentToolBar.delegate = self;
     
     DBLog(@"height %f  y %f", self.view.height, self.view.y);
-    
     [self.view addSubview:commentToolBar];
 }
 

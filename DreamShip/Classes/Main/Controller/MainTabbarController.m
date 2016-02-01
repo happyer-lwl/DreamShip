@@ -10,7 +10,6 @@
 #import "MainNavigationController.h"
 
 #import "HomeViewController.h"
-#import "CommendViewController.h"
 #import "DreamNaviVC.h"
 
 #import "DiscoverViewController.h"

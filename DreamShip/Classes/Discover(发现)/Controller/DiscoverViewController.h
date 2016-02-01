@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <RongIMKit/RongIMKit.h>
+#import "REMenu.h"
 
-@interface DiscoverViewController : RCConversationListViewController
+@interface DiscoverViewController : RCConversationListViewController<REMenuDelegate>
 
 @end

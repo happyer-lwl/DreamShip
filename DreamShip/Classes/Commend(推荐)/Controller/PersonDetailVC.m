@@ -140,7 +140,7 @@
 
 -(void)setGroup4{
     TableGroupModel *group = [TableGroupModel group];
-    NSString *focusStatus = @"";
+    NSString *focusStatus = @"关 注 他";
     TableItemModel *item = [TableItemModel initWithTitle:focusStatus tag:kCellTagFocus];
     group.items = @[item];
     

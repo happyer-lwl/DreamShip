@@ -47,8 +47,6 @@
 -(void)viewDidLoad{
     [super viewDidLoad];
 
-    [NSThread sleepForTimeInterval:kLaunchImageShowSec];
-    
     [self setTableViewInfo];
     [self setHeaderRefreshView];
     
@@ -109,20 +107,43 @@
         }
         
         [self.tableView reloadData];
-        [self.tableView.mj_header endRefreshing];
+        [self.tableView.gifHeader endRefreshing];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
-        [self.tableView.mj_header endRefreshing];
+        [self.tableView.gifHeader endRefreshing];
     }];
 }
 
 // 设置头和尾刷新
 -(void)setHeaderRefreshView{
-    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        [self getNewDreams];
-    }];
-    [self.tableView.mj_header beginRefreshing];
+    //添加下拉的动画图片
+    //设置下拉刷新回调
+    [self.tableView addGifHeaderWithRefreshingTarget:self refreshingAction:@selector(getNewDreams)];
+    
+    //设置普通状态的动画图片
+    NSMutableArray *idleImages = [NSMutableArray array];
+    for (NSUInteger i = 1; i<=60; ++i) {
+        //        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"dropdown_anim__000%zd",i]];
+        //        [idleImages addObject:image];
+        UIImage *image = [UIImage imageNamed:@"icon_listheader_animation_1"];
+        [idleImages addObject:image];
+    }
+    [self.tableView.gifHeader setImages:idleImages forState:MJRefreshHeaderStateIdle];
+    
+    //设置即将刷新状态的动画图片
+    NSMutableArray *refreshingImages = [NSMutableArray array];
+    UIImage *image1 = [UIImage imageNamed:@"icon_listheader_animation_1"];
+    [refreshingImages addObject:image1];
+    UIImage *image2 = [UIImage imageNamed:@"icon_listheader_animation_2"];
+    [refreshingImages addObject:image2];
+    [self.tableView.gifHeader setImages:refreshingImages forState:MJRefreshHeaderStatePulling];
+    
+    //设置正在刷新是的动画图片
+    [self.tableView.gifHeader setImages:refreshingImages forState:MJRefreshHeaderStateRefreshing];
+    
+    //马上进入刷新状态
+    [self.tableView.gifHeader beginRefreshing];
 }
 
 -(void)getMoreDreams:(UIRefreshControl *)refreshControl{
@@ -175,6 +196,23 @@
     
     homeDetailVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:homeDetailVC animated:YES];
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    CATransform3D rotation;
+    if (indexPath.row % 2 == 0) {
+        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
+    }else{
+        rotation                = CATransform3DMakeTranslation(-kScreenWidth, 0.0, 0.0);
+    }
+    
+    cell.layer.transform    = rotation;
+    
+    //3. Define the final state (After the animation) and commit the animation
+    [UIView beginAnimations:@"rotation" context:NULL];
+    [UIView setAnimationDuration:0.5];
+    cell.layer.transform    = CATransform3DIdentity;
+    [UIView commitAnimations];
 }
 
 /**

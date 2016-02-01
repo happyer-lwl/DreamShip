@@ -8,7 +8,7 @@
 
 #import "HomeViewController.h"
 #import "MainNavigationController.h"
-//#import "MJPhotoBrowser.h"
+#import "WBPhotosViewController.h"
 
 #import "HomeDetailVC.h"
 #import "ComposeDreamVC.h"
@@ -93,8 +93,8 @@
     UISegmentedControl *seg = [[UISegmentedControl alloc] initWithItems:@[@"全部类型", @"认真做梦", @"组队寻友", @"拉拉投资"]];
     seg.frame = CGRectMake(-2.5, 0, kScreenWidth + 5, kDreamTypeSegHeight);
     seg.backgroundColor = kViewBgColorDarkest;
+    seg.tintColor = [UIColor whiteColor];
     seg.selectedSegmentIndex = 0;
-    seg.tintColor = kViewBgColor;
     [self.view addSubview:seg];
     [seg addTarget:self action:@selector(dreamTypeSegChanged) forControlEvents:UIControlEventValueChanged];
     _dreamTypeSeg = seg;
@@ -157,20 +157,43 @@
         }
         
         [self.tableView reloadData];
-        [self.tableView.mj_header endRefreshing];
+        [self.tableView.gifHeader endRefreshing];
     } failure:^(NSError *error) {
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
-        [self.tableView.mj_header endRefreshing];
+        [self.tableView.gifHeader endRefreshing];
     }];
 }
 
 // 设置头和尾刷新
 -(void)setHeaderRefreshView{
-    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        [self getNewDreams];
-    }];
-    [self.tableView.mj_header beginRefreshing];
+    //添加下拉的动画图片
+    //设置下拉刷新回调
+    [self.tableView addGifHeaderWithRefreshingTarget:self refreshingAction:@selector(getNewDreams)];
+    
+    //设置普通状态的动画图片
+    NSMutableArray *idleImages = [NSMutableArray array];
+    for (NSUInteger i = 1; i<=60; ++i) {
+        //        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"dropdown_anim__000%zd",i]];
+        //        [idleImages addObject:image];
+        UIImage *image = [UIImage imageNamed:@"icon_listheader_animation_1"];
+        [idleImages addObject:image];
+    }
+    [self.tableView.gifHeader setImages:idleImages forState:MJRefreshHeaderStateIdle];
+    
+    //设置即将刷新状态的动画图片
+    NSMutableArray *refreshingImages = [NSMutableArray array];
+    UIImage *image1 = [UIImage imageNamed:@"icon_listheader_animation_1"];
+    [refreshingImages addObject:image1];
+    UIImage *image2 = [UIImage imageNamed:@"icon_listheader_animation_2"];
+    [refreshingImages addObject:image2];
+    [self.tableView.gifHeader setImages:refreshingImages forState:MJRefreshHeaderStatePulling];
+    
+    //设置正在刷新是的动画图片
+    [self.tableView.gifHeader setImages:refreshingImages forState:MJRefreshHeaderStateRefreshing];
+    
+    //马上进入刷新状态
+    [self.tableView.gifHeader beginRefreshing];
 }
 
 -(NSArray *)dreamFramesWithDreams:(NSArray*)dreams{
@@ -232,6 +255,23 @@
     
     homeDetailVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:homeDetailVC animated:YES];
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    CATransform3D rotation;
+    if (indexPath.row % 2 == 0) {
+        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
+    }else{
+        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
+    }
+    
+    cell.layer.transform    = rotation;
+    
+    //3. Define the final state (After the animation) and commit the animation
+    [UIView beginAnimations:@"rotation" context:NULL];
+    [UIView setAnimationDuration:0.5];
+    cell.layer.transform    = CATransform3DIdentity;
+    [UIView commitAnimations];
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
@@ -317,18 +357,13 @@
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
--(void)cellPhotoViewClicked:(DSDreamFrame *)dreamFrame{
-    NSMutableArray *photoArray = [NSMutableArray array];
-//    
-//    MJPhotoBrowser *photoBrowser = [[MJPhotoBrowser alloc] init];
-//    MJPhoto *photo = [[MJPhoto alloc] init];
-//    DSDreamModel *dream = dreamFrame.dream;
-//    photo.url = dream.pic_url;
-//    [photoArray addObject:photo];
-//    
-//    photoBrowser.photos = photoArray;
-//    photoBrowser.currentPhotoIndex = 0;
-//    [photoBrowser show];
+-(void)cellPhotoViewClicked:(DSDreamFrame *)dreamFrame view:(UIImageView *)view{
+    DSDreamModel *dreamModel = dreamFrame.dream;
+    NSArray *urlArray = @[dreamModel.pic_url];
+    
+    WBPhotosViewController *photosVC = [[WBPhotosViewController alloc] init];
+    photosVC.photos = [NSMutableArray arrayWithArray:urlArray];
+    [self presentViewController:photosVC animated:YES completion:nil];
 }
 
 -(void)cellCollectionClicked:(DSDreamFrame *)dreamFrame state:(BOOL)selected view:(id)view{

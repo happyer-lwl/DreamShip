@@ -86,4 +86,9 @@ typedef NS_ENUM(NSInteger, DreamRange){
 #define kRongCloudAppKey    @"8luwapkvuq99l"
 #define kRongCloudAppSecret @"It3mAiQtrU"
 
+// 昵称字体
+#define kDSUserNameFont [UIFont boldSystemFontOfSize:16]
+// 时间字体
+#define kDSUserWordsFont [UIFont systemFontOfSize:13]
+
 #endif /* Weibo_pch */

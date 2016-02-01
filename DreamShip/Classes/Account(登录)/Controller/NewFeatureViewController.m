@@ -114,36 +114,17 @@
 -(void)setLastImageView:(UIImageView *)imageView{
     // ImageView开启交互功能
     imageView.userInteractionEnabled = YES;
-    
-    // CheckBox 分享大家
-    UIButton *shareBtn = [[UIButton alloc]init];
-    [shareBtn setImage:[UIImage imageNamed:@"new_feature_share_false"] forState:UIControlStateNormal];
-    [shareBtn setImage:[UIImage imageNamed:@"new_feature_share_true"] forState:UIControlStateSelected];
-    [shareBtn setTitle:@"分享给大家" forState:UIControlStateNormal];
-    [shareBtn setTitleColor:[UIColor orangeColor] forState:(UIControlStateNormal)];
-    shareBtn.width = 150;
-    shareBtn.height = 30;
-    shareBtn.centerX = imageView.width * 0.5;
-    shareBtn.centerY = CGRectGetMaxY(imageView.frame) - 200;
-    [shareBtn addTarget:self action:@selector(shareBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [imageView addSubview:shareBtn];
-    shareBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-    shareBtn.hidden = YES;
-//    shareBtn.titleEdgeInsets    影响文字
-//    shareBtn.imageEdgeInsets    影响Image
-//    shareBtn.contentEdgeInsets  影响按钮内部的所有内容 Image和Label
-    
-    
+
     UIButton *finishBtn = [[UIButton alloc]init];
-    [finishBtn setBackgroundImage:[UIImage imageNamed:@"new_feature_finish_button"] forState:(UIControlStateNormal)];
-    [finishBtn setBackgroundImage:[UIImage imageNamed:@"new_feature_finish_button_highlighted"] forState:(UIControlStateHighlighted)];
+    finishBtn.width = 150;
+    finishBtn.height = 30;
+    finishBtn.centerX = imageView.width * 0.7;
+    finishBtn.centerY = CGRectGetMaxY(imageView.frame) - 120;
+    finishBtn.titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [finishBtn setBackgroundColor:[UIColor clearColor]];
     [finishBtn setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
-    [finishBtn setTitle:@"开始扬梦" forState:(UIControlStateNormal)];
-
-    finishBtn.centerX = shareBtn.centerX - 50;
-    finishBtn.centerY = _scrollView.height * 0.75;
-    finishBtn.size = finishBtn.currentBackgroundImage.size;
+    [finishBtn setTitleColor:kTitleFireColorHighlighted forState:UIControlStateHighlighted];
+    [finishBtn setTitle:@"梦 吧  Go" forState:(UIControlStateNormal)];
     
     [finishBtn addTarget:self action:@selector(finishBtnClicked) forControlEvents:(UIControlEventTouchUpInside)];
     [imageView addSubview:finishBtn];

@@ -10,9 +10,10 @@
 #import <RongIMKit/RongIMKit.h>
 
 #import "DSHomeViewCell.h"
+#import "JJPhotoManeger.h"
 
 @class DSDreamModel;
-@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, UIScrollViewDelegate>
+@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, UIScrollViewDelegate, JJPhotoDelegate>
 
 @property (nonatomic, assign) DreamRange dreamRange;
 @property (nonatomic, assign) DSDreamModel *dreamModel;
