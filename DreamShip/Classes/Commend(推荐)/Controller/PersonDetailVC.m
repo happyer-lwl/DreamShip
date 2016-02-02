@@ -265,6 +265,11 @@
             cell.textLabel.text = item.title;
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }else if (cell.tag == kCellTagPhone){
+            cell.textLabel.text = item.title;
+            cell.detailTextLabel.text = @"***********";
+            
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }else{
             cell.textLabel.text = item.title;
             if (cell.tag == kCellTagRemark){

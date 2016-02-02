@@ -70,6 +70,7 @@
     // 头像
     UIImageView *iconView = [[UIImageView alloc] init];
     iconView.layer.cornerRadius = 22;
+    [iconView.layer masksToBounds];
     [self.bgView addSubview:iconView];
     self.iconView = iconView;
     
