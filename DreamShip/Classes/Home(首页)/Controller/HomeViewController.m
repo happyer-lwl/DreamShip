@@ -113,8 +113,8 @@
 -(void)setTableViewInfo{
     UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kDreamTypeSegHeight, kScreenWidth, kScreenHeight - 64 - kDreamTypeSegHeight - 44) style:UITableViewStylePlain];
 
-    tableView.backgroundColor = kViewBgColorDarkest;
-    
+//    tableView.backgroundColor = kTitleFireColorNormal;// kViewBgColorDarkest;
+    tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Launchimage4.7"]];
     tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     tableView.delegate = self;

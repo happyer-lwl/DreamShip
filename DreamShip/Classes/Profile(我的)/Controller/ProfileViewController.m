@@ -64,7 +64,7 @@
     
     self.navigationItem.title = @"";
     self.navigationController.navigationBar.hidden = YES;
-    //[self.navigationController.navigationBar nav_setBackgroundColorAlpha:0];
+    self.view.backgroundColor = kViewBgColor;
     
     [self setHeadView];
     [self setTableViewUI];
