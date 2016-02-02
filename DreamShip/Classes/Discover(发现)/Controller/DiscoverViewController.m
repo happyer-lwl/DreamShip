@@ -29,6 +29,7 @@
 
 -(void)viewDidLoad{
     [super viewDidLoad];
+    [RCIM sharedRCIM].enableTypingStatus = YES;
     
     [self setDisplayConversationTypes:@[@(ConversationType_PRIVATE), @(ConversationType_DISCUSSION), @(ConversationType_GROUP)]];
     
@@ -48,7 +49,7 @@
     
     if (model.conversationType == ConversationType_GROUP) {
         GroupChatVC *conVC = [[GroupChatVC alloc] initWithConversationType:ConversationType_GROUP targetId:model.targetId];
-        
+        conVC.enableUnreadMessageIcon = YES;
         conVC.userName = model.conversationTitle;
         conVC.title = model.conversationTitle;
         conVC.targetId = model.targetId;
@@ -58,6 +59,7 @@
     } else if (model.conversationType == ConversationType_PRIVATE){
         SingleChatVC *conVC = [[SingleChatVC alloc] initWithConversationType:ConversationType_PRIVATE targetId:model.targetId];
         
+        conVC.enableUnreadMessageIcon = YES;
         conVC.userName = model.conversationTitle;
         conVC.title = model.conversationTitle;
         conVC.targetId = model.targetId;
