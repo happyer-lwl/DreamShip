@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CLCropImageViewController.h"
+#import "RSKImageCropViewController.h"
 
 #define kGetUserSkills @"kGetUserSkills"
 
 @class UserSkillModel;
 
-@interface AddUserSkillVC : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, clCropImageViewControllerDlegate>
+@interface AddUserSkillVC : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, RSKImageCropViewControllerDelegate>
 
 @property (nonatomic, strong) UserSkillModel *userSkillModel;
 

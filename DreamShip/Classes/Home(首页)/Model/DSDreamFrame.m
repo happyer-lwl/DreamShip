@@ -68,14 +68,14 @@
         toolBarY = CGRectGetMaxY(self.picF) + padding;
     }
     
-    CGFloat toolBarX = padding / 2;
-    CGFloat toolBarW = kScreenWidth - padding;
+    CGFloat toolBarX = 0;//padding / 2;
+    CGFloat toolBarW = kScreenWidth;// - padding;
     CGFloat toolBarH = 35;
     self.toolBarF = CGRectMake(toolBarX, toolBarY, toolBarW, toolBarH);
     
-    CGFloat bgX = padding / 2;
+    CGFloat bgX = 0;//padding / 2;
     CGFloat bgY = 0;
-    CGFloat bgWidth = kScreenWidth - padding;
+    CGFloat bgWidth = kScreenWidth;// - padding;
     self.bgViewF = CGRectMake(bgX, bgY, bgWidth, CGRectGetMaxY(self.toolBarF));
     
     self.cellHeight = CGRectGetMaxY(self.bgViewF) + padding / 2;

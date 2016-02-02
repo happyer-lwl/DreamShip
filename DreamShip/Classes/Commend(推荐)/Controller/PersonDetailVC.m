@@ -260,7 +260,6 @@
             cell.imageView.layer.masksToBounds = YES;
             cell.imageView.backgroundColor = [UIColor lightGrayColor];
             NSString *title = [NSString stringWithFormat:@"追梦人: %@", item.title];
-            NSString *detailTitle = [NSString stringWithFormat:@"  %@", item.detailTitle];
             cell.textLabel.text = title;
         }else if (cell.tag == kCellTagDreams){
             cell.textLabel.text = item.title;

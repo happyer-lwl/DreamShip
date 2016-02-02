@@ -12,8 +12,7 @@
 #import "SelfInfoSetWordsVC.h"
 #import "CitySelectView.h"
 
-#import "UINavigationBar+BackgroundColor.h"
-
+#import "MainNavigationController.h"
 #import "UICustomTextField.h"
 #import "AccountModel.h"
 #import "AccountTool.h"
@@ -243,8 +242,6 @@
 #pragma mark imagePickerControllerDelegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
     UIImage *image = nil;
-    AccountModel *model = [AccountTool account];
-    
     [picker dismissViewControllerAnimated:YES completion:nil];
     
     NSString *mediaType = [info objectForKey:@"UIImagePickerControllerMediaType"];
@@ -255,35 +252,49 @@
         image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     }
     
-    [MBProgressHUD showMessage:@"正在上传"];
-    
-    CGSize imageSize = self.selfImageView.size;
-    UIImage *newImage = [CommomToolDefine scaleToSize:image size:imageSize];
-    [self.selfImageView setImage:newImage forState:UIControlStateNormal];
-    
-    NSData *data = nil;
-    NSString *imageName = @"";
-    
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYMMddHHmmss"];
-    NSString *dateStr = [formatter stringFromDate:[NSDate date]];
-    NSString *userImagePhone = [model.userPhone substringFromIndex:5];
-    
-    if (UIImagePNGRepresentation(newImage) == nil) {
-        data = UIImageJPEGRepresentation(newImage, 1);
-        imageName = [NSString stringWithFormat:@"%@%@.jpg", userImagePhone, dateStr];
-    }else{
-        data = UIImagePNGRepresentation(newImage);
-        imageName = [NSString stringWithFormat:@"%@%@.png", userImagePhone, dateStr];
-    }
-    
-    [data writeToFile:[kDocumentPath stringByAppendingPathComponent:imageName] atomically:YES];
+    RSKImageCropViewController *curImageVC = [[RSKImageCropViewController alloc] initWithImage:image];
+    curImageVC.delegate = self;
+    [curImageVC setCropImageRect:CGRectMake(kScreenWidth / 2 - 40, kScreenHeight / 2 - 40, 80, 80)];
+    MainNavigationController *nav = [[MainNavigationController alloc] initWithRootViewController:curImageVC];
+    nav.title = @"截取照片";
+    [self presentViewController:nav animated:YES completion:nil];
+}
 
-    
-    model.userImage = [NSString stringWithFormat:@"%@/images/%@", Host_Url, imageName];
-    [AccountTool saveAccount:model];
-    
-    [self uploadSelfImage:data name:imageName];
+-(void)imageCropViewController:(RSKImageCropViewController *)controller didCropImage:(UIImage *)croppedImage{
+    [controller dismissViewControllerAnimated:YES completion:^{
+        [MBProgressHUD showMessage:@"正在上传"];
+        
+        [self.selfImageView setImage:croppedImage forState:UIControlStateNormal];
+        
+        NSData *data = nil;
+        NSString *imageName = @"";
+        AccountModel *model = [AccountTool account];
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"YYMMddHHmmss"];
+        NSString *dateStr = [formatter stringFromDate:[NSDate date]];
+        NSString *userImagePhone = [model.userPhone substringFromIndex:5];
+        
+        if (UIImagePNGRepresentation(croppedImage) == nil) {
+            data = UIImageJPEGRepresentation(croppedImage, 1);
+            imageName = [NSString stringWithFormat:@"%@%@.jpg", userImagePhone, dateStr];
+        }else{
+            data = UIImagePNGRepresentation(croppedImage);
+            imageName = [NSString stringWithFormat:@"%@%@.png", userImagePhone, dateStr];
+        }
+        
+        [data writeToFile:[kDocumentPath stringByAppendingPathComponent:imageName] atomically:YES];
+        
+        
+        model.userImage = [NSString stringWithFormat:@"%@/images/%@", Host_Url, imageName];
+        [AccountTool saveAccount:model];
+        
+        [self uploadSelfImage:data name:imageName];
+    }];
+}
+
+-(void)imageCropViewControllerDidCancelCrop:(RSKImageCropViewController *)controller{
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 /**

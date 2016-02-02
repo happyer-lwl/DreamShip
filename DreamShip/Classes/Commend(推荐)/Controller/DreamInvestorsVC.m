@@ -20,15 +20,15 @@
 
 -(NSArray *)investorsArray{
     if (_investorsArray == nil) {
-        TableItemModel *item1 = [TableItemModel initWithTitle:@"阿里基金" detailTitle:@"200次" tag:0];
-        TableItemModel *item2 = [TableItemModel initWithTitle:@"天虹基金" detailTitle:@"10次" tag:0];
-        TableItemModel *item3 = [TableItemModel initWithTitle:@"百度基金" detailTitle:@"220次" tag:0];
-        TableItemModel *item4 = [TableItemModel initWithTitle:@"腾讯基金" detailTitle:@"120次" tag:0];
-        TableItemModel *item5 = [TableItemModel initWithTitle:@"联想基金" detailTitle:@"330次" tag:0];
-        TableItemModel *item6 = [TableItemModel initWithTitle:@"IDG基金" detailTitle:@"33次" tag:0];
-        TableItemModel *item7 = [TableItemModel initWithTitle:@"AKG基金" detailTitle:@"21次" tag:0];
-        TableItemModel *item8 = [TableItemModel initWithTitle:@"DELL基金" detailTitle:@"14次" tag:0];
-        TableItemModel *item9 = [TableItemModel initWithTitle:@"苹果基金" detailTitle:@"22次" tag:0];
+        TableItemModel *item1 = [TableItemModel initWithTitle:@"AA基金" detailTitle:@"200次" tag:0];
+        TableItemModel *item2 = [TableItemModel initWithTitle:@"BB基金" detailTitle:@"10次" tag:0];
+        TableItemModel *item3 = [TableItemModel initWithTitle:@"CC基金" detailTitle:@"220次" tag:0];
+        TableItemModel *item4 = [TableItemModel initWithTitle:@"DD基金" detailTitle:@"120次" tag:0];
+        TableItemModel *item5 = [TableItemModel initWithTitle:@"EE基金" detailTitle:@"330次" tag:0];
+        TableItemModel *item6 = [TableItemModel initWithTitle:@"FF基金" detailTitle:@"33次" tag:0];
+        TableItemModel *item7 = [TableItemModel initWithTitle:@"GG基金" detailTitle:@"21次" tag:0];
+        TableItemModel *item8 = [TableItemModel initWithTitle:@"HH基金" detailTitle:@"14次" tag:0];
+        TableItemModel *item9 = [TableItemModel initWithTitle:@"II基金" detailTitle:@"22次" tag:0];
         
         _investorsArray = @[item1, item2, item3, item4, item5, item6, item7, item8, item9];
     }

@@ -244,10 +244,6 @@
 #pragma mark imagePickerControllerDelegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info{
     UIImage *image = nil;
-    AccountModel *model = [AccountTool account];
-    
-    NSString *mediaType = [info objectForKey:@"UIImagePickerControllerMediaType"];
-    
     if (picker == self.imagePickerCamera) {
         image = [info objectForKey:@"UIImagePickerControllerEditedImage"];
     }else if (picker == self.imagePickerPhotos){
@@ -256,50 +252,22 @@
     
     [picker dismissViewControllerAnimated:YES completion:nil];
     
-    CLCropImageViewController *curImageVC = [[CLCropImageViewController alloc] initWithImage:image];
+    RSKImageCropViewController *curImageVC = [[RSKImageCropViewController alloc] initWithImage:image];
     curImageVC.delegate = self;
+    [curImageVC setCropImageRect:CGRectMake(10, kScreenHeight / 2 - 80, kScreenWidth - 20, 160)];
     MainNavigationController *nav = [[MainNavigationController alloc] initWithRootViewController:curImageVC];
-    curImageVC.navigationItem.title = @"截取照片";
+    nav.title = @"截取照片";
     [self presentViewController:nav animated:YES completion:nil];
-    
-    //[MBProgressHUD showMessage:@"正在上传"];
-//    
-//    CGSize imageSize = self.skillImageView.size;
-//    UIImage *newImage = [CommomToolDefine scaleToSize:image size:imageSize];
-//    self.skillImageView.image = newImage;
-//    
-//    NSData *data = nil;
-//    NSString *imageName = @"";
-//    
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//    [formatter setDateFormat:@"YYMMddHHmmss"];
-//    NSString *dateStr = [formatter stringFromDate:[NSDate date]];
-//    NSString *userImagePhone = [model.userPhone substringFromIndex:5];
-//    
-//    if (UIImagePNGRepresentation(newImage) == nil) {
-//        data = UIImageJPEGRepresentation(newImage, 1);
-//        imageName = [NSString stringWithFormat:@"%@%@.jpg", userImagePhone, dateStr];
-//    }else{
-//        data = UIImagePNGRepresentation(newImage);
-//        imageName = [NSString stringWithFormat:@"%@%@.png", userImagePhone, dateStr];
-//    }
-    
-//    [data writeToFile:[kDocumentPath stringByAppendingPathComponent:imageName] atomically:YES];
-//    
-//    
-//    model.userImage = [NSString stringWithFormat:@"%@/images/%@", Host_Url, imageName];
-//    [AccountTool saveAccount:model];
-    
-    //[self uploadSelfImage:data name:imageName];
 }
 
-- (void)clCropImageViewController:(CLCropImageViewController *)cropImageViewController didFinish:(UIImage *)image{
-    self.skillImageView.image = image;
-
-    [cropImageViewController dismissViewControllerAnimated:YES completion:nil];
+-(void)imageCropViewController:(RSKImageCropViewController *)controller didCropImage:(UIImage *)croppedImage{
+    self.skillImageView.image = croppedImage;
+    
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
-- (void)clCropImageViewControllerDidCancel:(CLCropImageViewController *)cropImageViewController{
-    [cropImageViewController dismissViewControllerAnimated:YES completion:NULL];
+
+-(void)imageCropViewControllerDidCancelCrop:(RSKImageCropViewController *)controller{
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 /**
@@ -326,7 +294,7 @@
     params[@"skills"] = self.skillName.text;
     params[@"detail"] = self.skillDetail.text;
     params[@"canBeBuy"] = self.buySwitch.isOn ? [NSNumber numberWithInteger:1] : [NSNumber numberWithInteger:0];
-    params[@"price"] = self.skillPrice.text;
+    params[@"price"] = self.skillPrice.text.length ? self.skillPrice.text : @"0.0";
     
     if (self.skillImageView.image) {
         [self composeSkillWithPhoto:params];
@@ -374,6 +342,9 @@
 }
 
 -(void)composeSkillWithoutPhoto:(NSMutableDictionary *)params{
+    params[@"image"] = nil;
+    params[@"imageName"] = nil;
+    
     [HttpTool getWithUrl:Host_Url params:params success:^(NSDictionary* json) {
         DBLog(@"%@", json);
         [MBProgressHUD hideHUD];

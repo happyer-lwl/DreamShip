@@ -67,8 +67,6 @@
 }
 
 -(void)setSubviews{
-    AccountModel *model = [AccountTool account];
-    
     // 用户邮箱
     UITextField *otherName = [[UITextField alloc] init];
     otherName.frame = CGRectMake(10, 0, kScreenWidth - 20, 40);

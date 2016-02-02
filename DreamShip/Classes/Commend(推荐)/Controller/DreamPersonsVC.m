@@ -91,8 +91,6 @@
 }
 
 -(void)getFocusedUsers{
-    AccountModel *userModel = [AccountTool account];
-    
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"api_uid"] = @"users";
     params[@"api_type"] = @"getAllUsers";

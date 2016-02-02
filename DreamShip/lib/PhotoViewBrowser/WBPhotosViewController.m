@@ -72,7 +72,7 @@
         _scrollView.pagingEnabled = YES;
         _scrollView.contentSize = CGSizeMake(countPhoto * scrollW, _scrollView.height  *3);
         _scrollView.showsHorizontalScrollIndicator = NO;
-        
+        _scrollView.scrollEnabled = NO;
         // 设置监听
         _scrollView.delegate = self;
         

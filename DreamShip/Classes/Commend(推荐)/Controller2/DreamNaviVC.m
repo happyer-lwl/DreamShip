@@ -80,7 +80,6 @@ static NSString *ID = @"indexCell";
         [self.view addSubview:_scrollView];
         
         CGFloat scrollW = _scrollView.width;
-        CGFloat scrollH = _scrollView.height;
         for (int i = 0; i < kScrollImagePages; i++) {
             UIImageView *imageView = [[UIImageView alloc]init];
             imageView.width = scrollW;
