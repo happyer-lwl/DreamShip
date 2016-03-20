@@ -220,7 +220,7 @@ static FMDatabase *_db;
     return scaledImage;
 }
 
-+(void)addNoDataForView:(UIView *)view{
++(UIView *)addNoDataForView:(UIView *)view{
     UIView *cryView = [[UIView alloc] init];
     cryView.frame = CGRectMake(kScreenWidth/2 - 100, kScreenHeight / 2 - 100, 200, 139);
     
@@ -234,7 +234,6 @@ static FMDatabase *_db;
     label.text = @"暂时没有数据";
     label.textAlignment = NSTextAlignmentCenter;
     [cryView addSubview:label];
-    
-    [view addSubview:cryView];
+    return cryView;
 }
 @end

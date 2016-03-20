@@ -37,7 +37,7 @@
     
     [self initGroupMenu];
     
-    UIBarButtonItem *addGroup = [[UIBarButtonItem alloc] initWithTitle:@"Group" style:UIBarButtonItemStyleDone target:self action:@selector(groupCreate)];
+    UIBarButtonItem *addGroup = [[UIBarButtonItem alloc] initWithTitle:@"群" style:UIBarButtonItemStyleDone target:self action:@selector(groupCreate)];
     self.navigationItem.rightBarButtonItem = addGroup;
 }
 

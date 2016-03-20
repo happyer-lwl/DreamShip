@@ -28,14 +28,13 @@
     NSString *createTimeString = @"";
     
     NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
-    //    // 如果是真机调试，转换这种欧美时间，需要设置locale
-    //    //fmt.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];  // 中国
-    fmt.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];  // 欧美
+    // 如果是真机调试，转换这种欧美时间，需要设置locale
+    fmt.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"zh_CN"];  // 中国
     
     // dateFormat   YYYY-MM-dd HH:mm:ss
     // 设置日期格式 声明字符串每个数字和单词的含义
     fmt.dateFormat = @"YYYY-MM-dd HH:mm:ss";
-    // 微博创建日期
+    // 创建日期
     NSDate *createDate = [fmt dateFromString:_time];
     
     if ([createDate isThisYear]) { // 是今年

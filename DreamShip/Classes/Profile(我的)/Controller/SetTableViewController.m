@@ -9,7 +9,7 @@
 #import "SetTableViewController.h"
 #import "registerOrLoginViewController.h"
 #import "PwdResetController.h"
-#import "AudioController.h"
+#import "RegisterNoticeViewController.h"
 
 #import "LWLFileManager.h"
 #import "SDWebImageManager.h"
@@ -18,7 +18,7 @@
 
 #define kTagPwdReset    1
 #define kTagClear       2
-#define kTagBgAudio     3
+#define kTagLawer       3
 
 #define kTagQuit        6
 
@@ -26,7 +26,6 @@
 @interface SetTableViewController ()
 
 @property (nonatomic, strong) NSMutableArray* setGroups;
-@property (nonatomic, weak) UISwitch *audioSwitch;
 @property (nonatomic, weak) UIButton *quitButton;
 
 @end
@@ -51,35 +50,8 @@
     self.navigationItem.title = @"设置";
     self.tableView.tableHeaderView.height = 0;
     
-    [self setSwitchInfo];
     [self setGroupSetting];
     [self setGroupQuit];
-}
-
-/**
- *  设置开关按键
- */
--(void)setSwitchInfo{
-    UISwitch *audioSwitch = [[UISwitch alloc] init];
-    audioSwitch.frame = CGRectMake(0, 0, 50, 25);
-    audioSwitch.on = NO;
-    [audioSwitch addTarget:self action:@selector(audioSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-    _audioSwitch = audioSwitch;
-}
-
-/**
- *  后台音乐播放开关
- *
- *  @param audioSwitch
- */
--(void)audioSwitchChanged:(UISwitch *)audioSwitch{
-    if (audioSwitch.on) {
-        [KUserDefaults setBool:YES forKey:@"background_audio"];
-        [AudioController playMusic];
-    }else{
-        [KUserDefaults setBool:NO forKey:@"background_audio"];
-        [AudioController stopMusic];
-    }
 }
 
 /**
@@ -93,9 +65,8 @@
     
     TableItemModel* itemPwd = [TableItemModel initWithTitle:@"密码重置" tag:kTagPwdReset];
     TableItemModel* itemClear = [TableItemModel initWithTitle:@"清除缓存" detailTitle:tmpSizeStr tag:kTagClear];
-    TableItemModel* itemBgAudio = [TableItemModel initWithTitle:@"背景音乐: 追梦人" tag:kTagBgAudio];
-    
-    group.items = @[itemPwd, itemClear, itemBgAudio];
+    TableItemModel* itemLawer = [TableItemModel initWithTitle:@"梦扬协议" tag:kTagLawer];
+    group.items = @[itemPwd, itemClear, itemLawer];
     
     [self.setGroups addObject:group];
 }
@@ -169,12 +140,6 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         [cell.contentView addSubview:quitButton];
         cell.backgroundColor = [UIColor clearColor];
-    }else if (cell.tag == kTagBgAudio){
-        UISwitch *audioSwitch = [[UISwitch alloc] init];
-        audioSwitch.frame = CGRectMake(0, 0, 50, 25);
-        audioSwitch.on = [KUserDefaults boolForKey:@"background_audio"];
-        [audioSwitch addTarget:self action:@selector(audioSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-        cell.accessoryView = audioSwitch;
     }else if (cell.tag == kTagClear){
         cell.detailTextLabel.text = item.detailTitle;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -193,7 +158,8 @@
         case kTagClear:
             [self clearData];
             break;
-        case kTagBgAudio:
+        case kTagLawer:
+            [self openLawer];
             break;
         default:
             break;
@@ -262,5 +228,11 @@
     [alert addAction:actionOK];
     
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)openLawer{
+    RegisterNoticeViewController *noticeVC = [[RegisterNoticeViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:noticeVC];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 @end

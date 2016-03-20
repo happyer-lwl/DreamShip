@@ -40,6 +40,10 @@
 
 @property (nonatomic, assign) BOOL bLogin;
 
+@property (nonatomic, weak) UIButton *wexinLogin;
+@property (nonatomic, weak) UIButton *qqLogin;
+@property (nonatomic, weak) UIButton *sinaWeiBoLogin;
+
 @end
 @implementation registerOrLoginViewController
 
@@ -140,6 +144,33 @@
     _changeButton = changeButton;
     
     [self changeClick];
+    
+//    UIButton *weixinLogin = [[UIButton alloc] initWithFrame:CGRectMake(50 + (kScreenWidth - 60) / 6 - 22.5, kScreenHeight - 150, 45, 45)];
+//    [weixinLogin setBackgroundImage:[UIImage imageNamed:@"wechat_login.png"] forState:UIControlStateNormal];
+//    [weixinLogin addTarget:self action:@selector(wechatLoginClick) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:weixinLogin];
+//    
+//    UIButton *qqLogin = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(weixinLogin.frame) + 45, kScreenHeight - 150, 45, 45)];
+//    [qqLogin setBackgroundImage:[UIImage imageNamed:@"qq_login.png"] forState:UIControlStateNormal];
+//    [qqLogin addTarget:self action:@selector(qqLoginClick) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:qqLogin];
+//    
+//    UIButton *weiboLogin = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(qqLogin.frame) + 45, kScreenHeight - 150, 45, 45)];
+//    [weiboLogin setBackgroundImage:[UIImage imageNamed:@"weibo_login.png"] forState:UIControlStateNormal];
+//    [weiboLogin addTarget:self action:@selector(weiboLoginClick) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:weiboLogin];
+}
+
+- (void)wechatLoginClick{
+    
+}
+
+- (void)qqLoginClick{
+    
+}
+
+- (void)weiboLoginClick{
+    
 }
 
 // 注册或者登录

@@ -104,6 +104,7 @@
     // 评论
     UILabel *wordsLabel = [[UILabel alloc] init];
     wordsLabel.font = kDSUserWordsFont;
+    wordsLabel.numberOfLines = 0;
     wordsLabel.textColor = [UIColor grayColor];
     [self.bgView addSubview:wordsLabel];
     self.commentLabel = wordsLabel;

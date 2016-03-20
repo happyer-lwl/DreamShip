@@ -135,7 +135,7 @@ static NSString *ID = @"indexCell";
     [self setHeaderView];
     [self setCollectionViewInfo];
     
-    //_timer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(updataNextImageList) userInfo:nil repeats:YES];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(updataNextImageList) userInfo:nil repeats:YES];
 }
 
 -(void)updataNextImageList{

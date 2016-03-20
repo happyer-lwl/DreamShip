@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <RongIMKit/RongIMKit.h>
+#import "DMAdView.h"
 
 #import "DSHomeViewCell.h"
 
 @class DSDreamModel;
-@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, UIScrollViewDelegate>
+@interface HomeViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, DSHomeCellDelegate, UIScrollViewDelegate, DMAdViewDelegate>
 
 @property (nonatomic, assign) DreamRange dreamRange;
 @property (nonatomic, assign) DSDreamModel *dreamModel;

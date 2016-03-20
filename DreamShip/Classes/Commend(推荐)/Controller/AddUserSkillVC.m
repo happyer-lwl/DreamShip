@@ -115,7 +115,7 @@
         skillDetail.frame = CGRectMake(padding, CGRectGetMaxY(skillNameT.frame) + padding, kScreenWidth - padding * 2, 120);
         skillDetail.backgroundColor = kViewBgColor;
         skillDetail.textColor = kTitleFireColorNormal;
-        skillDetail.placehoder = @"技能描述";
+        skillDetail.placehoder = @"技能描述\n\n禁止非法交易，一经发现立马查处，并报告相关部门";
         skillDetail.placeholderColor = kViewBgColorPlaceHoder;
         skillDetail.font = [UIFont systemFontOfSize:17];
         skillDetail.layer.cornerRadius = 3;

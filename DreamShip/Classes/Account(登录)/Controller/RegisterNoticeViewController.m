@@ -42,8 +42,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"关闭" style:UIBarButtonItemStyleDone target:self action:@selector(closeView)];
     self.navigationItem.leftBarButtonItem.tintColor = [UIColor whiteColor];
     
-    UIImage *image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DreamWings" ofType:@"jpg"]];
-    [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_background_fire"] forBarMetrics:UIBarMetricsDefault];
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[NSForegroundColorAttributeName] = [UIColor whiteColor];
@@ -54,7 +53,7 @@
     DSHtmlItem *html = self.htmls[0];
     self.navigationItem.title = @"梦扬的协议";
     
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - 64)];
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"dsnotice.html" withExtension:nil];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     

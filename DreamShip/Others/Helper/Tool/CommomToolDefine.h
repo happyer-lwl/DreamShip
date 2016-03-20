@@ -26,5 +26,5 @@
 +(NSString *)MD5_16:(NSString *)str;
 
 +(UIImage *)scaleToSize:(UIImage *)image size:(CGSize)size;
-+(void)addNoDataForView:(UIView *)view;
++(UIView *)addNoDataForView:(UIView *)view;
 @end

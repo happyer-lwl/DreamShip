@@ -18,8 +18,6 @@
 #import <SMS_SDK/SMSSDK.h>
 #import "DataBaseSharedManager.h"
 
-#import "AudioController.h"
-
 #import "AFNetworking.h"
 #import "HttpTool.h"
 #import "MJExtension.h"
@@ -29,6 +27,9 @@
 #import "DSUser.h"
 
 #define kAppBuglyID         @"900016290"
+
+#define kShareSDKKey        @"fe467950896c"
+#define kShareSDKSecret     @"07ced222bff568a36d51813ae2ec7681"
 
 static FMDatabase* db = nil;
 
@@ -41,8 +42,7 @@ static FMDatabase* db = nil;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // 设置状态栏
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
-    // 播放背景音乐
-    [self playMusic];
+
     // 设置网络监听
     //[self setNetStatusCheck];
     // 设置IMSDK
@@ -54,6 +54,9 @@ static FMDatabase* db = nil;
     [[CrashReporter sharedInstance] installWithAppId:kAppBuglyID];
     // 短信验证注册
     [SMSSDK registerApp: MOB_SMS_APPKEY withSecret:MOB_SMS_SECRET];
+    
+    // shareSDK
+    //[ShareSDK registerApp:kShareSDKKey];
     
     [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
     
@@ -80,16 +83,6 @@ static FMDatabase* db = nil;
     [[RCIM sharedRCIM] setConnectionStatusDelegate:self];
     
     return YES;
-}
-
-/**
- *  播放音乐
- */
--(void)playMusic{
-    BOOL be = [KUserDefaults boolForKey:@"background_audio"];
-    if (be) {
-        [AudioController playMusic];
-    }
 }
 
 /**

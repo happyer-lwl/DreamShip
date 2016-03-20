@@ -158,4 +158,18 @@
     
     [self.navigationController pushViewController:detailVC animated:YES];
 }
+
+-(NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return @"加入黑名单";
+}
+
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        UIAlertController *alert = [CommomToolDefine alertWithTitle:@"确定将其加入黑名单吗?" message:nil ok:^{
+            [MBProgressHUD showSuccess:@"已经拉黑"];
+        } cancel:nil];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+    [self.tableView setEditing:NO animated:YES];
+}
 @end
