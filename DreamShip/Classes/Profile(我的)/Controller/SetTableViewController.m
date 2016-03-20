@@ -232,7 +232,6 @@
 
 - (void)openLawer{
     RegisterNoticeViewController *noticeVC = [[RegisterNoticeViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:noticeVC];
-    [self presentViewController:nav animated:YES completion:nil];
+    [self.navigationController pushViewController:noticeVC animated:YES];
 }
 @end

@@ -138,4 +138,23 @@
     [self.navigationController pushViewController:skillDetailVC animated:YES];
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(nonnull NSIndexPath *)indexPath{
+    return YES;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return @"举报";
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        UIAlertController *alert = [CommomToolDefine alertWithTitle:@"举报成功，我们会在24小时内审核并处理，感谢您的支持!" message:nil ok:^{
+        } cancel:^{
+        }];
+        
+        [self presentViewController:alert animated:YES completion:^{
+            [tableView setEditing:NO animated:YES];
+        }];
+    }
+}
 @end

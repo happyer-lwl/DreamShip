@@ -72,6 +72,9 @@
  */
 -(void)setNavigationInfo{
     self.navigationItem.title = self.dreamFrame.dream.user.userRealName;
+    
+    UIBarButtonItem *rightBar = [[UIBarButtonItem alloc] initWithTitle:@"举报" style:UIBarButtonItemStyleDone target:self action:@selector(rejectTheContent:)];
+    self.navigationItem.rightBarButtonItem = rightBar;
 }
 
 /**
@@ -404,5 +407,13 @@
     detailVC.user = commentsFrame.comment.user;
     detailVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:detailVC animated:YES];
+}
+
+- (void)rejectTheContent:(id)sender{
+    UIAlertController *alert = [CommomToolDefine alertWithTitle:@"举报成功，我们会在24小时内审核并处理，感谢您的支持!" message:nil ok:^{
+    } cancel:^{
+    }];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 @end
