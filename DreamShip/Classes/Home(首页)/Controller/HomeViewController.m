@@ -132,19 +132,19 @@
     
     _tableView = tableView;
     
-//    // 创建⼲⼴广告视图,此处使⽤用的是测试ID,请登陆多盟官⺴⽹网(www.domob.cn)获取新的ID
-//    // Creat advertisement view please get your own ID from domob website
-//    DMAdView* dmAdView = [[DMAdView alloc] initWithPublisherId:@"56OJyGFYuMOI695Q87" placementId:@"16TLwMxaAc0izY7NJgmfgl5k"];
-//    _dmAdView = dmAdView;
-//    
-//    // 设置⼲⼴广告视图的位置 宽与⾼高设置为 0 即可 该⼲⼴广告视图默认是横竖屏⾃自适应 但需要在旋转时调⽤用 orien- tationChanged ⽅方法
-//    // Set the frame of advertisement view
-//    _dmAdView.frame = CGRectMake(0, 0, kScreenWidth, 150);
-//    _dmAdView.delegate = self;
-//    _dmAdView.rootViewController = self;
-//    
-//    _tableView.tableHeaderView = _dmAdView;
-//    [_dmAdView loadAd];
+    // 创建⼲⼴广告视图,此处使⽤用的是测试ID,请登陆多盟官⺴⽹网(www.domob.cn)获取新的ID
+    // Creat advertisement view please get your own ID from domob website
+    DMAdView* dmAdView = [[DMAdView alloc] initWithPublisherId:@"56OJ2et4uNx7Uhd36l" placementId:@"16TLPG9lAp95ANUU3-KAdYMs"];
+    _dmAdView = dmAdView;
+    
+    // 设置⼲⼴广告视图的位置 宽与⾼高设置为 0 即可 该⼲⼴广告视图默认是横竖屏⾃自适应 但需要在旋转时调⽤用 orien- tationChanged ⽅方法
+    // Set the frame of advertisement view
+    _dmAdView.frame = CGRectMake(0, 0, kScreenWidth, 100);
+    _dmAdView.delegate = self;
+    _dmAdView.rootViewController = self;
+    
+    _tableView.tableFooterView = _dmAdView;
+    [_dmAdView loadAd];
 }
 
 // 获取梦想

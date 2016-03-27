@@ -2382,7 +2382,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-licucore",
-					"-Objc",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.runlwl.dreamship;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2440,7 +2440,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-licucore",
-					"-Objc",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.runlwl.dreamship;
 				PRODUCT_NAME = "$(TARGET_NAME)";

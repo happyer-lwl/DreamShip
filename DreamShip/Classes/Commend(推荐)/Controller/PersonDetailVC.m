@@ -77,6 +77,9 @@
     self.tableView.separatorColor = kViewBgColor;
     self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     
+    UIBarButtonItem *rightBar = [[UIBarButtonItem alloc] initWithTitle:@"举报" style:UIBarButtonItemStyleDone target:self action:@selector(rejectThePerson:)];
+    self.navigationItem.rightBarButtonItem = rightBar;
+    
     [self getUserFocusStatus];
     [self setGroup1];
     [self setGroup6];
@@ -435,5 +438,10 @@
         DBLog(@"%@", error.description);
         [MBProgressHUD showError:@"网络错误!"];
     }];
+}
+
+- (void)rejectThePerson:(id)sender{
+    UIAlertController *alert = [CommomToolDefine alertWithTitle:@"感谢您的支持，我们会尽快审核处理!" message:nil ok:nil cancel:nil];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 @end
