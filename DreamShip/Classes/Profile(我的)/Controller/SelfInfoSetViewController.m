@@ -244,7 +244,7 @@
     UIImage *image = nil;
     [picker dismissViewControllerAnimated:YES completion:nil];
     
-    NSString *mediaType = [info objectForKey:@"UIImagePickerControllerMediaType"];
+//    NSString *mediaType = [info objectForKey:@"UIImagePickerControllerMediaType"];
     
     if (picker == self.imagePickerCamera) {
         image = [info objectForKey:@"UIImagePickerControllerEditedImage"];

@@ -50,7 +50,7 @@
     
     [self htmls];
     // 取出每一行对应的Html模型
-    DSHtmlItem *html = self.htmls[0];
+//    DSHtmlItem *html = self.htmls[0];
     self.navigationItem.title = @"梦扬的协议";
     
     UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - 64)];

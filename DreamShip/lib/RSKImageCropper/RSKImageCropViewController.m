@@ -357,7 +357,7 @@ static const CGFloat kLandscapeCancelAndChooseButtonsVerticalMargin = 12.0f;
 
 - (CGRect)maskRect
 {
-    CGRect bounds = self.view.bounds;
+//    CGRect bounds = self.view.bounds;
 
     // 弧度截取
 //    CGFloat width = CGRectGetWidth(bounds);

@@ -95,7 +95,7 @@
 // 发送验证码
 -(void)sendCodeClick{
     NSString *userName = self.userName.text;
-    NSString *userCode = self.userCode.text;
+//    NSString *userCode = self.userCode.text;
     if (userName.length == 0) {
         [MBProgressHUD showError:@"手机号为空"];
     }else if (![CommonFunc isPhoneValid:userName]){

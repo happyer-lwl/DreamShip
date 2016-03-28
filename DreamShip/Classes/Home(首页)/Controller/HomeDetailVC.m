@@ -31,6 +31,11 @@
 #import "CommentToolBarView.h"
 #import "DSCommentCell.h"
 
+#import <ShareSDK/ShareSDK.h>
+#import "WXApi.h"
+#import <TencentOpenAPI/TencentOAuth.h>
+#import "WeiboSDK.h"
+
 @interface HomeDetailVC ()
 
 @property (nonatomic, strong) NSMutableArray *commentFrameArray;
@@ -284,17 +289,131 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return @"举报";
+    return @"分享";
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    DSDreamModel *model = _dreamFrame.dream;
+    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        [self.view addSubview:hud];
-        hud.mode = MBProgressHUDModeText;
-        hud.labelText = @"举报成功，我们会在24小时内处理";
-        hud.removeFromSuperViewOnHide = YES;
-        [hud hide:YES afterDelay:1];
+//        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+//        [self.view addSubview:hud];
+//        hud.mode = MBProgressHUDModeText;
+//        hud.labelText = @"举报成功，我们会在24小时内处理";
+//        hud.removeFromSuperViewOnHide = YES;
+//        [hud hide:YES afterDelay:1];
+
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"分享" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction *weibo = [UIAlertAction actionWithTitle:@"微博" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"album" ofType:@"png"];
+            //构造分享内容
+            id<ISSContent> publishContent = [ShareSDK content:@"分享"
+                                               defaultContent:@""
+                                                        image:[ShareSDK imageWithPath:imagePath]
+                                                        title:@"ShareSDK"
+                                                          url:@"http://www.mob.com"
+                                                  description:NSLocalizedString(@"TEXT_TEST_MSG", @"这是一条测试信息")
+                                                    mediaType:SSPublishContentMediaTypeNews];
+            [ShareSDK clientShareContent:publishContent
+                                    type:ShareTypeSinaWeibo
+                           statusBarTips:YES
+                                  result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
+                                      
+                                      if (state == SSPublishContentStateSuccess)
+                                      {
+                                          NSLog(NSLocalizedString(@"TEXT_SHARE_SUC", @"分享成功!"));
+                                      }
+                                      else if (state == SSPublishContentStateFail)
+                                      {
+                                          NSLog(NSLocalizedString(@"TEXT_SHARE_FAI", @"分享失败!"), [error errorCode], [error errorDescription]);
+                                      }
+                                  }];
+            
+        }];
+        UIAlertAction *wechat = [UIAlertAction actionWithTitle:@"微信" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            UIImage *shareimage =  [self imageFromView:self.view];
+            
+            //构造分享内容
+            id<ISSContent> publishContent = [ShareSDK content:@"分享内容"
+                                               defaultContent:@"测试一下"
+                                                        image:[ShareSDK pngImageWithImage:shareimage]
+                                                        title:@"ShareSDK"
+                                                          url:@"http://www.mob.com"
+                                                  description:@"这是一条测试信息"
+                                                    mediaType:SSPublishContentMediaTypeImage];
+            
+            id<ISSAuthOptions> authOptions = [ShareSDK authOptionsWithAutoAuth:YES
+                                                                 allowCallback:NO
+                                                                 authViewStyle:SSAuthViewStyleFullScreenPopup
+                                                                  viewDelegate:nil
+                                                       authManagerViewDelegate:nil];
+            //
+            [authOptions setPowerByHidden:YES];
+            //
+            id<ISSShareOptions> shareOptions = [ShareSDK simpleShareOptionsWithTitle:@"分享循迹地图" shareViewDelegate:nil];
+            
+            [ShareSDK clientShareContent:publishContent type:ShareTypeWeixiSession authOptions:authOptions shareOptions:shareOptions statusBarTips:YES result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
+                
+                if (state == SSResponseStateSuccess)
+                {
+                    NSLog(@"分享成功");
+                }
+                else if (state == SSResponseStateFail)
+                {
+                    NSLog(@"分享失败,错误码:%ld,错误描述:%@", [error errorCode], [error errorDescription]);
+                }
+                
+            }];
+            
+        }];
+        UIAlertAction *qq = [UIAlertAction actionWithTitle:@"Q Q" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"qq_login" ofType:@"png"];
+            
+            //构造分享内容
+            id<ISSContent> publishContent = [ShareSDK content:model.type
+                                               defaultContent:@"梦想"
+                                                        image:[ShareSDK imageWithPath:imagePath]
+                                                        title:model.user.userRealName
+                                                          url:@"http://www.mob.com"
+                                                  description:model.text
+                                                    mediaType:SSPublishContentMediaTypeNews];
+            
+            id<ISSAuthOptions> authOptions = [ShareSDK authOptionsWithAutoAuth:YES
+                                                                 allowCallback:NO
+                                                                 authViewStyle:SSAuthViewStyleFullScreenPopup
+                                                                  viewDelegate:nil
+                                                       authManagerViewDelegate:nil];
+            //
+            [authOptions setPowerByHidden:YES];
+            //
+            id<ISSShareOptions> shareOptions = [ShareSDK simpleShareOptionsWithTitle:@"分享循迹地图" shareViewDelegate:nil];
+            
+            [ShareSDK clientShareContent:publishContent type:ShareTypeQQ authOptions:authOptions shareOptions:shareOptions statusBarTips:YES result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
+               
+                if (state == SSResponseStateSuccess)
+                {
+                    NSLog(@"分享成功");
+                }
+                else if (state == SSResponseStateFail)
+                {
+                    NSLog(@"分享失败,错误码:%ld,错误描述:%@", [error errorCode], [error errorDescription]);
+                }
+                
+            }];
+            
+        }];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            
+        }];
+        [alert addAction:weibo];
+        [alert addAction:wechat];
+        [alert addAction:qq];
+        [alert addAction:cancel];
+        
+        [self presentViewController:alert animated:YES completion:nil];
         
         [tableView setEditing:NO animated:YES];
     }
@@ -415,5 +534,17 @@
     }];
     
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+// iphone 截屏方法
+- (UIImage *)imageFromView:(UIView *)theView
+{
+    UIGraphicsBeginImageContext(theView.frame.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    //[theView.layer renderInContext: context];
+    [self.navigationController.view.layer renderInContext:context];
+    UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return theImage;
 }
 @end

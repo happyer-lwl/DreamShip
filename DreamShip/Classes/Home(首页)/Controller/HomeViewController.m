@@ -28,6 +28,8 @@
 #import "UIBarButtonItem+Extension.h"
 #import "UITabBar+littleRedDotBadge.h"
 
+#import "MobClick.h"
+
 #define kDreamTypeSegHeight 40
 
 @interface HomeViewController()
@@ -77,6 +79,18 @@
     [_dmAdView removeFromSuperview];
 }
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [MobClick beginLogPageView:@"Home"];
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
+    [MobClick endLogPageView:@"Home"];
+}
+
 /**
  *  设置导航
  */
@@ -121,8 +135,8 @@
 -(void)setTableViewInfo{
     UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kDreamTypeSegHeight, kScreenWidth, kScreenHeight - 64 - kDreamTypeSegHeight - 44) style:UITableViewStylePlain];
 
-//    tableView.backgroundColor = kTitleFireColorNormal;// kViewBgColorDarkest;
-    tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Launchimage4.7"]];
+    tableView.backgroundColor = kTitleFireColorNormal;// kViewBgColorDarkest;
+//    tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Launchimage4.7"]];
     tableView.contentInset = UIEdgeInsetsMake(5, 0, 0, 0);
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     tableView.delegate = self;
@@ -279,22 +293,23 @@
     [self.navigationController pushViewController:homeDetailVC animated:YES];
 }
 
--(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    CATransform3D rotation;
-    if (indexPath.row % 2 == 0) {
-        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
-    }else{
-        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
-    }
-    
-    cell.layer.transform    = rotation;
-    
-    //3. Define the final state (After the animation) and commit the animation
-    [UIView beginAnimations:@"rotation" context:NULL];
-    [UIView setAnimationDuration:0.5];
-    cell.layer.transform    = CATransform3DIdentity;
-    [UIView commitAnimations];
-}
+// 展示动画
+//-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+//    CATransform3D rotation;
+//    if (indexPath.row % 2 == 0) {
+//        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
+//    }else{
+//        rotation                = CATransform3DMakeTranslation(kScreenWidth, 0.0, 0.0);
+//    }
+//    
+//    cell.layer.transform    = rotation;
+//    
+//    //3. Define the final state (After the animation) and commit the animation
+//    [UIView beginAnimations:@"rotation" context:NULL];
+//    [UIView setAnimationDuration:0.5];
+//    cell.layer.transform    = CATransform3DIdentity;
+//    [UIView commitAnimations];
+//}
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     static float newx = 0;
